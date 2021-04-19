@@ -6,8 +6,10 @@ public enum Resource {
     SERVANT(1),
     SHIELD(2),
     STONE(3),
-    WHITE(4),
-    FAITH(5);
+    FAITH(4),
+    WHITE(5),
+    ANY(6);
+
     private int value;
     private Resource (int value)
     {

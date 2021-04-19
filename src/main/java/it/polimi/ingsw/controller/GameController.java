@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 
 public class GameController {
@@ -9,7 +10,7 @@ public class GameController {
      */
     GameController(int playersnum, ArrayList<String> nicknames)
     {
-        game = new game()
+
     }
 
 

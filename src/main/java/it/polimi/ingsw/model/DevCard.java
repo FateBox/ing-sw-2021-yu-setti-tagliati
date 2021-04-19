@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumeration.Color;
-import it.polimi.ingsw.model.enumeration.Level;
-import it.polimi.ingsw.model.enumeration.Resource;
+import it.polimi.ingsw.enumeration.Color;
+import it.polimi.ingsw.enumeration.Level;
+import it.polimi.ingsw.enumeration.Resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +44,18 @@ public class DevCard {
 
     public Level getLevel() {
         return level;
+    }
+    public Level getNextLevel() {
+        switch (level){
+            case LV1:
+                return Level.LV2;
+            case LV2:
+                return Level.LV3;
+            case LV3:
+                return null;
+        }
+
+        return null;
     }
 
     public Color getColor() {

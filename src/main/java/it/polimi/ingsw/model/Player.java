@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.*;
 
@@ -76,6 +76,9 @@ public class Player {
         }
         return this;
     }
+    // Returns Resources in the row
+    // todo: implements
+    public ArrayList<Resource> getresources(int row) {return null;}
     // todo: needs to evaluate resource managment through the app
     public ArrayList<Resource> getAllResources()
     {
@@ -84,11 +87,6 @@ public class Player {
         {
 
         }
-        return null;
-    }
-    //same
-    public ArrayList<Resource> getResCount()
-    {
         return null;
     }
     /** leaders **/
@@ -109,7 +107,7 @@ public class Player {
     }
 
     /** pope favor **/
-    //set pope favor token check
+    //Requires an integer from 1 to 3, set corresponding pope favor check to true
     public void setPopeFavor(int num) throws Exception
     {
         if (num <3) {
@@ -120,29 +118,31 @@ public class Player {
 
     /** depots **/
     //
-    public void insertdepots(Resource r, int raw) throws Exception
+    public void insertDepots(Resource r, int row) throws Exception
     {
         if (r == Resource.STONE || r == Resource.WHITE)
             throw new Exception();
         else
-        switch (raw) {
+        switch (row) {
             case 1:
                 if (depots.get(0).isEmpty()) {
                     depots.get(0).add(r);
-                    return;
-                } else
+
+                } else throw new Exception();
                 break;
             case 2:
                 if ((depots.get(1).contains(r) && depots.get(1).size() <= 2) || depots.get(1).isEmpty()) {
                     depots.get(1).add(r);
-                    return;
+
                 } else
+                    throw new Exception();
                 break;
             case 3:
                 if ((depots.get(2).contains(r) && depots.get(2).size() <= 3) || depots.get(2).isEmpty()) {
                     depots.get(2).add(r);
-                    return;
-                } else break;
+
+                } else throw new Exception();
+                    break;
             default:
                 throw new IllegalStateException("Unexpected value");
         }
@@ -150,14 +150,14 @@ public class Player {
 
     }
     //
-    public Resource removedepots(int raw)
+    public Resource removeDepots(int raw)
     {
         if(raw>0 && raw <=3)
         return depots.get(raw-1).remove(0);
         else return null;
     }
     //
-    public void swapdepots(int firstraw, int secondraw) throws Exception
+    public void swapDepots(int firstraw, int secondraw) throws Exception
     {
         if(firstraw>3 || firstraw<0 || secondraw>3 || secondraw<0)
             throw new Exception();
@@ -193,10 +193,12 @@ public class Player {
     popeFavor = new boolean[3];
     strongBox= new int[4];
     this.depots = new ArrayList<ArrayList<Resource>>(3);
-    for (int i=0; i<4; i++)
+    for (int i=1; i<4; i++)
     {
-        depots.add(new ArrayList<Resource>(3));
+        depots.add(new ArrayList<Resource>(i));
     }
+    this.extraslots = new ArrayList<ExtraSlot>();
+    //extraslots.add()
 
     }
 }

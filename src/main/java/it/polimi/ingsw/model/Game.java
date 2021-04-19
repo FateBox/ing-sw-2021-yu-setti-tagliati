@@ -1,11 +1,10 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumeration.Color;
-import it.polimi.ingsw.model.enumeration.Level;
-import it.polimi.ingsw.model.enumeration.Resource;
+import it.polimi.ingsw.enumeration.Color;
+import it.polimi.ingsw.enumeration.Level;
+import it.polimi.ingsw.enumeration.Resource;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class Game {
 

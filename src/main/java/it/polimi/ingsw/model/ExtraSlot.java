@@ -1,4 +1,4 @@
-package it.polimi.ingsw;
+package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.Resource;
 
@@ -8,7 +8,9 @@ public class ExtraSlot implements CardSlot{
 
     ArrayList<Resource> costList;
     ArrayList<Resource> productList;
+    int victoryPoint;
 
+    /** Getters **/
     public ArrayList<Resource> getCostlist()
     {
         return costList;
@@ -17,9 +19,15 @@ public class ExtraSlot implements CardSlot{
     {
         return productList;
     }
-
-    @Override
     public int getVictoryPoint() {
-        return 0;
+        return victoryPoint;
     }
+
+    /** Constructor **/
+    ExtraSlot(ArrayList<Resource> costList, ArrayList<Resource> productList, int victoryPoint ){
+        this.costList=costList;
+        this.victoryPoint=victoryPoint;
+        this.productList=productList;
+    }
+
 }
