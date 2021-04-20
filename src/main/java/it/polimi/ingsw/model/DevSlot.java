@@ -36,6 +36,11 @@ public abstract class DevSlot implements CardSlot{
     }
 
     @Override
+    public void product(ArrayList<Resource> res) {
+
+    }
+
+    @Override
     // sums all stacked card victory points
     public int getVictoryPoint() {
         int v=0;

@@ -7,11 +7,10 @@ public enum Resource {
     SHIELD(2),
     STONE(3),
     FAITH(4),
-    WHITE(5),
-    ANY(6);
+    WHITE(5);
 
     private int value;
-    private Resource (int value)
+     Resource (int value)
     {
         this.value = value;
     }

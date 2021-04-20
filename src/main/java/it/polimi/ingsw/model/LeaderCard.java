@@ -21,29 +21,26 @@ public abstract class LeaderCard {
         cost=purchasecost;
         ID = id;
         type=value;
-        return;
+
     }
 
     public String getID() {
         return ID;
     }
-
     public Boolean isactive() {return active;}
-
-    public ArrayList<Resource> getCost() {
+    public ArrayList<Resource> getCost()
+    {
         return new ArrayList<>(cost);
     }
-
     public AbilityType getType() {
         return type;
     }
-
     public LeaderCard activate()
     {
         active=true;
         return this;
     }
-    public void use ()
+    public void use (Player player)
     {
         this.active=true;
 

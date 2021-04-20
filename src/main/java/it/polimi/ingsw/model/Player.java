@@ -3,6 +3,9 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enumeration.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
+import static it.polimi.ingsw.enumeration.Resource.*;
 
 public class Player {
     private String nickname;
@@ -15,79 +18,45 @@ public class Player {
     private ArrayList<ArrayList<Resource>> depots;
     /**Development space**/
     private ArrayList<DevSlot> devSlots;
+    /** Leader properties **/
+    // contains base slot and leader slots
     private ArrayList<ExtraSlot> extraslots;
+    private HashSet<Resource> developmentDiscounts;
+    private HashSet<Resource> marketDiscounts;
+    //not sure if good, needs suggestion
+    //-> at start it's a new arr(4) with arr.get(0/1/2/3) = null; when leader is played arr.get(i) gets 0;
+    private ArrayList<Integer> specialdepot;
+
 
     /** strongbox **/
     // Requires a storable resource
     // Remove and return resource removed, throw Exception if there's no resource of that type in strongbox
     public Resource drawStrongBox(Resource r) throws Exception
     {
-        switch (r)
-        {
-            case COIN:
-                if(this.strongBox[0] > 0)
-                    this.strongBox[0]--;
-                else
-                    throw new Exception();
-                break;
-            case SERVANT:
-                if(this.strongBox[1] > 0)
-                    this.strongBox[1]--;
-                else
-                    throw new Exception();
-                break;
-            case SHIELD:
-                if(this.strongBox[2] > 0)
-                    this.strongBox[2]--;
-                else
-                    throw new Exception();
-                break;
-            case STONE:
-                if(this.strongBox[3] > 0)
-                    this.strongBox[3]--;
-                else
-                    throw new Exception();
-                break;
-            default:
-                throw new Exception();
-        }
+        if(r==WHITE || r==FAITH || strongBox[r.getValue()]<=0)
+            throw new Exception();
+        strongBox[r.getValue()]--;
         return r;
     }
-    // Requires a storable resource
+    // Requires a storable resource or throw exception
     // Insert selected resource in strongbox
     public Player insertStrongBox(Resource r) throws Exception
     {
-        switch (r)
-        {
-            case COIN:
-                this.strongBox[0]++;
-                break;
-            case SERVANT:
-                this.strongBox[1]++;
-                break;
-            case SHIELD:
-                this.strongBox[2]++;
-                break;
-            case STONE:
-                this.strongBox[3]++;
-                break;
-            default:
-                throw new Exception();
-        }
+        if(r==WHITE || r==FAITH)
+            throw new Exception();
+        else
+         this.strongBox[r.getValue()]++;
+
         return this;
     }
-    // Returns Resources in the row
-    // todo: implements
-    public ArrayList<Resource> getresources(int row) {return null;}
-    // todo: needs to evaluate resource managment through the app
-    public ArrayList<Resource> getAllResources()
+    // ---> IMPLEMENT IT LATER IF USEFULL AND NO CHANGES IN CODE <---
+    public ArrayList<Resource> drawStrongBox(ArrayList<Resource> r) throws Exception {return null;}
+    public ArrayList<Resource> insertStrongBox(ArrayList<Resource> r) throws Exception {return null;}
+    public int getResourceQuantity(Resource res)
     {
-        ArrayList<Resource> res;
-        for(int i=0; i<4; i++)
-        {
-
-        }
-        return null;
+        if(res == FAITH || res == WHITE)
+            return 0;
+        return strongBox[res.getValue()];
     }
     /** leaders **/
     //classic getters and setters
@@ -105,12 +74,15 @@ public class Player {
     {
         return leaderCards.get(i);
     }
-
+    public void useLeader (LeaderCard leaderCard)
+    {
+        leaderCard.use(this);
+    }
     /** pope favor **/
     //Requires an integer from 1 to 3, set corresponding pope favor check to true
     public void setPopeFavor(int num) throws Exception
     {
-        if (num <3) {
+        if (num <3 && num >0) {
             popeFavor[num] = true;
         }
         else throw new Exception();
@@ -150,10 +122,10 @@ public class Player {
 
     }
     //
-    public Resource removeDepots(int raw)
+    public Resource removeDepots(int row)
     {
-        if(raw>0 && raw <=3)
-        return depots.get(raw-1).remove(0);
+        if(row >0 && row <=3)
+        return depots.get(row -1).remove(0);
         else return null;
     }
     //
@@ -179,14 +151,29 @@ public class Player {
 
         return depots.get(greater).size() > lower;
     }
-    /** rest **/
+    /** various getters **/
     public String getNickname() {
         return nickname;
     }
+    public ArrayList<DevSlot> getDevSlots() {
+        return devSlots;
+    }
+    public ArrayList<ExtraSlot> getExtraslots() {
+        return extraslots;
+    }
+    public HashSet<Resource> getDevelopmentDiscounts() {
+        return developmentDiscounts;
+    }
+    public HashSet<Resource> getMarketDiscounts() {
+        return marketDiscounts;
+    }
+    public ArrayList<Integer> getSpecialdepot() {
+        return specialdepot;
+    }
+
 
 
     /** creator **/
-    //incomplete
     public Player(String nickname) {
     this.nickname = nickname;
     this.leaderCards = new ArrayList<LeaderCard>(4);
@@ -197,8 +184,14 @@ public class Player {
     {
         depots.add(new ArrayList<Resource>(i));
     }
+    this.devSlots = new ArrayList<>(3);
     this.extraslots = new ArrayList<ExtraSlot>();
-    //extraslots.add()
+    extraslots.add(new ExtraSlot());
+    this.developmentDiscounts = new HashSet<>();
+    this.marketDiscounts = new HashSet<>();
+    this.specialdepot = new ArrayList<>(2);
 
     }
+
+
 }
