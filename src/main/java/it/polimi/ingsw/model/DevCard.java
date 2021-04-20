@@ -9,13 +9,13 @@ import java.util.Arrays;
 
 public class DevCard {
     //state
-    private int id;
-    private Color color;
-    private Level level;
-    private int victoryPoint;
-    private ArrayList<Resource> costList;
-    private ArrayList<Resource> productInputList;
-    private ArrayList<Resource> productOutputList;
+    private final int id;
+    private final Color color;
+    private final Level level;
+    private final int victoryPoint;
+    private final ArrayList<Resource> costList;
+    private  ArrayList<Resource> productInputList;
+    private  ArrayList<Resource> productOutputList;
 
 
     //costruttore e metodi set usati per inizializzare le carte
