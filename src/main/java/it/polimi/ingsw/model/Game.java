@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import com.sun.tools.javac.platform.PlatformUtils;
 import it.polimi.ingsw.model.enumeration.Color;
 import it.polimi.ingsw.model.enumeration.Level;
 import it.polimi.ingsw.model.enumeration.Resource;
@@ -10,7 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class Game {
 
     //state
-    private ArrayList<Player> playerLobby;
+    private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
     private ArrayList<ActionLorenzo> lorenzoDeck;
     private ArrayList<LeaderCard> leaderDeck;
@@ -20,13 +21,13 @@ public class Game {
     private int[] playerLocation; //Il percorso Fede ha 25 caselle: la posizione di un giocatore può essere compresa tra 0 e 24
 
     //costruttore
-    public Game()
+    public Game(ArrayList<Player> p)
     {
-        //PlayerListGenerator();
+        this.playerList = new ArrayList<Player>(p); //la classe che crea i giocatori passa poi la lista (senza Lorenzo) all'oggetto game
         marketGenerator();
         //leaderDeckGenerator();
         //lorenzoDeckGenerator();
-        //faithTrackGenerator();
+        faithTrackGenerator();
         devCardGenerator();
     }
 
@@ -396,27 +397,35 @@ public class Game {
         return gain;
     }
 
+
     //metodi gestione percorso fede
 
-    /*private void faithTrackGenerator() {
+    private void faithTrackGenerator() {
 
-        int s = this.playerLobby.size();
+        int s = this.playerList.size();
         int i;
-        playerLocation = new int[s];
-        //posizione iniziale primo e secondo giocatore: 0; terzo e quarto giocatore: 1
+        if (s>1) //multiplayer
+        { //posizioni iniziali primo e secondo giocatore: 0; terzo e quarto giocatore: 1
+        this.playerLocation = new int[s];
         for (i=0; i<s; i++) {
-            if(i<2) {
+            if (i < 2) {
                 this.playerLocation[i] = 0;
-            }
+                }
             else{
-                this.playerLocation[i]= 1;
+                this.playerLocation[i] = 1;
+                }
             }
+        }
+        else{ //singleplayer
+            this.playerLocation = new int[2];
+            playerLocation[0] = 0;
+            playerLocation[1] = 0; //posizione di Lorenzo
         }
     }
 
-    public void forward(int id, int box) //i parametri indicano il giocatore e il numero di caselle percorse
+    public void forward(int id, int box) //i parametri indicano il giocatore (da 0 a 3) e il numero di caselle da percorrere
     {
-        this.playerLocation[id] += box;
+        this.playerLocation[id] += box; // per muovere Lorenzo nel singleplayer bisogna passare un id = 1
         //questo controllo viene fatto dopo che un personaggio si è mosso per sapere se attivare il popeSpace
         if (this.playerLocation[id]>18)
         {
@@ -432,9 +441,6 @@ public class Game {
         }
     }
 
-    private void PlayerListGenerator() {
-
-    }
 
 
     //metodi pubblici Game
@@ -443,11 +449,6 @@ public class Game {
         Collections.shuffle(this.leaderDeck);
     }
 
-
-    public void discardDev()
-    {
-
-    }
 
     public void useActionLorenzo()
     {
@@ -485,5 +486,5 @@ public class Game {
         }
         Collections.shuffle(this.leaderDeck);
         return this.leaderDeck;
-    }*/
+    }
 }
