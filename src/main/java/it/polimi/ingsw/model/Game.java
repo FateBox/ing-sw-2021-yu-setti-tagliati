@@ -278,10 +278,17 @@ public class Game {
             Collections.shuffle(devGrid[i]);
         }
     }
-    public Stack<DevCard> getDeck(int idmazzo) //tramite questa funzione è possibile accedere ad un mazzo specifico. Una volta restituito in un'altra classe, è possibile invocare i metodi peek e pop per visualizzare e pescare la carta
+
+    public DevCard getDevCard(int idmazzo)
     {
-        return devGrid[idmazzo];
+        return devGrid[idmazzo].peek();
     }
+
+    public DevCard drawDevCard(int idmazzo)
+    {
+        return devGrid[idmazzo].pop();
+    }
+
 
     //metodi gestione mercato
 
@@ -423,10 +430,32 @@ public class Game {
         }
     }
 
-    public void forward(int id, int box) //i parametri indicano il giocatore (da 0 a 3) e il numero di caselle da percorrere
+    public void forwardPlayer(Player p, int box) //i parametri indicano il giocatore che avanza(da 0 a 3) e il numero di caselle da percorrere
     {
-        this.playerLocation[id] += box; // per muovere Lorenzo nel singleplayer bisogna passare un id = 1
-        //questo controllo viene fatto dopo che un personaggio si è mosso per sapere se attivare il popeSpace
+        int id = playerList.indexOf(p);
+        this.playerLocation[id] += box;
+        setPope(id);
+    }
+
+    public void forwardOtherPlayers(Player p, int box) //usato solo in multiplayer
+    {
+        int id = playerList.indexOf(p);
+        for (int i = 0; i<playerList.size(); i++) {
+            if (i != id) {
+                this.playerLocation[i] += box;
+                setPope(i);
+            }
+        }
+    }
+
+    public void forwardLorenzo(int box) //usato solo in singleplayer
+    {
+        this.playerLocation[1] += box;
+        setPope(1);
+    }
+
+    private void setPope (int id)
+    {
         if (this.playerLocation[id]>18)
         {
             this.popeSpace[2] = false;
@@ -456,11 +485,6 @@ public class Game {
     }
 
     public void endGame()
-    {
-
-    }
-
-    public void forwardLorenzo()
     {
 
     }
