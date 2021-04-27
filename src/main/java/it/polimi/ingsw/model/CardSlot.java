@@ -7,6 +7,5 @@ import java.util.ArrayList;
 public interface CardSlot {
      ArrayList<Resource> getCostlist();
      ArrayList<Resource> getProductlist();
-     void product(ArrayList<Resource> res );
      int getVictoryPoint();
 }

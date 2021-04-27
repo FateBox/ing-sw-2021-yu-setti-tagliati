@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enumeration.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static it.polimi.ingsw.enumeration.Resource.*;
@@ -23,20 +24,19 @@ public class Player {
     private ArrayList<ExtraSlot> extraslots;
     private HashSet<Resource> developmentDiscounts;
     private HashSet<Resource> marketDiscounts;
-    //not sure if good, needs suggestion
-    //-> at start it's a new arr(4) with arr.get(0/1/2/3) = null; when leader is played arr.get(i) gets 0;
-    private ArrayList<Integer> specialdepot;
-
+    private ArrayList<SpecialDepot> specialDepot;
 
     /** strongbox **/
     // Requires a storable resource
     // Remove and return resource removed, throw Exception if there's no resource of that type in strongbox
-    public Resource drawStrongBox(Resource r) throws Exception
+    public Player drawStrongBox(Resource r) throws Exception
     {
-        if(r==WHITE || r==FAITH || strongBox[r.getValue()]<=0)
-            throw new Exception();
+        if(r==WHITE || r==FAITH)
+            throw new Exception("Wrong input");
+        if(strongBox[r.getValue()]<=0)
+            throw new Exception("Resource not present");
         strongBox[r.getValue()]--;
-        return r;
+        return this;
     }
     // Requires a storable resource or throw exception
     // Insert selected resource in strongbox
@@ -76,47 +76,59 @@ public class Player {
     }
     public void useLeader (LeaderCard leaderCard)
     {
-        leaderCard.use(this);
+            leaderCard.use(this);
     }
     /** pope favor **/
-    //Requires an integer from 1 to 3, set corresponding pope favor check to true
-    public void setPopeFavor(int num) throws Exception
+    //
+    public void setPopeFavor(Level num)
     {
-        if (num <3 && num >0) {
-            popeFavor[num] = true;
-        }
-        else throw new Exception();
+            popeFavor[num.get()] = true;
+    }
+    public boolean getPopeFavor(Level num)
+    {
+        return popeFavor[num.get()];
     }
 
     /** depots **/
     //
+    //
+    public Resource getDepotsRowType(int row)
+    {
+        if(depots.get(row).isEmpty())
+            return null;
+        else return depots.get(row).get(0);
+    }
+    private boolean isResViable(Resource resource)
+    {
+        return !(getDepotsRowType(0)==resource || getDepotsRowType(1)==resource || getDepotsRowType(2)==resource);
+    }
     public void insertDepots(Resource r, int row) throws Exception
     {
-        if (r == Resource.STONE || r == Resource.WHITE)
+        if (r == FAITH || r == Resource.WHITE )
             throw new Exception();
         else
         switch (row) {
             case 1:
-                if (depots.get(0).isEmpty()) {
+                if (depots.get(0).isEmpty() && isResViable(r)) {
                     depots.get(0).add(r);
 
                 } else throw new Exception();
                 break;
             case 2:
-                if ((depots.get(1).contains(r) && depots.get(1).size() <= 2) || depots.get(1).isEmpty()) {
+                if ((depots.get(1).contains(r) && depots.get(1).size() <= 2) || (depots.get(1).isEmpty() && isResViable(r) )) {
                     depots.get(1).add(r);
 
                 } else
                     throw new Exception();
                 break;
             case 3:
-                if ((depots.get(2).contains(r) && depots.get(2).size() <= 3) || depots.get(2).isEmpty()) {
+                if ((depots.get(2).contains(r) && depots.get(2).size() <= 3) || (depots.get(2).isEmpty() && isResViable(r))) {
                     depots.get(2).add(r);
 
                 } else throw new Exception();
                     break;
             default:
-                throw new IllegalStateException("Unexpected value");
+                throw new Exception("Unexpected input value");
         }
 
 
@@ -124,32 +136,38 @@ public class Player {
     //
     public Resource removeDepots(int row)
     {
-        if(row >0 && row <=3)
+        if(row >0 && row <=3 && !(depots.get(row).isEmpty()))
         return depots.get(row -1).remove(0);
         else return null;
     }
     //
-    public void swapDepots(int firstraw, int secondraw) throws Exception
+    public void swapDepots(int firstRow, int secondRow) throws Exception
     {
-        if(firstraw>3 || firstraw<0 || secondraw>3 || secondraw<0)
-            throw new Exception();
+        if(firstRow >3 || firstRow <0 || secondRow >3 || secondRow <0)
+            throw new Exception("Unexpected input value");
         else
         {
-            if (isDepotSwappable(firstraw, secondraw)){
-                ArrayList<Resource> temp = depots.get(firstraw-1);
-                ArrayList<Resource> t2 = depots.get(firstraw-1);
-                t2 = depots.get(secondraw-1);
-                t2 = depots.get(secondraw-1) ;
-                t2 = temp;
+            if (isDepotSwappable(firstRow, secondRow)){
+                ArrayList<Resource> temp = new ArrayList<Resource>( depots.get(firstRow -1));
+                depots.get(firstRow-1).clear();
+                depots.get(firstRow-1).addAll(depots.get(secondRow-1));
+                depots.get(secondRow-1).clear();
+                depots.get(secondRow-1).addAll(temp);
         }
+            else throw new Exception("Operation violate state invariant properties");
         }
     }
-    public boolean isDepotSwappable(int firstraw, int secondraw)
+    public boolean isDepotSwappable(int firstrow, int secondrow)
     {
-        int greater = Math.max(firstraw, secondraw);
-        int lower = Math.min(firstraw, secondraw);
+        int greater = Math.max(firstrow, secondrow);
+        int lower = Math.min(firstrow, secondrow);
 
-        return depots.get(greater).size() > lower;
+        int size =depots.get(greater-1).size();
+        return size <= lower;
+    }
+    public ArrayList<Resource> getDepots(int row)
+    {
+        return new ArrayList<>(depots.get(row));
     }
     /** various getters **/
     public String getNickname() {
@@ -167,10 +185,24 @@ public class Player {
     public HashSet<Resource> getMarketDiscounts() {
         return marketDiscounts;
     }
-    public ArrayList<Integer> getSpecialdepot() {
-        return specialdepot;
+    public SpecialDepot getSpecialdepot(int i) {
+        return specialDepot.get(i);
     }
 
+
+    /** various setters **/
+    public void addExtraslots(ExtraSlot extraslot) {
+        this.extraslots.add(extraslot) ;
+    }
+    public void addDevelopmentDiscounts(Resource developmentDiscounts) {
+        this.developmentDiscounts.add( developmentDiscounts );
+    }
+    public void addMarketDiscounts(Resource resource) {
+        this.marketDiscounts.add(resource);
+    }
+    public void addSpecialDepot(Resource r) {
+        this.specialDepot.add(new SpecialDepot(r));
+    }
 
 
     /** creator **/
@@ -189,9 +221,22 @@ public class Player {
     extraslots.add(new ExtraSlot());
     this.developmentDiscounts = new HashSet<>();
     this.marketDiscounts = new HashSet<>();
-    this.specialdepot = new ArrayList<>(2);
-
+    this.specialDepot = new ArrayList<SpecialDepot>();
     }
 
 
-}
+    //TODO: implement it
+    Boolean ownsResources(ArrayList<Resource> res)
+    {
+        return false;
+    }
+    //TODO: implement it
+    Boolean hasDevCard(Level l, Color c)
+    {
+        return false;
+    }
+    Boolean hasDevCard(Color c)
+    {
+        return false;
+    }
+ }

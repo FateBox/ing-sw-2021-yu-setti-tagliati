@@ -1,13 +1,16 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.enumeration.Resource;
 
 import java.util.ArrayList;
 
-public abstract class DevSlot implements CardSlot{
-    ArrayList<DevCard> devcards;
+public class DevSlot implements CardSlot{
+    ArrayList<DevCard> devCards;
 
+    DevSlot()
+    {
+        devCards = new ArrayList<>();
+    }
     //Returns top card costlist
     public ArrayList<Resource> getCostlist() {
 
@@ -23,28 +26,24 @@ public abstract class DevSlot implements CardSlot{
     public DevCard getLastCard()
     {
 
-        return devcards.get((devcards.size()-1));
+        return devCards.get((devCards.size()-1));
     }
 
     //Try to insert card respecting game VINCOLI otherwise launch exception
     public void insertCard(DevCard card) throws Exception
     {
         if(getLastCard().getLevel() == card.getNextLevel())
-        devcards.add(card);
+        devCards.add(card);
         else
             throw new Exception();
     }
 
-    @Override
-    public void product(ArrayList<Resource> res) {
-
-    }
 
     @Override
     // sums all stacked card victory points
     public int getVictoryPoint() {
         int v=0;
-        for (DevCard dev : devcards)
+        for (DevCard dev : devCards)
         {
             v += dev.getVictoryPoint();
         }

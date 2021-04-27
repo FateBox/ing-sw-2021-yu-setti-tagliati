@@ -7,7 +7,8 @@ public enum Resource {
     SHIELD(2),
     STONE(3),
     FAITH(4),
-    WHITE(5);
+    WHITE(5),
+    ANY(6);
 
     private int value;
      Resource (int value)
@@ -18,8 +19,22 @@ public enum Resource {
     public int getValue() {
         return value;
     }
-
-    public void setValue(int value) {
-        this.value = value;
+    public Marble getMarble() throws Exception
+    {
+        int v=getValue();
+        switch (v)
+        {
+            case 0:
+                return Marble.COIN;
+            case 1:
+                return Marble.SERVANT;
+            case 2:
+                return Marble.SHIELD;
+            case 3:
+                return Marble.STONE;
+            default:
+                throw new Exception();
+        }
     }
+
 }

@@ -20,20 +20,25 @@ public class ExtraSlot implements CardSlot{
         return productList;
     }
 
-    @Override
-    public void product(ArrayList<Resource> res) {
-
-    }
-
     public int getVictoryPoint() {
         return victoryPoint;
     }
 
     /** Constructor **/
     ExtraSlot(Resource resource ){
+        costList= new ArrayList<>();
+        costList.add(resource);
+        productList = new ArrayList<>();
+        productList.add(Resource.ANY);
+        productList.add(Resource.FAITH);
     }
     ExtraSlot()
     {
+        costList = new ArrayList<>();
+        costList.add(Resource.ANY);
+        costList.add(Resource.ANY);
+        productList= new ArrayList<>();
+        productList.add(Resource.ANY);
     }
 
 }
