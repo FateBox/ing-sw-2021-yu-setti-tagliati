@@ -5,45 +5,71 @@ import it.polimi.ingsw.enumeration.*;
 import java.util.ArrayList;
 
 
-public abstract class LeaderCard {
+public class LeaderCard {
     private Player owner;
     private final String ID;
     private ArrayList<Resource> resourcesRequirements;
     private ArrayList<Level> devLevelRequirements;
     private ArrayList<Color> devColorRequirements;
+    private ArrayList<Integer> devColLevQuantity;
     private final AbilityType type;
     private final Resource res;
+    private final int victoryPoint;
     private Boolean active;
 
-    LeaderCard(Player owner, String id, AbilityType value, Resource abilityResource)
+    LeaderCard(String id,int victoryPoint, AbilityType value, Resource abilityResource)
     {
-        this.owner = owner;
         res = abilityResource;
         active=false;
+        this.victoryPoint=victoryPoint;
         ID = id;
         type=value;
         resourcesRequirements = new ArrayList<>();
         devColorRequirements = new ArrayList<>();
         devLevelRequirements = new ArrayList<>();
+        devColLevQuantity = new ArrayList<>();
 
     }
-
-    protected void setDevRequirements(Color color)
+    LeaderCard setOwner(Player player)
+    {
+        owner = player;
+        return this;
+    }
+    protected LeaderCard setDevRequirements(Color color)
     {
         this.devLevelRequirements.add(null);
         this.devColorRequirements.add(color);
+        this.devColLevQuantity.add(1);
+        return this;
     }
-    protected void setDevLevelRequirements(Level level, Color color)
+    LeaderCard setLevelRequirements(Color color, int quantity)
+    {
+        this.devLevelRequirements.add(null);
+        this.devColorRequirements.add(color);
+        this.devColLevQuantity.add(quantity);
+        return this;
+    }
+    protected LeaderCard setDevLevelRequirements(Color color, Level level)
     {
         this.devLevelRequirements.add(level);
         this.devColorRequirements.add(color);
+        this.devColLevQuantity.add(1);
+        return this;
     }
-    protected void setResourcesRequirements(Resource resource, int quantity)
+    protected LeaderCard setDevLevelRequirements(Level level, Color color, int quantity)
+    {
+        this.devLevelRequirements.add(level);
+        this.devColorRequirements.add(color);
+        this.devColLevQuantity.add(quantity);
+        return this;
+    }
+    protected LeaderCard setResourcesRequirements(Resource resource, int quantity)
     {
         for(int i=0; i<quantity-1;i++)
         {
             resourcesRequirements.add(resource);
         }
+        return this;
     }
     public String getID() {
         return ID;
@@ -58,7 +84,12 @@ public abstract class LeaderCard {
         boolean result = player.ownsResources(resourcesRequirements);
         for (int i=0; i<devColorRequirements.size();i++)
         {
-            if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i) )));
+            if(devLevelRequirements.get(i) == null)
+                if(!(player.hasDevCard(devColorRequirements.get(i),devColLevQuantity.get(i))))
+                    return false;
+                else{}
+                else
+            if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )));
             result = false;
         }
         return result;
