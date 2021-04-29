@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enumeration.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -49,9 +50,18 @@ public class Player {
 
         return this;
     }
+    public int getQuantityStrongBox(Resource r)
+    {
+        return strongBox[r.getValue()];
+    }
     // ---> IMPLEMENT IT LATER IF USEFULL AND NO CHANGES IN CODE <---
     public ArrayList<Resource> drawStrongBox(ArrayList<Resource> r) throws Exception {return null;}
-    public ArrayList<Resource> insertStrongBox(ArrayList<Resource> r) throws Exception {return null;}
+    // implemented
+    public Player insertStrongBox(Resource... res) throws Exception {
+        ArrayList<Resource> resources = new ArrayList<Resource>(Arrays.asList(res));
+        for(Marble m : Marble.values())
+        strongBox[m.getResource().getValue()] += Collections.frequency(resources, m.getResource());
+        return this;}
     public int getResourceQuantity(Resource res)
     {
         if(res == FAITH || res == WHITE)
@@ -60,19 +70,19 @@ public class Player {
     }
     /** leaders **/
     //classic getters and setters
-    public boolean addLeader(LeaderCard l)
+    public Player addLeader(LeaderCard l)
     {
-        return
-                this.leaderCards.add(l);
+        leaderCards.add(l);
+        return this;
     }
     public boolean removeLeader(LeaderCard l)
     {
         return
                 this.leaderCards.remove(l);
     }
-    public LeaderCard getLeader(int i)
+    public ArrayList<LeaderCard> getLeader()
     {
-        return leaderCards.get(i);
+        return leaderCards;
     }
     public void useLeader (LeaderCard leaderCard)
     {
@@ -102,7 +112,7 @@ public class Player {
     {
         return !(getDepotsRowType(0)==resource || getDepotsRowType(1)==resource || getDepotsRowType(2)==resource);
     }
-    public void insertDepots(Resource r, int row) throws Exception
+    public Player insertDepots(Resource r, int row) throws Exception
     {
         if (r == FAITH || r == Resource.WHITE )
             throw new Exception();
@@ -130,8 +140,7 @@ public class Player {
             default:
                 throw new Exception("Unexpected input value");
         }
-
-
+        return this;
     }
     //
     public Resource removeDepots(int row)
@@ -165,6 +174,17 @@ public class Player {
         int size =depots.get(greater-1).size();
         return size <= lower;
     }
+    public int getQuantityDepots(Resource resource)
+    {
+        if(isResViable(resource))
+            return 0;
+        for(int row = 0; row<3; row++)
+        {
+            if(getDepotsRowType(row)==resource)
+                return depots.get(row).size();
+        }
+        return 0;
+    }
     public ArrayList<Resource> getDepots(int row)
     {
         return new ArrayList<>(depots.get(row));
@@ -173,8 +193,9 @@ public class Player {
     public String getNickname() {
         return nickname;
     }
-    public ArrayList<DevSlot> getDevSlots() {
-        return devSlots;
+    public DevSlot getDevSlot(int i) throws Exception{
+        if(i >=0 && i <=2 )return devSlots.get(i);
+        throw new Exception("wrong input");
     }
     public ArrayList<ExtraSlot> getExtraslots() {
         return extraslots;
@@ -217,6 +238,9 @@ public class Player {
         depots.add(new ArrayList<Resource>(i));
     }
     this.devSlots = new ArrayList<>(3);
+    devSlots.add(new DevSlot());
+    devSlots.add(new DevSlot());
+    devSlots.add(new DevSlot());
     this.extraslots = new ArrayList<ExtraSlot>();
     extraslots.add(new ExtraSlot());
     this.developmentDiscounts = new HashSet<>();
@@ -225,18 +249,41 @@ public class Player {
     }
 
 
-    //TODO: implement it
+    //
     Boolean ownsResources(ArrayList<Resource> res)
     {
-        return false;
+        if(res == null)
+            return true;
+        for(Marble m: Marble.values())
+        {
+            int requiredQuantity = Collections.frequency(res, m.getResource());
+            if(requiredQuantity != 0)
+            {
+                requiredQuantity = requiredQuantity - getQuantityStrongBox(m.getResource());
+                int temp = getQuantityDepots(m.getResource());
+                requiredQuantity = requiredQuantity - temp;
+                if(requiredQuantity >0) return false;
+            }
+        }
+        return true;
     }
-    //TODO: implement it
-    Boolean hasDevCard(Level l, Color c)
+    //
+    Boolean hasDevCard(Level level, Color color, int quantity)
     {
-        return false;
+        int result=0;
+        for(DevSlot d: devSlots)
+        {
+            result +=d.getQuantityDevCard(level, color);
+        }
+        return result>=quantity;
     }
-    Boolean hasDevCard(Color c)
+    Boolean hasDevCard(Color color, int quantity)
     {
-        return false;
+        int result=0;
+        for(DevSlot d: devSlots)
+        {
+            result +=d.getQuantityDevCard(color);
+        }
+        return result>=quantity;
     }
  }

@@ -11,11 +11,11 @@ public class ExtraSlot implements CardSlot{
     int victoryPoint;
 
     /** Getters **/
-    public ArrayList<Resource> getCostlist()
+    public ArrayList<Resource> getCostList()
     {
         return costList;
     }
-    public ArrayList<Resource> getProductlist()
+    public ArrayList<Resource> getProductList()
     {
         return productList;
     }

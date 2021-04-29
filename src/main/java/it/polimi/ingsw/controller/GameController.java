@@ -1,12 +1,10 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
-import sun.jvm.hotspot.utilities.Observable;
-import sun.jvm.hotspot.utilities.Observer;
 
 import java.util.ArrayList;
 
-public class GameController implements Observer {
+public class GameController {
     Game game;
     ArrayList<Player> players;
     /*
@@ -25,13 +23,9 @@ public class GameController implements Observer {
 
     }
     //check if game over, called by turn controller every last turn
-    boolean isGameOver(){
+    public boolean isGameOver(){
         return false;
     }
 
 
-    @Override
-    public void update(Observable o, Object arg) {
-
-    }
 }

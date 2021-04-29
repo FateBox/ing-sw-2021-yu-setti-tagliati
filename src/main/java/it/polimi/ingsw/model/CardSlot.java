@@ -5,7 +5,7 @@ import it.polimi.ingsw.enumeration.Resource;
 import java.util.ArrayList;
 
 public interface CardSlot {
-     ArrayList<Resource> getCostlist();
-     ArrayList<Resource> getProductlist();
+     ArrayList<Resource> getCostList();
+     ArrayList<Resource> getProductList();
      int getVictoryPoint();
 }

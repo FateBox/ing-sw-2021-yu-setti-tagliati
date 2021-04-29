@@ -42,7 +42,7 @@ public class LeaderCard {
         this.devColLevQuantity.add(1);
         return this;
     }
-    LeaderCard setLevelRequirements(Color color, int quantity)
+    LeaderCard setDevRequirements(Color color, int quantity)
     {
         this.devLevelRequirements.add(null);
         this.devColorRequirements.add(color);
@@ -65,7 +65,7 @@ public class LeaderCard {
     }
     protected LeaderCard setResourcesRequirements(Resource resource, int quantity)
     {
-        for(int i=0; i<quantity-1;i++)
+        for(int i=0; i<quantity;i++)
         {
             resourcesRequirements.add(resource);
         }
@@ -79,17 +79,21 @@ public class LeaderCard {
         return type;
     }
 
+    public boolean isPlayable()
+    {
+        return isPlayable(owner);
+    }
     public boolean isPlayable(Player player)
     {
         boolean result = player.ownsResources(resourcesRequirements);
         for (int i=0; i<devColorRequirements.size();i++)
         {
-            if(devLevelRequirements.get(i) == null)
-                if(!(player.hasDevCard(devColorRequirements.get(i),devColLevQuantity.get(i))))
+            if(devLevelRequirements.get(i) == null) {
+                if (!(player.hasDevCard(devColorRequirements.get(i), devColLevQuantity.get(i))))
                     return false;
-                else{}
+            }
                 else
-            if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )));
+            if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )))
             result = false;
         }
         return result;

@@ -6,13 +6,13 @@ import it.polimi.ingsw.model.Player;
 
 public class SinglePlayerTurnController {
     Game game;
+    GameController Controller;
     Player inTurnPlayer;
 
 
     //called after receiving end turn message by view
     //update players possible actions
     void setupNextTurn(){
-
     }
     //update players possible actions
     //called by gamecontroller & after executeFirstAction to permit next player to chose leader to discard
