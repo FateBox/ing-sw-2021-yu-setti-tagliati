@@ -1,12 +1,11 @@
 package it.polimi.ingsw.model;
 
-import com.sun.tools.javac.platform.PlatformUtils;
+import it.polimi.ingsw.model.enumeration.AbilityType;
 import it.polimi.ingsw.model.enumeration.Color;
 import it.polimi.ingsw.model.enumeration.Level;
 import it.polimi.ingsw.model.enumeration.Resource;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 
 public class Game {
 
@@ -14,7 +13,7 @@ public class Game {
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
     private ArrayList<ActionLorenzo> lorenzoDeck;
-    private ArrayList<LeaderCard> leaderDeck;
+    private Stack<LeaderCard> leaderDeck;
     private Resource[][] market;
     private Resource freeMarble;
     private boolean[] popeSpace = {true, true, true}; // true indica che il favore papale è attivabile
@@ -25,10 +24,10 @@ public class Game {
     {
         this.playerList = new ArrayList<Player>(p); //la classe che crea i giocatori passa poi la lista (senza Lorenzo) all'oggetto game
         marketGenerator();
-        //leaderDeckGenerator();
-        //lorenzoDeckGenerator();
+        leaderDeckGenerator();
         faithTrackGenerator();
         devCardGenerator();
+        //lorenzoDeckGenerator();
     }
 
     //metodi gestione carte sviluppo
@@ -454,7 +453,7 @@ public class Game {
         setPope(1);
     }
 
-    private void setPope (int id)
+    private void setPope (int id)//metodo ausiliario utilizzato dai metodi forward del tracciato fede
     {
         if (this.playerLocation[id]>18)
         {
@@ -471,44 +470,51 @@ public class Game {
     }
 
 
-
-    //metodi pubblici Game
-    public void shuffleLorenzoDeck()
-    {
-        Collections.shuffle(this.leaderDeck);
-    }
-
-
-    public void useActionLorenzo()
-    {
-
-    }
-
-    public void endGame()
-    {
-
-    }
-
-    //metodi privati ausiliari (momentaneamente pubblici)
-
-    //genera e mescola il mazzo azioni di Lorenzo
-    private ArrayList<ActionLorenzo> lorenzoDeckGenerator() {
-        this.lorenzoDeck= new ArrayList<ActionLorenzo>(7);
-
-        for (int i = 0; i<7; i++) {
-            this.lorenzoDeck.add(i, new ActionLorenzo());
-        }
-        this.shuffleLorenzoDeck();
-        return this.lorenzoDeck;
-    }
-
     //genera e mescola il mazzo leader
-    private ArrayList<LeaderCard> leaderDeckGenerator() {
-        this.leaderDeck = new ArrayList<LeaderCard>(16);
-        for (int i = 0; i<16; i++) {
-            this.leaderDeck.add(i, new LeaderCard());
-        }
+    private void leaderDeckGenerator() {
+        this.leaderDeck = new Stack<LeaderCard>();
+            //Leader Sconto
+            this.leaderDeck.push(new LeaderCard(0, 2, AbilityType.DISCOUNT, Resource.SHIELD));
+            leaderDeck.peek().setDisResLeader(Color.BLUE, Color.PURPLE);
+            this.leaderDeck.push(new LeaderCard(1, 2, AbilityType.DISCOUNT, Resource.STONE));
+            leaderDeck.peek().setDisResLeader(Color.GREEN, Color.BLUE);
+            this.leaderDeck.push(new LeaderCard(2, 2, AbilityType.DISCOUNT, Resource.SERVANT));
+            leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.GREEN);
+            this.leaderDeck.push(new LeaderCard(3, 2, AbilityType.DISCOUNT, Resource.COIN));
+            leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.PURPLE);
+            //Leader Market
+            this.leaderDeck.push(new LeaderCard(4, 5, AbilityType.DEPOT, Resource.SHIELD ));
+            leaderDeck.peek().setDisResLeader(Color.GREEN, Color.PURPLE);
+            this.leaderDeck.push(new LeaderCard(5, 5, AbilityType.DEPOT, Resource.STONE));
+            leaderDeck.peek().setDisResLeader(Color.BLUE, Color.YELLOW);
+            this.leaderDeck.push(new LeaderCard(6, 5, AbilityType.DEPOT, Resource.SERVANT));
+            leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.BLUE);
+            this.leaderDeck.push(new LeaderCard(7, 5, AbilityType.DEPOT, Resource.COIN));
+            leaderDeck.peek().setDisResLeader(Color.PURPLE, Color.GREEN);
+            //Leader Sviluppo
+            this.leaderDeck.push(new LeaderCard(8, 4, AbilityType.PRODUCTION, Resource.SHIELD));
+            leaderDeck.peek().setDevLeader(Color.YELLOW);
+            this.leaderDeck.push(new LeaderCard(9, 4, AbilityType.PRODUCTION,Resource.STONE));
+            leaderDeck.peek().setDevLeader(Color.PURPLE);
+            this.leaderDeck.push(new LeaderCard(10,4, AbilityType.PRODUCTION,Resource.SERVANT));
+            leaderDeck.peek().setDevLeader(Color.BLUE);
+            this.leaderDeck.push(new LeaderCard(11,4, AbilityType.PRODUCTION, Resource.COIN));
+            leaderDeck.peek().setDevLeader(Color.GREEN);
+            //Leader Deposito
+            this.leaderDeck.push(new LeaderCard(12, 3, AbilityType.DEPOT, Resource.SHIELD));
+            leaderDeck.peek().setDepLeader(Resource.SERVANT);
+            this.leaderDeck.push(new LeaderCard(13, 3, AbilityType.DEPOT, Resource.STONE));
+            leaderDeck.peek().setDepLeader(Resource.COIN);
+            this.leaderDeck.push(new LeaderCard(14, 3, AbilityType.DEPOT, Resource.SERVANT));
+            leaderDeck.peek().setDepLeader(Resource.STONE);
+            this.leaderDeck.push(new LeaderCard(15, 3, AbilityType.DEPOT, Resource.COIN));
+            leaderDeck.peek().setDepLeader(Resource.SHIELD);
+
         Collections.shuffle(this.leaderDeck);
-        return this.leaderDeck;
+    }
+
+    public LeaderCard drawLeaderCard()
+    {
+        return leaderDeck.pop();
     }
 }
