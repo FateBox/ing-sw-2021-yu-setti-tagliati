@@ -1,13 +1,23 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.enumeration.AbilityType;
+import it.polimi.ingsw.model.enumeration.Color;
+import it.polimi.ingsw.model.enumeration.Level;
+import it.polimi.ingsw.model.enumeration.Resource;
+
+
+import java.util.ArrayList;
+
+
 import it.polimi.ingsw.enumeration.*;
 
 import java.util.ArrayList;
 
 
 public class LeaderCard {
+
     private Player owner;
-    private final String ID;
+    private final int ID;
     private ArrayList<Resource> resourcesRequirements;
     private ArrayList<Level> devLevelRequirements;
     private ArrayList<Color> devColorRequirements;
@@ -17,7 +27,7 @@ public class LeaderCard {
     private final int victoryPoint;
     private Boolean active;
 
-    LeaderCard(String id,int victoryPoint, AbilityType value, Resource abilityResource)
+    LeaderCard(int id,int victoryPoint, AbilityType value, Resource abilityResource)
     {
         res = abilityResource;
         active=false;
@@ -30,10 +40,53 @@ public class LeaderCard {
         devColLevQuantity = new ArrayList<>();
 
     }
-    LeaderCard setOwner(Player player)
+    public LeaderCard setOwner(Player player)
     {
         owner = player;
         return this;
+    }
+    public LeaderCard setDisResLeader(Color color1, Color color2) //usato per Leader sconto e risorse
+    {
+        this.devLevelRequirements.add(null);
+
+        this.devColorRequirements.add(color1);
+
+        if (type.equals(AbilityType.DISCOUNT))
+            this.devColLevQuantity.add(1);
+
+        else if (type.equals(AbilityType.RESOURCE))
+            this.devColLevQuantity.add(2);
+
+        this.devColorRequirements.add(color2);
+        this.devColLevQuantity.add(1);
+
+
+        return this;
+    }
+
+    public LeaderCard setDevLeader(Color color) //usato per Leader sviluppo
+    {
+        this.devLevelRequirements.add(Level.LV2);
+        this.devColorRequirements.add(color);
+        this.devColLevQuantity.add(1);
+        return this;
+    }
+
+    public LeaderCard setDepLeader(Resource resource) //usato per leader deposito
+    {
+        for(int i=0; i<5; i++)
+        {
+            resourcesRequirements.add(resource);
+        }
+        return this;
+    }
+
+    public int getID() {
+        return ID;
+    }
+    public Boolean isactive() {return active;}
+    public AbilityType getType() {
+        return type;
     }
     protected LeaderCard setDevRequirements(Color color)
     {
@@ -70,69 +123,67 @@ public class LeaderCard {
             resourcesRequirements.add(resource);
         }
         return this;
-    }
-    public String getID() {
-        return ID;
-    }
-    public Boolean isactive() {return active;}
-    public AbilityType getType() {
+
+        public Boolean isactive() {return active;}
+        public AbilityType getType() {
         return type;
     }
 
-    public boolean isPlayable()
-    {
-        return isPlayable(owner);
-    }
-    public boolean isPlayable(Player player)
-    {
-        boolean result = player.ownsResources(resourcesRequirements);
-        for (int i=0; i<devColorRequirements.size();i++)
+        public boolean isPlayable()
         {
-            if(devLevelRequirements.get(i) == null) {
-                if (!(player.hasDevCard(devColorRequirements.get(i), devColLevQuantity.get(i))))
-                    return false;
-            }
+            return isPlayable(owner);
+        }
+        public boolean isPlayable(Player player)
+        {
+            boolean result = player.ownsResources(resourcesRequirements);
+            for (int i=0; i<devColorRequirements.size();i++)
+            {
+                if(devLevelRequirements.get(i) == null) {
+                    if (!(player.hasDevCard(devColorRequirements.get(i), devColLevQuantity.get(i))))
+                        return false;
+                }
                 else
-            if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )))
-            result = false;
+                if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )))
+                    result = false;
+            }
+            return result;
         }
-        return result;
-    }
 
-    public boolean use (Player player)
-    {
-        if(active || !isPlayable(player))
+        public boolean use (Player player)
         {
-            return false;
-        }
+            if(active || !isPlayable(player))
+            {
+                return false;
+            }
 
-        switch (type) {
-            case DISCOUNT:
-            {
-            player.addDevelopmentDiscounts(res);
-            }
+            switch (type) {
+                case DISCOUNT:
+                {
+                    player.addDevelopmentDiscounts(res);
+                }
                 break;
-            case PRODUCTION:
-            {
-                ExtraSlot slot = new ExtraSlot(res);
-                player.addExtraslots(slot);
-            }
+                case PRODUCTION:
+                {
+                    ExtraSlot slot = new ExtraSlot(res);
+                    player.addExtraslots(slot);
+                }
                 break;
-            case DEPOT:
-            {
-                player.addSpecialDepot(res);
-            }
+                case DEPOT:
+                {
+                    player.addSpecialDepot(res);
+                }
                 break;
-            case RESOURCE:
-            {
-                player.addMarketDiscounts(res);
-            }
+                case RESOURCE:
+                {
+                    player.addMarketDiscounts(res);
+                }
                 break;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + type);
+                default:
+                    throw new IllegalStateException("Unexpected value: " + type);
+            }
+            this.active=true;
+            return true;
         }
-        this.active=true;
-        return true;
     }
 }
