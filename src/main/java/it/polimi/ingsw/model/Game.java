@@ -285,7 +285,10 @@ public class Game {
 
     public DevCard drawDevCard(int idmazzo)
     {
-        return devGrid[idmazzo].pop();
+        if (devGrid[idmazzo].isEmpty())
+            return null;
+        else
+            return devGrid[idmazzo].pop();
     }
 
 
@@ -453,6 +456,12 @@ public class Game {
         setPope(1);
     }
 
+    public int getPositionPlayer(Player p)
+    {
+        int id = playerList.indexOf(p);
+        return  playerLocation[id];
+    }
+
     private void setPope (int id)//metodo ausiliario utilizzato dai metodi forward del tracciato fede
     {
         if (this.playerLocation[id]>18)
@@ -467,6 +476,16 @@ public class Game {
         {
             this.popeSpace[0] = false;
         }
+    }
+
+    public boolean getPope (int n)
+    {
+        return popeSpace[n];
+    }
+
+    public Resource getFreeMarble ()
+    {
+        return freeMarble;
     }
 
 
@@ -515,6 +534,9 @@ public class Game {
 
     public LeaderCard drawLeaderCard()
     {
+        if (leaderDeck.isEmpty())
+            return  null;
+        else
         return leaderDeck.pop();
     }
 }

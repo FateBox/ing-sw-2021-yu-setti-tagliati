@@ -82,7 +82,7 @@ public class LeaderCard {
         return type;
     }
 
-    public boolean isPlayable(Player player)
+   /* public boolean isPlayable(Player player)
     {
         boolean result = player.ownsResources(resourcesRequirements);
         for (int i=0; i<devColorRequirements.size();i++)
@@ -133,5 +133,5 @@ public class LeaderCard {
         }
         this.active=true;
         return true;
-    }
+    }*/
 }
