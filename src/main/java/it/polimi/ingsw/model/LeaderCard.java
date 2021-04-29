@@ -1,9 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumeration.AbilityType;
-import it.polimi.ingsw.model.enumeration.Color;
-import it.polimi.ingsw.model.enumeration.Level;
-import it.polimi.ingsw.model.enumeration.Resource;
 
 
 import java.util.ArrayList;
@@ -11,7 +7,6 @@ import java.util.ArrayList;
 
 import it.polimi.ingsw.enumeration.*;
 
-import java.util.ArrayList;
 
 
 public class LeaderCard {
@@ -116,17 +111,11 @@ public class LeaderCard {
         this.devColLevQuantity.add(quantity);
         return this;
     }
-    protected LeaderCard setResourcesRequirements(Resource resource, int quantity)
-    {
-        for(int i=0; i<quantity;i++)
-        {
+    protected LeaderCard setResourcesRequirements(Resource resource, int quantity) {
+        for (int i = 0; i < quantity; i++) {
             resourcesRequirements.add(resource);
         }
         return this;
-
-        public Boolean isactive() {return active;}
-        public AbilityType getType() {
-        return type;
     }
 
         public boolean isPlayable()
@@ -186,4 +175,3 @@ public class LeaderCard {
             return true;
         }
     }
-}

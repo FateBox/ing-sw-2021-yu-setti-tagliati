@@ -111,21 +111,21 @@ public class PlayerTest {
     void testLeaderCard() throws Exception
     {
         setUp();
-        LeaderCard depotLeader = new LeaderCard("1",2, AbilityType.DEPOT,Resource.COIN)
+        LeaderCard depotLeader = new LeaderCard(1,2, AbilityType.DEPOT,Resource.COIN)
                 .setOwner(testedPlayer)
                 .setResourcesRequirements(Resource.COIN,5)
                 .setResourcesRequirements(Resource.STONE, 3);
 
-        LeaderCard discountLeader = new LeaderCard("2", 3, AbilityType.DISCOUNT, Resource.STONE)
+        LeaderCard discountLeader = new LeaderCard(2, 3, AbilityType.DISCOUNT, Resource.STONE)
                 .setOwner(testedPlayer)
                 .setDevRequirements(Color.BLUE, 2);
 
-        LeaderCard productionLeader = new LeaderCard("3", 2, AbilityType.PRODUCTION, Resource.SERVANT);
+        LeaderCard productionLeader = new LeaderCard(3, 2, AbilityType.PRODUCTION, Resource.SERVANT);
         productionLeader.setOwner(testedPlayer)
                 .setDevRequirements(Color.GREEN)
                 .setDevLevelRequirements(Color.GREEN , Level.LV3);
 
-        LeaderCard resourceLeader = new LeaderCard("4", 3, AbilityType.RESOURCE, Resource.SHIELD);
+        LeaderCard resourceLeader = new LeaderCard(4, 3, AbilityType.RESOURCE, Resource.SHIELD);
         resourceLeader.setOwner(testedPlayer)
                 .setDevRequirements(Color.GREEN, 2)
                 .setDevLevelRequirements(Color.PURPLE , Level.LV3);

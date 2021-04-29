@@ -1,9 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.enumeration.AbilityType;
-import it.polimi.ingsw.model.enumeration.Color;
-import it.polimi.ingsw.model.enumeration.Level;
-import it.polimi.ingsw.model.enumeration.Resource;
+import it.polimi.ingsw.enumeration.*;
 
 import java.util.*;
 

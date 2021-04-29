@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
-import it.polimi.ingsw.model.enumeration.Resource;
+
+import it.polimi.ingsw.enumeration.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,8 +13,8 @@ class GameTest {
 
     @Test
     void drawDevCard() {
-        pg.add(new Player());
-        pg.add(new Player());
+        pg.add(new Player("nick2"));
+        pg.add(new Player("nick1"));
         Game g = new Game(pg);
 
         for (int j = 0; j<4; j++) {
@@ -29,8 +30,8 @@ class GameTest {
 
     @Test
     void insertRow() {
-        pg.add(new Player());
-        pg.add(new Player());
+        pg.add(new Player("nick3"));
+        pg.add(new Player("nick4"));
         Game g = new Game(pg);
 
         for (int j = 0; j<3; j++)
@@ -49,8 +50,8 @@ class GameTest {
 
     @Test
     void insertCol() {
-        pg.add(new Player());
-        pg.add(new Player());
+        pg.add(new Player("nick1"));
+        pg.add(new Player("nick2"));
         Game g = new Game(pg);
         for (int j = 0; j<4; j++)
         {
@@ -67,8 +68,8 @@ class GameTest {
 
     @Test
     void getResources() {
-        pg.add(new Player());
-        pg.add(new Player());
+        pg.add(new Player("nick3"));
+        pg.add(new Player("nick4"));
         Game g = new Game(pg);
 
         ArrayList<Resource> r = g.getResources(Resource.WHITE,g.getRow(2));
@@ -80,10 +81,10 @@ class GameTest {
 
     @Test
     void playerPosition() {
-        pg.add(new Player());
-        pg.add(new Player());
-        pg.add(new Player());
-        pg.add(new Player());
+        pg.add(new Player("nick1"));
+        pg.add(new Player("nick3"));
+        pg.add(new Player("nick2"));
+        pg.add(new Player("nick4"));
         Game g = new Game(pg);
 
         assertEquals(0, g.getPositionPlayer(pg.get(0)));
@@ -95,9 +96,9 @@ class GameTest {
 
     @Test
     void forwardPlayer() {
-        pg.add(new Player());
-        pg.add(new Player());
-        pg.add(new Player());
+        pg.add(new Player("nick1"));
+        pg.add(new Player("nick2"));
+        pg.add(new Player("nick3"));
         Game g = new Game(pg);
         assertEquals(true ,g.getPope(0));
         g.forwardPlayer(pg.get(0),3);
@@ -115,7 +116,7 @@ class GameTest {
 
     @Test
     void drawLeaderCard() {
-        pg.add(new Player());
+        pg.add(new Player("nick4"));
         Game g = new Game(pg);
         for (int i = 0; i<16; i++)
         {
