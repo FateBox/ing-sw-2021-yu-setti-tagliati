@@ -17,27 +17,23 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            Scanner in = new Scanner(socket.getInputStream());
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
             ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
             while (true){
-                String line = objIn.readUTF();
-                if(line.equals("quit")){
+                Object o = objIn.readObject();
+                if(((String)o).equals("quit")){
                     break;
                 } else {
                     objOut.reset();
-                    objOut.writeUTF("Received: " + line);
+                    objOut.writeObject("Received: " + (String) o);
                     objOut.flush();
                 }
             }
             //close connections
-            in.close();
-            out.close();
             objOut.close();
             objIn.close();
             socket.close();
-        } catch (IOException e){
+        } catch (IOException | ClassNotFoundException e){
             System.err.println(e.getMessage());
         }
     }

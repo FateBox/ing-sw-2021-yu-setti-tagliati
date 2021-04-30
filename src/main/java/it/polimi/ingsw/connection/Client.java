@@ -22,8 +22,6 @@ public class Client {
         Socket socket = new Socket(ip, port);
         System.out.println("Connection established");
 
-        Scanner in = new Scanner(socket.getInputStream());
-        PrintWriter out = new PrintWriter(socket.getOutputStream());
         ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
         Scanner stdin = new Scanner(System.in);
@@ -31,17 +29,15 @@ public class Client {
         try{
             while (true){
                 String inputLine = stdin.nextLine();
-                objOut.writeUTF(inputLine);
+                objOut.writeObject(inputLine);
                 objOut.flush();
-                String socketLine = objIn.readUTF();
+                String socketLine = (String) (objIn.readObject());
                 System.out.println(socketLine);
             }
-        } catch(NoSuchElementException e){
+        } catch(NoSuchElementException | ClassNotFoundException e){
             System.out.println("Connection closed");
         } finally {
             stdin.close();
-            in.close();
-            out.close();
             objOut.close();
             objIn.close();
             socket.close();
