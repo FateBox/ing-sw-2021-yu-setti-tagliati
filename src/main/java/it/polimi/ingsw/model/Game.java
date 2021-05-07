@@ -403,6 +403,20 @@ public class Game {
         return gain;
     }
 
+    //Viene chiamato quando il giocatore decide di usare entrambe le carte leader per potenziare i bianchi
+    //il giocatore deve per ogni biglia bianca definire la risorsa che vuole
+    //il metodo si limita a prendere la lista contenete le risorse che vanno a sostituire i bianchi
+    public ArrayList<Resource> get2LeaderResources (ArrayList<Resource> r, ArrayList<Resource> gain)
+    {
+        int j = 0;
+        for (int i = 0; i< gain.size(); i++) {
+            if (gain.get(i).equals(Resource.WHITE)) {
+                gain.set(i, r.get(j));
+                j++;
+            }
+        }
+        return gain;
+    }
 
     //metodi gestione percorso fede
 
