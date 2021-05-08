@@ -1,25 +1,12 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Player;
+
+import java.util.ArrayList;
 
 public abstract class TurnController {
 
-    GameController gameController;
-    /**
-     *
-     *
-     *
-     *
-     */
-    /**
-     * verifica end game e nel caso sia arrivato modifica game
-     * e modifica PlayerinTurn
-     *  quando è finito l'ultimo round chiama gameController.prepareResult
-     */
-    public void nextTurn()
-    {
-
-    }
 
 
 
