@@ -1,6 +1,42 @@
 package it.polimi.ingsw.controller;
 
-public class ProductionExecutor {
+import it.polimi.ingsw.enumeration.Resource;
+import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.Player;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+public class ProductionExecutor extends ActionController {
+
+    /*
+    chosen[0] equivale al base slot, chosen[1/2/3] equivalgono ai devslot, chosen[4/5] agli eventuali leader slot
+     */
+    ArrayList<Boolean> chosenSlots;
+    Resource[] baseCost;
+    Resource baseProduct;
+    /*
+    chosen[0][0/1/2/3] equivale allo strongbox, chosen[1] al deposito, chosen[2], chosen [3] ai depositi extra
+     */
+    ArrayList<ArrayList<Resource>> chosenPayment;
+    /*
+    come chosenPayment
+     */
+    ArrayList<ArrayList<Resource>> chosenInsert;
+    Player player;
+    //= turnController.getPlayerInTurn();
+
+    void validateChosenSlots()
+    {
+        ArrayList<Resource>resourceRequired;
+        //
+        //foreach chosenSlots adds resource in resourceRequired
+        //and player.ownsResources()
+    }
+    void validatePayment()
+    {
+        //depends on
+    }
     /**
      * informazioni richieste
      * scelta di quali slot attivare
@@ -20,6 +56,14 @@ public class ProductionExecutor {
      * }
      *
      */
+    public ProductionExecutor(Game game, TurnController tc) {
+        super(game,tc);
+    }
+
+    public void execute()
+    {
+
+    }
 
 
 

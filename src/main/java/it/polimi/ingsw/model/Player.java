@@ -250,7 +250,7 @@ public class Player {
 
 
     //
-    Boolean ownsResources(ArrayList<Resource> res)
+    public Boolean ownsResources(ArrayList<Resource> res)
     {
         if(res == null)
             return true;

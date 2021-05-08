@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import it.polimi.ingsw.Util;
 import it.polimi.ingsw.enumeration.AbilityType;
 import it.polimi.ingsw.enumeration.Color;
 import it.polimi.ingsw.enumeration.Level;
@@ -189,6 +190,7 @@ public class PlayerTest {
         discountLeader.use(testedPlayer);
         productionLeader.use(testedPlayer);
 
+        Util.method();
     }
 
 }
