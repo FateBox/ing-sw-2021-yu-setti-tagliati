@@ -5,8 +5,9 @@ import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 
 public class GameController {
-    Game game;
-    ArrayList<Player> players;
+
+    private Game game;
+    final ArrayList<Player> players;
     TurnController turnController;
     MarketExecutor marketExecutor;
     DiscardLeaderExecutor discardLeaderExecutor;
@@ -20,7 +21,7 @@ public class GameController {
     public void prepareFirstAction()
     {
         for(Player p : players) {
-            p.addLeader(game.drawLeaderCard())
+                    p.addLeader(game.drawLeaderCard())
                     .addLeader(game.drawLeaderCard())
                     .addLeader(game.drawLeaderCard())
                     .addLeader(game.drawLeaderCard());
@@ -28,15 +29,16 @@ public class GameController {
         //notify
     }
     //calculate scores and tell players (using a model attribute forwarded)
-    public void prepareResults()
+    public ArrayList<Integer> prepareResults()
     {
-
-
+        ArrayList<Integer> Scores = new ArrayList<>();
+        for(Player p: players)
+        {
+            Scores.add(p.getScore());
+        }
+        return Scores;
     }
-    //check if game over, called by turn controller every last turn
-    public boolean isGameOver(){
-        return false;
-    }
+
     public GameController(ArrayList<String> nicknames)
     {
         players= new ArrayList<>();
@@ -44,6 +46,14 @@ public class GameController {
             for( int i=0; i<players.size(); i++ )
         players.add(new Player(nicknames.get(i)));
         game = new Game(players);
+        if(nicknames.size()>1)
+            turnController = new MultiPlayerTurnController(this);
+        else
+            turnController = new SinglePlayerTurnController();
+        marketExecutor = new MarketExecutor();
+        discardLeaderExecutor = new DiscardLeaderExecutor(this);
+        productionExecutor = new ProductionExecutor(this);
+
 
     }
 

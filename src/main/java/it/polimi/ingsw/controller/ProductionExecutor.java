@@ -12,7 +12,7 @@ public class ProductionExecutor extends ActionController {
     /*
     chosen[0] equivale al base slot, chosen[1/2/3] equivalgono ai devslot, chosen[4/5] agli eventuali leader slot
      */
-    ArrayList<Boolean> chosenSlots;
+    ArrayList<Integer> chosenSlots;
     Resource[] baseCost;
     Resource baseProduct;
     /*
@@ -22,7 +22,6 @@ public class ProductionExecutor extends ActionController {
     /*
     come chosenPayment
      */
-    ArrayList<ArrayList<Resource>> chosenInsert;
     Player player;
     //= turnController.getPlayerInTurn();
 
@@ -44,8 +43,7 @@ public class ProductionExecutor extends ActionController {
      * {
      *     per lo base slot, se scelto deve sceglire quali risorse pagare e da quale deposito/strongbox prendere le risorse
      *     per gli altri slot deve scegliere solo come pagare
-     * }
-     *dove inserire le risorse
+     * }dove inserire le risorse
      *
      * operazioni da eseguire
      * validare le scelte
@@ -56,8 +54,8 @@ public class ProductionExecutor extends ActionController {
      * }
      *
      */
-    public ProductionExecutor(Game game, TurnController tc) {
-        super(game,tc);
+    public ProductionExecutor(GameController gameController) {
+        super(gameController);
     }
 
     public void execute()

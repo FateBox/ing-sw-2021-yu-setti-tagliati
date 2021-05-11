@@ -3,25 +3,29 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.LeaderCard;
 
-public class DiscardLeaderExecutor {
-    Game game;
-    TurnController turnController;
+import java.awt.*;
+
+
+public class DiscardLeaderExecutor extends ActionController {
+
 
     void execute(LeaderCard l) {
-     /*    Player player = turnController.getPlayerInTurn();
+         Player player = turnController.getPlayerInTurn();
          try{
              player.removeLeader(l);
          } catch (Exception e)
         {
-            player.forwardError("string opcode");
+            //player.notify("string opcode");
         }
     }
-        DiscardLeaderExecutor(Game game)
-        {
-            this.game = game;
-        }*/
+    DiscardLeaderExecutor(GameController g)
+    {
+        super(g);
     }
-}
+
+    }
+
+
     /**
      * informazioni
      * quale leader l'utente vuole scartare

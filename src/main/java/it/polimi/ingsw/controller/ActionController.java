@@ -5,10 +5,10 @@ import it.polimi.ingsw.model.Game;
 public abstract class ActionController {
     Game game;
     TurnController turnController;
-    public ActionController(Game game, TurnController turnController)
+    public ActionController(GameController gameController)
     {
-        this.game=game;
-        this.turnController = turnController;
+        this.game= gameController.getGame();
+        this.turnController = gameController.getTurnController();
     }
 
 

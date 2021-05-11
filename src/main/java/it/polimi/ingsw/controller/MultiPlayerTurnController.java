@@ -3,7 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.Player;
 
-public class MultiPlayerTurnController {
+public class MultiPlayerTurnController extends TurnController{
 
     Game game;
     GameController gameController;
