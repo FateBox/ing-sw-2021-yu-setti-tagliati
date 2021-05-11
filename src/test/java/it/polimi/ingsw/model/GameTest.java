@@ -95,6 +95,21 @@ class GameTest {
     }
 
     @Test
+    void playerCurrent() {
+        pg.add(new Player("nick1"));
+        pg.add(new Player("nick3"));
+        pg.add(new Player("nick2"));
+        pg.add(new Player("nick4"));
+        Game g = new Game(pg);
+        for(int i = 0; i<4; i++)
+        {
+            assertEquals(pg.get(i), g.getCurrentP());
+            g.nextPlayer();
+        }
+        assertEquals(pg.get(0), g.getCurrentP());
+    }
+
+    @Test
     void forwardPlayer() {
         pg.add(new Player("nick1"));
         pg.add(new Player("nick2"));
