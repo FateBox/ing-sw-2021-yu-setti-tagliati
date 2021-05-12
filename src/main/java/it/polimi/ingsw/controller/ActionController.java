@@ -1,6 +1,16 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.Game;
+
 public abstract class ActionController {
+    Game game;
+    TurnController turnController;
+    public ActionController(GameController gameController)
+    {
+        this.game= gameController.getGame();
+        this.turnController = gameController.getTurnController();
+    }
+
 
     /*
 
