@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 public class Server {
     private int port;
     private ArrayList<PlayerSocket> lobby;
+    private ArrayList<String> playerNameList;
     public Server(int port){
         this.port = port;
     }
@@ -40,5 +41,18 @@ public class Server {
 
     public ArrayList<PlayerSocket> getLobby() {
         return lobby;
+    }
+
+    public ArrayList<String> getPlayerNameList() {
+        return playerNameList;
+    }
+
+    public boolean checkRepeatedNick(String nick)
+    {
+        if(playerNameList.contains(nick))
+        {
+            return true;
+        }
+            return false;
     }
 }
