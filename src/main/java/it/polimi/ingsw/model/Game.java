@@ -6,6 +6,7 @@ import java.util.*;
 
 public class Game {
 
+
     //state
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
@@ -570,5 +571,16 @@ public class Game {
             return  null;
         else
         return leaderDeck.pop();
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+    public ArrayList<Player> getPlayerList() {
+        return playerList;
+    }
+    public Player getLastPlayer()
+    {
+        return playerList.get(playerList.size()-1);
     }
 }

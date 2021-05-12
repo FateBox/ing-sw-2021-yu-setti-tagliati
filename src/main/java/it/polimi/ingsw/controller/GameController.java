@@ -25,6 +25,8 @@ public class GameController {
                     .addLeader(game.drawLeaderCard())
                     .addLeader(game.drawLeaderCard())
                     .addLeader(game.drawLeaderCard());
+                    if(players.size()>=3)
+                        game.forwardPlayer(p,1);
         }
         //notify
     }
@@ -36,6 +38,7 @@ public class GameController {
         {
             Scores.add(p.getScore());
         }
+        //notify
         return Scores;
     }
 

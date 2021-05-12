@@ -51,6 +51,7 @@ public class DevSlot implements CardSlot {
         return this;
     }
 
+    //returns how many devCards of that type are present in devSlot
     int getQuantityDevCard(Level l, Color c)
     {
         int result = 0;
@@ -61,7 +62,7 @@ public class DevSlot implements CardSlot {
         }
         return result;
     }
-
+    //returns how many devCards of that color are present in devSlot
     int getQuantityDevCard(Color c)
     {
         int result = 0;
@@ -72,10 +73,10 @@ public class DevSlot implements CardSlot {
         return result;
 
     }
-
-
-
-
+    int getQuantityDevCard()
+    {
+        return devCards.size();
+    }
 
     @Override
     // sums all stacked card victory points

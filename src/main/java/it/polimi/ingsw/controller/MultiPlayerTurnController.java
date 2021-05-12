@@ -7,7 +7,7 @@ public class MultiPlayerTurnController extends TurnController{
 
     Game game;
     GameController gameController;
-    Player playerInTurn;
+    boolean gameOver;
 
     /**
      *
@@ -22,18 +22,33 @@ public class MultiPlayerTurnController extends TurnController{
      */
     public void nextTurn()
     {
-
+        if(!gameOver && isGameOver()) {
+            gameOver = true;
+            //notify gameover
+        }
+        if(gameOver && game.getCurrentPlayer() == game.getLastPlayer())
+        {
+            gameController.prepareResults();
+        }
+        game.nextPlayer();
+        //notify nextPlayer
     }
+
     public boolean isGameOver()
     {
-
-        return false;
+        boolean result = false;
+        for(Player p : game.getPlayerList()) {
+            if (game.getPositionPlayer(p) == 20 || p.has7DevCards())
+                result = true;
+        }
+        return result;
 
     }
     public MultiPlayerTurnController(GameController gameController)
     {
         this.gameController = gameController;
         game = gameController.getGame();
+        gameOver = false;
         //playerInTurn = game.getPlayer(0);
     }
 }

@@ -8,6 +8,7 @@ import java.util.*;
 import static it.polimi.ingsw.enumeration.Resource.*;
 
 public class Player {
+
     private String nickname;
     private ArrayList<LeaderCard> leaderCards;
     private boolean[] popeFavor;
@@ -16,13 +17,15 @@ public class Player {
     private int[] strongBox;
     //A matrix where only lower diagonal half will be used as a triangular matrix.
     private ArrayList<ArrayList<Resource>> depots;
+    //Resource stored in hand by player
+    private ArrayList <Resource> inHandResources;
     /**Development space**/
     private ArrayList<DevSlot> devSlots;
     /** Leader properties **/
     // contains base slot and leader slots
     private ArrayList<ExtraSlot> extraslots;
-    private HashSet<Resource> developmentDiscounts;
-    private HashSet<Resource> marketDiscounts;
+    private ArrayList<Resource> developmentDiscounts;
+    private ArrayList<Resource> marketDiscounts;
     private ArrayList<Resource> specialDepot;
 
     /** strongbox **/
@@ -244,16 +247,21 @@ public class Player {
     public ArrayList<ExtraSlot> getExtraslots() {
         return extraslots;
     }
-    public HashSet<Resource> getDevelopmentDiscounts() {
+    public ArrayList<Resource> getDevelopmentDiscounts() {
         return developmentDiscounts;
     }
-    public HashSet<Resource> getMarketDiscounts() {
+    public ArrayList<Resource> getMarketDiscounts() {
         return marketDiscounts;
     }
     public Resource getSpecialdepot(int i) {
         return specialDepot.get(i);
     }
-
+    public ArrayList<Resource> getInHandResources() {
+        return inHandResources;
+    }
+    public void setInHandResources(ArrayList<Resource> inHandResources) {
+        this.inHandResources = inHandResources;
+    }
 
     /** various setters **/
     public void addExtraslots(ExtraSlot extraslot) {
@@ -288,8 +296,8 @@ public class Player {
     devSlots.add(new DevSlot());
     this.extraslots = new ArrayList<ExtraSlot>();
     extraslots.add(new ExtraSlot());
-    this.developmentDiscounts = new HashSet<>();
-    this.marketDiscounts = new HashSet<>();
+    this.developmentDiscounts = new ArrayList<>();
+    this.marketDiscounts = new ArrayList<>();
     this.specialDepot = new ArrayList<Resource>();
     }
 
@@ -336,4 +344,15 @@ public class Player {
     {
         return 0;
     }
+    public Boolean has7DevCards()
+    {
+        int quantity = 0;
+        for(DevSlot d: devSlots)
+        {
+            quantity += d.getQuantityDevCard();
+        }
+        return quantity >=7;
+    }
+
+
  }

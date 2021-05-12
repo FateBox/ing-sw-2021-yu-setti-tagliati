@@ -11,18 +11,7 @@ public abstract class TurnController {
     Game game;
 
     public void setupFirstRoundTurns()
-    {   }
-
-    public void executeFirstAction(Player player, LeaderCard firstDiscard, LeaderCard secondDiscard){
-
-        if(player.getLeader().contains(firstDiscard) && player.getLeader().contains(secondDiscard))
-        {
-            player.removeLeader(firstDiscard);
-            player.removeLeader(secondDiscard);
-        }
-        setupFirstRoundTurns();
-        //else
-        //    errorMSG
+    {
     }
 
     public Player getPlayerInTurn()

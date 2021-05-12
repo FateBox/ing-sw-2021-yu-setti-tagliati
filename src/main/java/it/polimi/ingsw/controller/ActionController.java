@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.Game;
 
 public abstract class ActionController {
@@ -11,6 +12,29 @@ public abstract class ActionController {
         this.turnController = gameController.getTurnController();
     }
 
+
+    public void executeDepotInsert(Resource resource,int row)
+    {
+        try
+        {
+            game.getCurrentPlayer().insertDepots(resource, row);
+        }
+        catch (Exception e)
+        {
+            //notify error
+        }
+
+    }
+    public void executeStrongBoxInsert(Resource... r)
+    {
+        try{
+            game.getCurrentPlayer().insertStrongBox(r);
+        }
+        catch (Exception e)
+        {
+            //forward error message
+        }
+    }
 
     /*
 
