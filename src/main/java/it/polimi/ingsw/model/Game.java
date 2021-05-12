@@ -13,6 +13,7 @@ public class Game {
     private Stack<LeaderCard> leaderDeck;
     private Resource[][] market;
     private Resource freeMarble;
+    private Player currentPlayer; //oggetto player che punta il player corrente a partire dal primo nella lista playerList
     private boolean[] popeSpace = {true, true, true}; // true indica che il favore papale è attivabile
     private int[] playerLocation; //Il percorso Fede ha 25 caselle: la posizione di un giocatore può essere compresa tra 0 e 24
 
@@ -20,11 +21,32 @@ public class Game {
     public Game(ArrayList<Player> p)
     {
         this.playerList = new ArrayList<Player>(p); //la classe che crea i giocatori passa poi la lista (senza Lorenzo) all'oggetto game
+        currentPlayer = playerList.get(0);
         marketGenerator();
         leaderDeckGenerator();
         faithTrackGenerator();
         devCardGenerator();
         //lorenzoDeckGenerator();
+    }
+
+    public void nextPlayer ()
+    {
+        int i = playerList.indexOf(currentPlayer);
+        i++;
+        if (i == playerList.size())
+        {
+            currentPlayer = playerList.get(0);
+        }
+        else
+        {
+            currentPlayer = playerList.get(i);
+        }
+
+    }
+
+    public Player getCurrentP ()
+    {
+        return currentPlayer;
     }
 
     //metodi gestione carte sviluppo
@@ -288,7 +310,6 @@ public class Game {
             return devGrid[idmazzo].pop();
     }
 
-
     //metodi gestione mercato
 
     private void marketGenerator() //genera e riempie casualmente la griglia mercato di un oggetto gioco
@@ -403,6 +424,20 @@ public class Game {
         return gain;
     }
 
+    //Viene chiamato al posto di getResources quando il giocatore decide di usare entrambe le carte leader per potenziare i bianchi
+    //il giocatore deve per ogni biglia bianca definire la risorsa che vuole
+    //il metodo si limita a prendere la lista contenete le risorse che vanno a sostituire i bianchi
+    public ArrayList<Resource> get2LeaderResources (ArrayList<Resource> r, ArrayList<Resource> gain)
+    {
+        int j = 0;
+        for (int i = 0; i< gain.size(); i++) {
+            if (gain.get(i).equals(Resource.WHITE)) {
+                gain.set(i, r.get(j));
+                j++;
+            }
+        }
+        return gain;
+    }
 
     //metodi gestione percorso fede
 

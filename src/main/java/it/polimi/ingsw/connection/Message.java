@@ -2,10 +2,11 @@ package it.polimi.ingsw.connection;
 
 public class Message {
     private String playerNick;
-    private int opCod;
-    private String info;
+    private String opCod;
+    private String text;
 
-    public Message() {
+    public Message(String playerNick, String opCod, String text) {
+
     }
 
     public String getPlayerNick() {
@@ -16,19 +17,19 @@ public class Message {
         this.playerNick = playerNick;
     }
 
-    public int getOpCod() {
+    public String getOpCod() {
         return opCod;
     }
 
-    public void setOpCod(int opCod) {
+    public void setOpCod(String opCod) {
         this.opCod = opCod;
     }
 
-    public Object getInfo() {
-        return info;
+    public Object getText() {
+        return text;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setText(String text) {
+        this.text = text;
     }
 }
