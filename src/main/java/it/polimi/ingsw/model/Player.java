@@ -9,6 +9,8 @@ import static it.polimi.ingsw.enumeration.Resource.*;
 
 public class Player {
     private String nickname;
+    private int faithLocation;
+    private int victoryPoints;
     private ArrayList<LeaderCard> leaderCards;
     private boolean[] popeFavor;
     /**Resource space**/
@@ -22,8 +24,100 @@ public class Player {
     // contains base slot and leader slots
     private ArrayList<ExtraSlot> extraslots;
     private HashSet<Resource> developmentDiscounts;
-    private HashSet<Resource> marketDiscounts;
+    private ArrayList<Resource> marketDiscounts;
     private ArrayList<Resource> specialDepot;
+
+    public void setFaithLocation(int box)
+    {
+        this.faithLocation += box;
+    }
+
+    public int getFaithLocation()
+    {
+        return this.faithLocation;
+    }
+
+    public int VP ()
+    {
+        int i;
+        int r = 0;
+
+        //percorso fede
+        if (getFaithLocation() == 24)
+            i = 20;
+        else if (getFaithLocation()>20)
+        {
+            i = 16;
+        }
+        else if (getFaithLocation()>17)
+        {
+            i = 12;
+        }
+
+        else if (getFaithLocation()>14)
+        {
+            i = 9;
+        }
+
+        else if (getFaithLocation()>11)
+        {
+            i = 6;
+        }
+
+        else if (getFaithLocation()>8)
+        {
+            i = 4;
+        }
+
+        else if (getFaithLocation()>5)
+        {
+            i = 2;
+        }
+
+        else if (getFaithLocation()>2)
+        {
+            i = 1;
+        }
+
+        else
+        {
+            i = 0;
+        }
+
+        //favore papale
+        if (popeFavor[0])
+        {i+=2;}
+        if (popeFavor[1])
+        {i+=3;}
+        if (popeFavor[2])
+        {i+=4;}
+
+        //Risorse
+        for(int j = 0; j<4; j++) {
+            r += strongBox[j];
+        }
+
+        for (int h = 0; h< depots.size(); h++) {
+            r += depots.get(h).size();
+        }
+
+        i += (r/5);
+
+        //carte sviluppo
+        for (DevSlot d : devSlots) {
+            i += d.getVictoryPoint();
+        }
+
+        //carte leader
+        for (LeaderCard lc : leaderCards)
+        {
+            if (lc.isactive()) {
+                i += lc.getVictoryPoint();
+            }
+        }
+        this.victoryPoints = i;
+        return victoryPoints;
+    }
 
     /** strongbox **/
     // Requires a storable resource
@@ -81,13 +175,13 @@ public class Player {
     }
     /** pope favor **/
     //
-    public void setPopeFavor(Level num)
+    public void setPopeFavor(int num)
     {
-            popeFavor[num.get()] = true;
+            popeFavor[num] = true;
     }
-    public boolean getPopeFavor(Level num)
+    public boolean getPopeFavor(int num)
     {
-        return popeFavor[num.get()];
+        return popeFavor[num];
     }
 
     /** depots **/
@@ -247,7 +341,7 @@ public class Player {
     public HashSet<Resource> getDevelopmentDiscounts() {
         return developmentDiscounts;
     }
-    public HashSet<Resource> getMarketDiscounts() {
+    public ArrayList<Resource> getMarketDiscounts() {
         return marketDiscounts;
     }
     public Resource getSpecialdepot(int i) {
@@ -274,6 +368,8 @@ public class Player {
     /** creator **/
     public Player(String nickname) {
     this.nickname = nickname;
+    this.faithLocation = 0;
+    this.victoryPoints = 0;
     this.leaderCards = new ArrayList<LeaderCard>(4);
     popeFavor = new boolean[3];
     strongBox= new int[4];
@@ -289,7 +385,7 @@ public class Player {
     this.extraslots = new ArrayList<ExtraSlot>();
     extraslots.add(new ExtraSlot());
     this.developmentDiscounts = new HashSet<>();
-    this.marketDiscounts = new HashSet<>();
+    this.marketDiscounts = new ArrayList<>();
     this.specialDepot = new ArrayList<Resource>();
     }
 

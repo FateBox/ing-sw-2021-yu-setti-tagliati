@@ -15,7 +15,7 @@ public class Game {
     private Resource freeMarble;
     private Player currentPlayer; //oggetto player che punta il player corrente a partire dal primo nella lista playerList
     private boolean[] popeSpace = {true, true, true}; // true indica che il favore papale è attivabile
-    private int[] playerLocation; //Il percorso Fede ha 25 caselle: la posizione di un giocatore può essere compresa tra 0 e 24
+    private int lorenzoLocation; //indica la posizione di Lorenzo sul percorso Fede
 
     //costruttore
     public Game(ArrayList<Player> p)
@@ -31,7 +31,7 @@ public class Game {
 
     public void nextPlayer ()
     {
-        int i = playerList.indexOf(currentPlayer);
+        int i = getIndexPlayer(currentPlayer);
         i++;
         if (i == playerList.size())
         {
@@ -44,9 +44,24 @@ public class Game {
 
     }
 
+    public int getIndexPlayer (Player p)
+    {
+        return playerList.indexOf(p);
+    }
+
+    public Player getPlayer (int id)
+    {
+        return playerList.get(id);
+
+    }
     public Player getCurrentP ()
     {
         return currentPlayer;
+    }
+
+    public int getLorenzoLocation()
+    {
+        return lorenzoLocation;
     }
 
     //metodi gestione carte sviluppo
@@ -401,7 +416,7 @@ public class Game {
         return  chosenCol;
     }
 
-    public ArrayList<Resource> getResources (Resource r, ArrayList<Resource> gain) //restituisce le risorse della striscia scelta o senza il bianco o potenziate con la carta leader
+    public void modifyResources (Resource r, ArrayList<Resource> gain) //restituisce le risorse della striscia scelta o senza il bianco o potenziate con la carta leader
     {
         if (r.equals(Resource.WHITE))
         {
@@ -421,13 +436,12 @@ public class Game {
                 {gain.set(i, r);}
             }
         }
-        return gain;
     }
 
     //Viene chiamato al posto di getResources quando il giocatore decide di usare entrambe le carte leader per potenziare i bianchi
     //il giocatore deve per ogni biglia bianca definire la risorsa che vuole
     //il metodo si limita a prendere la lista contenete le risorse che vanno a sostituire i bianchi
-    public ArrayList<Resource> get2LeaderResources (ArrayList<Resource> r, ArrayList<Resource> gain)
+    public void leadersResources (ArrayList<Resource> r, ArrayList<Resource> gain)
     {
         int j = 0;
         for (int i = 0; i< gain.size(); i++) {
@@ -436,47 +450,47 @@ public class Game {
                 j++;
             }
         }
-        return gain;
     }
 
     //metodi gestione percorso fede
 
     private void faithTrackGenerator() {
 
-        int s = this.playerList.size();
-        int i;
+        int s = this.playerList.size(); //numero di giocatori
         if (s>1) //multiplayer
         { //posizioni iniziali primo e secondo giocatore: 0; terzo e quarto giocatore: 1
-        this.playerLocation = new int[s];
-        for (i=0; i<s; i++) {
-            if (i < 2) {
-                this.playerLocation[i] = 0;
+            for (int i=0; i<s; i++) {
+                if (i < 2) {
+                    playerList.get(i).setFaithLocation(0);
                 }
-            else{
-                this.playerLocation[i] = 1;
+                else{
+                    playerList.get(i).setFaithLocation(1);
                 }
             }
         }
         else{ //singleplayer
-            this.playerLocation = new int[2];
-            playerLocation[0] = 0;
-            playerLocation[1] = 0; //posizione di Lorenzo
+            playerList.get(0).setFaithLocation(0);
+            lorenzoLocation = 0; //posizione di Lorenzo
         }
     }
 
-    public void forwardPlayer(Player p, int box) //i parametri indicano il giocatore che avanza(da 0 a 3) e il numero di caselle da percorrere
+    public void forwardPlayer(int id, int box) //i parametri indicano il giocatore che avanza(da 0 a 3) e il numero di caselle da percorrere
     {
-        int id = playerList.indexOf(p);
-        this.playerLocation[id] += box;
+        playerList.get(id).setFaithLocation(box);
         setPope(id);
     }
 
-    public void forwardOtherPlayers(Player p, int box) //usato solo in multiplayer
+    public void forwardOtherPlayers(int id, int box) //usato solo in multiplayer
     {
-        int id = playerList.indexOf(p);
-        for (int i = 0; i<playerList.size(); i++) {
+        int i;
+        for (i = 0; i<playerList.size(); i++) {
             if (i != id) {
-                this.playerLocation[i] += box;
+                playerList.get(i).setFaithLocation(box);
+                //setPope(i);
+            }
+        }
+        for (i = 0; i<playerList.size(); i++) {
+            if (i != id) {
                 setPope(i);
             }
         }
@@ -484,29 +498,70 @@ public class Game {
 
     public void forwardLorenzo(int box) //usato solo in singleplayer
     {
-        this.playerLocation[1] += box;
-        setPope(1);
+        this.lorenzoLocation += box;
+        if (lorenzoLocation>23)
+        {
+            assignmentPopeFavor(2);
+            this.popeSpace[2] = false;
+        }
+        else if (lorenzoLocation>15)
+        {
+            assignmentPopeFavor(1);
+            this.popeSpace[1] = false;
+        }
+        else if(lorenzoLocation>7)
+        {
+            assignmentPopeFavor(0);
+            this.popeSpace[0] = false;
+        }
     }
-
-    public int getPositionPlayer(Player p)
+    public int[] ranking(){
+        int[] r = new int[playerList.size()];
+        for (int i = 0; i<playerList.size(); i++)
+        {
+            r[i] = playerList.get(i).VP();
+        }
+        return r;
+    }
+    public int getLocationPlayer(int id)
     {
-        int id = playerList.indexOf(p);
-        return  playerLocation[id];
+        return  playerList.get(id).getFaithLocation();
     }
 
     private void setPope (int id)//metodo ausiliario utilizzato dai metodi forward del tracciato fede
     {
-        if (this.playerLocation[id]>18)
+        if (popeSpace[2] && getLocationPlayer(id)>23)
         {
+            assignmentPopeFavor(2);
             this.popeSpace[2] = false;
         }
-        else if (this.playerLocation[id]>11)
+        else if (popeSpace[1] && getLocationPlayer(id)>15)
         {
+            assignmentPopeFavor(1);
             this.popeSpace[1] = false;
         }
-        else if(this.playerLocation[id]>4)
+        else if(popeSpace[0] && getLocationPlayer(id)>7)
         {
+            assignmentPopeFavor(0);
             this.popeSpace[0] = false;
+        }
+    }
+
+    private void assignmentPopeFavor(int n)
+    {
+        int c;
+        if (n==2)
+            c = 18;
+        else if (n==1)
+            c =11;
+        else
+            c = 4;
+        for(Player p : playerList)
+        {
+            if (p.getFaithLocation() > c)
+            {
+                p.setPopeFavor(n);
+            }
         }
     }
 
@@ -524,42 +579,42 @@ public class Game {
     //genera e mescola il mazzo leader
     private void leaderDeckGenerator() {
         this.leaderDeck = new Stack<LeaderCard>();
-            //Leader Sconto
-            this.leaderDeck.push(new LeaderCard(0, 2, AbilityType.DISCOUNT, Resource.SHIELD));
-            leaderDeck.peek().setDisResLeader(Color.BLUE, Color.PURPLE);
-            this.leaderDeck.push(new LeaderCard(1, 2, AbilityType.DISCOUNT, Resource.STONE));
-            leaderDeck.peek().setDisResLeader(Color.GREEN, Color.BLUE);
-            this.leaderDeck.push(new LeaderCard(2, 2, AbilityType.DISCOUNT, Resource.SERVANT));
-            leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.GREEN);
-            this.leaderDeck.push(new LeaderCard(3, 2, AbilityType.DISCOUNT, Resource.COIN));
-            leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.PURPLE);
-            //Leader Market
-            this.leaderDeck.push(new LeaderCard(4, 5, AbilityType.DEPOT, Resource.SHIELD ));
-            leaderDeck.peek().setDisResLeader(Color.GREEN, Color.PURPLE);
-            this.leaderDeck.push(new LeaderCard(5, 5, AbilityType.DEPOT, Resource.STONE));
-            leaderDeck.peek().setDisResLeader(Color.BLUE, Color.YELLOW);
-            this.leaderDeck.push(new LeaderCard(6, 5, AbilityType.DEPOT, Resource.SERVANT));
-            leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.BLUE);
-            this.leaderDeck.push(new LeaderCard(7, 5, AbilityType.DEPOT, Resource.COIN));
-            leaderDeck.peek().setDisResLeader(Color.PURPLE, Color.GREEN);
-            //Leader Sviluppo
-            this.leaderDeck.push(new LeaderCard(8, 4, AbilityType.PRODUCTION, Resource.SHIELD));
-            leaderDeck.peek().setDevLeader(Color.YELLOW);
-            this.leaderDeck.push(new LeaderCard(9, 4, AbilityType.PRODUCTION,Resource.STONE));
-            leaderDeck.peek().setDevLeader(Color.PURPLE);
-            this.leaderDeck.push(new LeaderCard(10,4, AbilityType.PRODUCTION,Resource.SERVANT));
-            leaderDeck.peek().setDevLeader(Color.BLUE);
-            this.leaderDeck.push(new LeaderCard(11,4, AbilityType.PRODUCTION, Resource.COIN));
-            leaderDeck.peek().setDevLeader(Color.GREEN);
-            //Leader Deposito
-            this.leaderDeck.push(new LeaderCard(12, 3, AbilityType.DEPOT, Resource.SHIELD));
-            leaderDeck.peek().setDepLeader(Resource.SERVANT);
-            this.leaderDeck.push(new LeaderCard(13, 3, AbilityType.DEPOT, Resource.STONE));
-            leaderDeck.peek().setDepLeader(Resource.COIN);
-            this.leaderDeck.push(new LeaderCard(14, 3, AbilityType.DEPOT, Resource.SERVANT));
-            leaderDeck.peek().setDepLeader(Resource.STONE);
-            this.leaderDeck.push(new LeaderCard(15, 3, AbilityType.DEPOT, Resource.COIN));
-            leaderDeck.peek().setDepLeader(Resource.SHIELD);
+        //Leader Sconto
+        this.leaderDeck.push(new LeaderCard(0, 2, AbilityType.DISCOUNT, Resource.SHIELD));
+        leaderDeck.peek().setDisResLeader(Color.BLUE, Color.PURPLE);
+        this.leaderDeck.push(new LeaderCard(1, 2, AbilityType.DISCOUNT, Resource.STONE));
+        leaderDeck.peek().setDisResLeader(Color.GREEN, Color.BLUE);
+        this.leaderDeck.push(new LeaderCard(2, 2, AbilityType.DISCOUNT, Resource.SERVANT));
+        leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.GREEN);
+        this.leaderDeck.push(new LeaderCard(3, 2, AbilityType.DISCOUNT, Resource.COIN));
+        leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.PURPLE);
+        //Leader Market
+        this.leaderDeck.push(new LeaderCard(4, 5, AbilityType.DEPOT, Resource.SHIELD ));
+        leaderDeck.peek().setDisResLeader(Color.GREEN, Color.PURPLE);
+        this.leaderDeck.push(new LeaderCard(5, 5, AbilityType.DEPOT, Resource.STONE));
+        leaderDeck.peek().setDisResLeader(Color.BLUE, Color.YELLOW);
+        this.leaderDeck.push(new LeaderCard(6, 5, AbilityType.DEPOT, Resource.SERVANT));
+        leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.BLUE);
+        this.leaderDeck.push(new LeaderCard(7, 5, AbilityType.DEPOT, Resource.COIN));
+        leaderDeck.peek().setDisResLeader(Color.PURPLE, Color.GREEN);
+        //Leader Sviluppo
+        this.leaderDeck.push(new LeaderCard(8, 4, AbilityType.PRODUCTION, Resource.SHIELD));
+        leaderDeck.peek().setDevLeader(Color.YELLOW);
+        this.leaderDeck.push(new LeaderCard(9, 4, AbilityType.PRODUCTION,Resource.STONE));
+        leaderDeck.peek().setDevLeader(Color.PURPLE);
+        this.leaderDeck.push(new LeaderCard(10,4, AbilityType.PRODUCTION,Resource.SERVANT));
+        leaderDeck.peek().setDevLeader(Color.BLUE);
+        this.leaderDeck.push(new LeaderCard(11,4, AbilityType.PRODUCTION, Resource.COIN));
+        leaderDeck.peek().setDevLeader(Color.GREEN);
+        //Leader Deposito
+        this.leaderDeck.push(new LeaderCard(12, 3, AbilityType.DEPOT, Resource.SHIELD));
+        leaderDeck.peek().setDepLeader(Resource.SERVANT);
+        this.leaderDeck.push(new LeaderCard(13, 3, AbilityType.DEPOT, Resource.STONE));
+        leaderDeck.peek().setDepLeader(Resource.COIN);
+        this.leaderDeck.push(new LeaderCard(14, 3, AbilityType.DEPOT, Resource.SERVANT));
+        leaderDeck.peek().setDepLeader(Resource.STONE);
+        this.leaderDeck.push(new LeaderCard(15, 3, AbilityType.DEPOT, Resource.COIN));
+        leaderDeck.peek().setDepLeader(Resource.SHIELD);
 
         Collections.shuffle(this.leaderDeck);
     }
@@ -569,6 +624,6 @@ public class Game {
         if (leaderDeck.isEmpty())
             return  null;
         else
-        return leaderDeck.pop();
+            return leaderDeck.pop();
     }
 }

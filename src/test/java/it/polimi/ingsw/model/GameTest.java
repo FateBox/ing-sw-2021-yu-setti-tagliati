@@ -56,23 +56,24 @@ class GameTest {
         for (int j = 0; j<4; j++)
         {
             Resource res = g.getFreeMarble();
-        ArrayList<Resource> r = new ArrayList<Resource>(g.getCol(j));
-        g.insertCol(j);
-        assertSame(r.get(0), g.getFreeMarble());
-        for (int i = 1; i<2; i++) {
-            assertSame(r.get(i), g.getCol(j).get(i - 1));
-        }
+            ArrayList<Resource> r = new ArrayList<Resource>(g.getCol(j));
+            g.insertCol(j);
+            assertSame(r.get(0), g.getFreeMarble());
+            for (int i = 1; i<2; i++) {
+                assertSame(r.get(i), g.getCol(j).get(i - 1));
+            }
             assertSame(res, g.getCol(j).get(2));
         }
     }
 
     @Test
-    void getResources() {
+    void modifyResources() {
         pg.add(new Player("nick3"));
         pg.add(new Player("nick4"));
         Game g = new Game(pg);
 
-        ArrayList<Resource> r = g.getResources(Resource.WHITE,g.getRow(2));
+        ArrayList<Resource> r = new ArrayList<Resource>(g.getRow(2));
+        g.modifyResources(Resource.WHITE, r);
         for (int i = 0; i<r.size(); i++)
         {
             assertNotEquals(Resource.WHITE ,r.get(i));
@@ -87,10 +88,10 @@ class GameTest {
         pg.add(new Player("nick4"));
         Game g = new Game(pg);
 
-        assertEquals(0, g.getPositionPlayer(pg.get(0)));
-        assertEquals(0, g.getPositionPlayer(pg.get(1)));
-        assertEquals(1, g.getPositionPlayer(pg.get(2)));
-        assertEquals(1, g.getPositionPlayer(pg.get(3)));
+        assertEquals(0, g.getLocationPlayer(0));
+        assertEquals(0, g.getLocationPlayer(1));
+        assertEquals(1, g.getLocationPlayer(2));
+        assertEquals(1, g.getLocationPlayer(3));
 
     }
 
@@ -115,16 +116,44 @@ class GameTest {
         pg.add(new Player("nick2"));
         pg.add(new Player("nick3"));
         Game g = new Game(pg);
+
         assertEquals(true ,g.getPope(0));
-        g.forwardPlayer(pg.get(0),3);
-        g.forwardPlayer(pg.get(2),5);
-        assertEquals(3, g.getPositionPlayer(pg.get(0)));
-        assertEquals(6, g.getPositionPlayer(pg.get(2)));
+        g.forwardPlayer(0,3);
+        g.forwardPlayer(1,5);
+        assertEquals(true, g.getPope(0));
+        g.forwardPlayer(2,7);
+        assertEquals(3, g.getLocationPlayer(0));
+        assertEquals(5, g.getLocationPlayer(1));
+        assertEquals(8, g.getLocationPlayer(2));
         assertEquals(false, g.getPope(0));
-        g.forwardOtherPlayers(pg.get(0),3);
-        assertEquals(3, g.getPositionPlayer(pg.get(0)));
-        assertEquals(3, g.getPositionPlayer(pg.get(1)));
-        assertEquals(9, g.getPositionPlayer(pg.get(2)));
+
+        assertEquals(true, g.getPlayer(2).getPopeFavor(0));
+        assertEquals(true, g.getPlayer(1).getPopeFavor(0));
+        assertEquals(false, g.getPlayer(0).getPopeFavor(0));
+
+        g.forwardOtherPlayers(0,3);
+        assertEquals(3, g.getLocationPlayer(0));
+        assertEquals(8, g.getLocationPlayer(1));
+        assertEquals(11, g.getLocationPlayer(2));
+
+        g.forwardPlayer(0,6);
+        assertEquals(9, g.getLocationPlayer(0));
+        assertEquals(false, g.getPlayer(0).getPopeFavor(0));
+
+    }
+
+    @Test
+    void forwardSinglePlayer() {
+        pg.add(new Player("nick1"));
+        Game g = new Game(pg);
+
+        assertEquals(true ,g.getPope(0));
+        g.forwardPlayer(0,5);
+        g.forwardLorenzo(10);
+        assertEquals(5, g.getLocationPlayer(0));
+        assertEquals(10, g.getLorenzoLocation());
+        assertEquals(false, g.getPope(0));
+        assertEquals(true, g.getPlayer(0).getPopeFavor(0));
 
     }
 

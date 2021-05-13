@@ -174,4 +174,6 @@ public class LeaderCard {
             this.active=true;
             return true;
         }
-    }
+
+    public int getVictoryPoint() { return this.victoryPoint; }
+}
