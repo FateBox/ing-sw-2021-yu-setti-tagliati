@@ -39,24 +39,20 @@ public class GameController {
         return Scores;
     }
 
-    public GameController(ArrayList<String> nicknames)
-    {
-        players= new ArrayList<>();
-        if(nicknames.size()<4)
-            for( int i=0; i<players.size(); i++ )
-        players.add(new Player(nicknames.get(i)));
+    public GameController(ArrayList<String> nicknames) {
+        players = new ArrayList<>();
+        if (nicknames.size() < 4)
+            for (int i = 0; i < players.size(); i++)
+                players.add(new Player(nicknames.get(i)));
         game = new Game(players);
-        if(nicknames.size()>1)
+        if (nicknames.size() > 1)
             turnController = new MultiPlayerTurnController(this);
         else
             turnController = new SinglePlayerTurnController();
         marketExecutor = new MarketExecutor();
         discardLeaderExecutor = new DiscardLeaderExecutor(this);
         productionExecutor = new ProductionExecutor(this);
-
-
     }
-
 
     public Game getGame() {
         return game;

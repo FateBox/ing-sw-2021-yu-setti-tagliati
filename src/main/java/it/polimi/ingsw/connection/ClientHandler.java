@@ -12,7 +12,7 @@ public class ClientHandler implements Runnable {
     private Socket socket;
     private ArrayList<PlayerSocket> lobby;
 
-    public ClientHandler(Socket socket, ArrayList<PlayerSocket> lobby){
+    public ClientHandler(Socket socket, ArrayList<String> player){
         this.socket = socket;
         this.lobby = lobby;
     }
@@ -20,7 +20,7 @@ public class ClientHandler implements Runnable {
     private boolean checkDuplicationNick(String nick)
     {
         for (PlayerSocket p: lobby) {
-            if(p.getNickname().equals(nick))
+            //if(p.getNickname().equals(nick))
                 return true;
         }
         return false;
@@ -42,7 +42,7 @@ public class ClientHandler implements Runnable {
                 }
                 else
                 {
-                    lobby.add(new PlayerSocket(nick, socket));
+                    //lobby.add(new PlayerSocket(nick, socket));
                     objOut.writeObject("added properly in lobby");
                     objOut.flush();
                     break;

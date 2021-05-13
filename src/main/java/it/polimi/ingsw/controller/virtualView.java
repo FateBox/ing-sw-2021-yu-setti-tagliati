@@ -5,7 +5,7 @@ import it.polimi.ingsw.Observer;
 import it.polimi.ingsw.connection.Client;
 import it.polimi.ingsw.connection.Message;
 
-public class virtualView implements Observer {
+public class virtualView implements Observer<Message>{
     Client client;
 
     virtualView()

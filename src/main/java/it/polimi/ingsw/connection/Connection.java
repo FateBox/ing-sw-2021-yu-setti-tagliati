@@ -5,9 +5,7 @@ import it.polimi.ingsw.Observable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Connection extends Observable<Message> implements Runnable{
 
@@ -24,30 +22,46 @@ public class Connection extends Observable<Message> implements Runnable{
         this.server=server;
     }
 
-    public void sendMessage(Message m) throws IOException {
-        objOut.writeObject(m);
-        objOut.flush();
+    public void sendMessage(Message m)  {
+        try {
+            objOut.writeObject(m);
+            objOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-    }
-    public void sendText(String text) throws IOException {
-        objOut.writeUTF(text);
-        objOut.flush();
-    }
-    public void asyncSend(final Message m){
+    public void asyncSendMessage(final Message m){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
                     sendMessage(m);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }).start();
     }
+
+    public void sendText(String text){
+
+        try {
+            objOut.writeUTF(text);
+            objOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void asyncSendText(final String text){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                sendText(text);
+            }
+        }).start();
+    }
+
     public synchronized void closeConnection() {
         try{
-            String nick="peppo";
+            String nick=nickname;
             String opcode="0";
             String text="connection closed";
             sendMessage(new Message(nick,opcode,text));
@@ -60,6 +74,13 @@ public class Connection extends Observable<Message> implements Runnable{
 
     private synchronized boolean isActive(){
         return active;
+    }
+
+    private void close(){
+        closeConnection();
+        System.out.println("De-registering client...");
+        server.getPlayerNameList().remove(nickname);
+        System.out.println("Done!");
     }
 
     @Override
@@ -85,15 +106,18 @@ public class Connection extends Observable<Message> implements Runnable{
             }
 
             while(isActive()){
+                Message newMessage=null;
+                try {
+                    newMessage=(Message) objIn.readObject();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                notify(newMessage);
             }
         } catch(IOException e){
             System.err.println(e.getMessage());
         } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            close();
         }
     }
 

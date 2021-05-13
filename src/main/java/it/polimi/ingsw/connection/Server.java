@@ -18,6 +18,7 @@ public class Server {
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         lobby=new ArrayList<PlayerSocket>();
+        playerNameList=new ArrayList<String>();
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try{
@@ -53,6 +54,6 @@ public class Server {
         {
             return true;
         }
-            return false;
+        return false;
     }
 }
