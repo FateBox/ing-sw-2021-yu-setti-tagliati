@@ -10,16 +10,13 @@ import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
-    private ArrayList<Connection> connectionsList;
-    private ArrayList<String> playerNameList;
-    private HashMap<String, Connection> connectionHashMap;
+    private Lobby lobby;
     public Server(int port){
         this.port = port;
     }
 
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
-        playerNameList=new ArrayList<String>();
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try{
@@ -42,14 +39,9 @@ public class Server {
         serverSocket.close();
     }
 
-
-    public ArrayList<String> getPlayerNameList() {
-        return playerNameList;
-    }
-
     public boolean checkRepeatedNick(String nick)
     {
-        if(connectionHashMap.containsKey(nick))
+        if(lobby.getPlayerNameList().contains(nick))
         {
             return true;
         }

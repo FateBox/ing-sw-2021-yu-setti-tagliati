@@ -256,14 +256,28 @@ public class Player {
         return depots.get(row -1).remove(0);
         else return null;
     }
+
+    //require 2 cell (empty or not)
+    //swap "things" inside these cell
+    public void swapDepotsCell()
+    {
+
+    }
+
     //
-    public void swapDepots(int firstRow, int secondRow) throws Exception
+    public void isDepotsCellSwappable()
+    {
+
+    }
+
+    //
+    public void swapDepotsRow(int firstRow, int secondRow) throws Exception
     {
         if(firstRow >5 || firstRow <=0 || secondRow >5 || secondRow <=0)
             throw new Exception("Unexpected input value");
         else
         {
-            if (isDepotSwappable(firstRow, secondRow)){
+            if (isDepotRowSwappable(firstRow, secondRow)){
                 ArrayList<Resource> temp = new ArrayList<Resource>( depots.get(firstRow -1));
                 depots.get(firstRow-1).clear();
                 depots.get(firstRow-1).addAll(depots.get(secondRow-1));
@@ -274,7 +288,7 @@ public class Player {
         }
     }
     //
-    public boolean isDepotSwappable(int firstrow, int secondrow) throws Exception
+    public boolean isDepotRowSwappable(int firstrow, int secondrow) throws Exception
     {
         int greater = Math.max(firstrow, secondrow);
         int lower = Math.min(firstrow, secondrow);
