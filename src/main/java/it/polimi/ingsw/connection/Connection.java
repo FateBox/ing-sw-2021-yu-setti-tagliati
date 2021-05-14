@@ -85,25 +85,11 @@ public class Connection extends Observable<Message> implements Runnable{
 
     @Override
     public void run() {
-        boolean repeatNick=true;
+
         try{
             objIn = new ObjectInputStream(socket.getInputStream());
             objOut = new ObjectOutputStream(socket.getOutputStream());
-            sendText("Welcome! What's your name?");
-            while(repeatNick)
-            {
-                String playerNickname= objIn.readUTF();
-                if(server.checkRepeatedNick(playerNickname))
-                {
-                    sendText("Someone else is already using this Nickname, please insert another.");
-                }
-                else{
-                    sendText("Got it! Welcome to the lobby "+ playerNickname);
-                    this.nickname = playerNickname;
-                    server.getPlayerNameList().add(playerNickname);
-                    repeatNick = false;
-                }
-            }
+            askNickname();
 
             while(isActive()){
                 Message newMessage=null;
@@ -118,6 +104,24 @@ public class Connection extends Observable<Message> implements Runnable{
             System.err.println(e.getMessage());
         } finally {
             close();
+        }
+    }
+
+    private void askNickname() throws IOException {
+        boolean repeatNick=true;
+        sendText("Welcome! What's your name?");
+        while(repeatNick)
+        {
+            String playerNickname= objIn.readUTF();
+            if(server.checkRepeatedNick(playerNickname))
+            {
+                sendText("Someone else is already using this Nickname, please insert another.");
+            }
+            else{
+                sendText("Got it! Welcome to the lobby "+ playerNickname);
+                this.nickname = playerNickname;
+                repeatNick = false;
+            }
         }
     }
 

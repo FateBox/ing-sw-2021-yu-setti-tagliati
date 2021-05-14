@@ -4,20 +4,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
-    private ArrayList<PlayerSocket> lobby;
+    private ArrayList<Connection> connectionsList;
     private ArrayList<String> playerNameList;
+    private HashMap<String, Connection> connectionHashMap;
     public Server(int port){
         this.port = port;
     }
 
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
-        lobby=new ArrayList<PlayerSocket>();
         playerNameList=new ArrayList<String>();
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
@@ -31,7 +32,8 @@ public class Server {
         while (true){
             try{
                 Socket socket = serverSocket.accept();
-                executor.submit(new Connection(socket,this));
+                Connection newConnection= new Connection(socket,this);
+                executor.submit(newConnection);
             }catch(IOException e){
                 break; //In case the serverSocket gets closed
             }
@@ -40,9 +42,6 @@ public class Server {
         serverSocket.close();
     }
 
-    public ArrayList<PlayerSocket> getLobby() {
-        return lobby;
-    }
 
     public ArrayList<String> getPlayerNameList() {
         return playerNameList;
@@ -50,7 +49,7 @@ public class Server {
 
     public boolean checkRepeatedNick(String nick)
     {
-        if(playerNameList.contains(nick))
+        if(connectionHashMap.containsKey(nick))
         {
             return true;
         }
