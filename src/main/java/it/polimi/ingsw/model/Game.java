@@ -438,7 +438,7 @@ public class Game {
         }
     }
 
-    //Viene chiamato al posto di getResources quando il giocatore decide di usare entrambe le carte leader per potenziare i bianchi
+    //Viene chiamato al posto di modifyResource quando il giocatore decide di usare entrambe le carte leader per potenziare i bianchi
     //il giocatore deve per ogni biglia bianca definire la risorsa che vuole
     //il metodo si limita a prendere la lista contenete le risorse che vanno a sostituire i bianchi
     public void leadersResources (ArrayList<Resource> r, ArrayList<Resource> gain)

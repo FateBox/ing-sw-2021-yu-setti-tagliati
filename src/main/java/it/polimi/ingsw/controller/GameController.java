@@ -28,16 +28,6 @@ public class GameController {
         }
         //notify
     }
-    //calculate scores and tell players (using a model attribute forwarded)
-    public ArrayList<Integer> prepareResults()
-    {
-        ArrayList<Integer> Scores = new ArrayList<>();
-        for(Player p: players)
-        {
-            Scores.add(p.getScore());
-        }
-        return Scores;
-    }
 
     public GameController(ArrayList<String> nicknames) {
         players = new ArrayList<>();

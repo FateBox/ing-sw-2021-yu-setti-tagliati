@@ -18,6 +18,8 @@ public class Player {
     private int[] strongBox;
     //A matrix where only lower diagonal half will be used as a triangular matrix.
     private ArrayList<ArrayList<Resource>> depots;
+    //Resource stored in hand by player
+    private ArrayList <Resource> inHandResources;
     /**Development space**/
     private ArrayList<DevSlot> devSlots;
     /** Leader properties **/
@@ -361,7 +363,12 @@ public class Player {
     public Resource getSpecialdepot(int i) {
         return specialDepot.get(i);
     }
-
+    public ArrayList<Resource> getInHandResources() {
+        return inHandResources;
+    }
+    public void setInHandResources(ArrayList<Resource> inHandResources) {
+        this.inHandResources = new ArrayList<Resource>(inHandResources);
+    }
 
     /** various setters **/
     public void addExtraslots(ExtraSlot extraslot) {
@@ -440,10 +447,5 @@ public class Player {
             result +=d.getQuantityDevCard(color);
         }
         return result>=quantity;
-    }
-    //TODO: implement me
-    public int getScore()
-    {
-        return 0;
     }
  }
