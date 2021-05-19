@@ -385,6 +385,11 @@ public class Player {
         this.depots.add(new ArrayList<Resource> (2));
     }
 
+    public void setDepots (ArrayList<ArrayList<Resource>> d)
+    {
+        this.depots = new ArrayList<ArrayList<Resource>> (d);
+    }
+
 
     /** creator **/
     public Player(String nickname) {

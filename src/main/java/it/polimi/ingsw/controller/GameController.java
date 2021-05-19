@@ -39,7 +39,7 @@ public class GameController {
             turnController = new MultiPlayerTurnController(this);
         else
             turnController = new SinglePlayerTurnController();
-        marketExecutor = new MarketExecutor();
+        marketExecutor = new MarketExecutor(this);
         discardLeaderExecutor = new DiscardLeaderExecutor(this);
         productionExecutor = new ProductionExecutor(this);
     }
