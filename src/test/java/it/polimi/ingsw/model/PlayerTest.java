@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import static it.polimi.ingsw.enumeration.Resource.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.Util;
 import it.polimi.ingsw.enumeration.AbilityType;
 import it.polimi.ingsw.enumeration.Color;
 import it.polimi.ingsw.enumeration.Level;
@@ -111,7 +110,7 @@ public class PlayerTest {
         for(int i=0; i<3; i++)
         {
 
-            DevSlot devslot = testedPlayer.getDevSlot(i);
+            DevSlot_Old_old devslot = testedPlayer.getDevSlot(i);
             assertEquals(devslot.getCostList(),null);
             assertEquals(devslot.getProductList(),null);
             assertEquals(devslot.getVictoryPoint(), 0);

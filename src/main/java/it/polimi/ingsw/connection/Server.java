@@ -10,6 +10,9 @@ import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
+
+
+
     private Lobby lobby;
     public Server(int port){
         this.port = port;
@@ -19,6 +22,7 @@ public class Server {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
+        lobby=new Lobby();
         try{
             serverSocket = new ServerSocket(port);
         }catch (IOException e){
@@ -46,5 +50,9 @@ public class Server {
             return true;
         }
         return false;
+    }
+
+    public Lobby getLobby() {
+        return lobby;
     }
 }

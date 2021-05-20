@@ -4,7 +4,7 @@ import it.polimi.ingsw.enumeration.Resource;
 
 import java.util.ArrayList;
 
-public class ExtraSlot implements CardSlot{
+public class ExtraSlotOld implements DevSlotOld {
 
     ArrayList<Resource> costList;
     ArrayList<Resource> productList;
@@ -25,14 +25,14 @@ public class ExtraSlot implements CardSlot{
     }
 
     /** Constructor **/
-    ExtraSlot(Resource resource ){
+    ExtraSlotOld(Resource resource ){
         costList= new ArrayList<>();
         costList.add(resource);
         productList = new ArrayList<>();
         productList.add(Resource.ANY);
         productList.add(Resource.FAITH);
     }
-    ExtraSlot()
+    ExtraSlotOld()
     {
         costList = new ArrayList<>();
         costList.add(Resource.ANY);

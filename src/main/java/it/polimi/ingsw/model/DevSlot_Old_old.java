@@ -6,10 +6,10 @@ import it.polimi.ingsw.enumeration.Resource;
 
 import java.util.ArrayList;
 
-public class DevSlot implements CardSlot {
+public class DevSlot_Old_old implements DevSlotOld {
     ArrayList<DevCard> devCards;
 
-    DevSlot() {
+    DevSlot_Old_old() {
         devCards = new ArrayList<>();
     }
 
@@ -38,7 +38,7 @@ public class DevSlot implements CardSlot {
     }
 
     //Try to insert card respecting game VINCOLI otherwise launch exception
-    public DevSlot insertCard(DevCard card) throws Exception {
+    public DevSlot_Old_old insertCard(DevCard card) throws Exception {
         if (getLastCard() == null && card.getLevel() == Level.LV1) {
             devCards.add(card);
             return this;

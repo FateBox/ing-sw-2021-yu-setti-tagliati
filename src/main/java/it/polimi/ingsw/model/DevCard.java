@@ -45,17 +45,16 @@ public class DevCard {
     public Level getLevel() {
         return level;
     }
+
     public Level getNextLevel() {
         switch (level){
             case LV1:
                 return Level.LV2;
             case LV2:
                 return Level.LV3;
-            case LV3:
+            default:
                 return null;
         }
-
-        return null;
     }
 
     public Color getColor() {

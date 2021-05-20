@@ -79,7 +79,7 @@ public class Connection extends Observable<Message> implements Runnable{
     private void close(){
         closeConnection();
         System.out.println("De-registering client...");
-        server.getPlayerNameList().remove(nickname);
+        server.getLobby().getConnectionHashMap().remove(nickname);
         System.out.println("Done!");
     }
 

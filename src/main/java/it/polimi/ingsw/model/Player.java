@@ -2,7 +2,6 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.*;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static it.polimi.ingsw.enumeration.Resource.*;
@@ -19,12 +18,12 @@ public class Player {
     //A matrix where only lower diagonal half will be used as a triangular matrix.
     private ArrayList<ArrayList<Resource>> depots;
     //Resource stored in hand by player
-    private ArrayList <Resource> inHandResources;
+    //private ArrayList <Resource> inHandResources;
     /**Development space**/
     private ArrayList<DevSlot> devSlots;
     /** Leader properties **/
     // contains base slot and leader slots
-    private ArrayList<ExtraSlot> extraslots;
+    private ArrayList<ExtraSlotOld> extraslots;
     private HashSet<Resource> developmentDiscounts;
     private ArrayList<Resource> marketDiscounts;
     private ArrayList<Resource> specialDepot;
@@ -106,14 +105,14 @@ public class Player {
         i += (r/5);
 
         //carte sviluppo
-        for (DevSlot d : devSlots) {
+        for (DevSlot_Old_old d : devSlotOlds) {
             i += d.getVictoryPoint();
         }
 
         //carte leader
         for (LeaderCard lc : leaderCards)
         {
-            if (lc.isactive()) {
+            if (lc.isActive()) {
                 i += lc.getVictoryPoint();
             }
         }
@@ -347,11 +346,11 @@ public class Player {
     public String getNickname() {
         return nickname;
     }
-    public DevSlot getDevSlot(int i) throws Exception{
-        if(i >=0 && i <=2 )return devSlots.get(i);
+    public DevSlot_Old_old getDevSlot(int i) throws Exception{
+        if(i >=0 && i <=2 )return devSlotOlds.get(i);
         throw new Exception("wrong input");
     }
-    public ArrayList<ExtraSlot> getExtraslots() {
+    public ArrayList<ExtraSlotOld> getExtraslots() {
         return extraslots;
     }
     public HashSet<Resource> getDevelopmentDiscounts() {
@@ -363,15 +362,9 @@ public class Player {
     public Resource getSpecialdepot(int i) {
         return specialDepot.get(i);
     }
-    public ArrayList<Resource> getInHandResources() {
-        return inHandResources;
-    }
-    public void setInHandResources(ArrayList<Resource> inHandResources) {
-        this.inHandResources = new ArrayList<Resource>(inHandResources);
-    }
 
     /** various setters **/
-    public void addExtraslots(ExtraSlot extraslot) {
+    public void addExtraslots(ExtraSlotOld extraslot) {
         this.extraslots.add(extraslot) ;
     }
     public void addDevelopmentDiscounts(Resource developmentDiscounts) {
@@ -404,12 +397,12 @@ public class Player {
     {
         depots.add(new ArrayList<Resource>(i));
     }
-    this.devSlots = new ArrayList<>(3);
-    devSlots.add(new DevSlot());
-    devSlots.add(new DevSlot());
-    devSlots.add(new DevSlot());
-    this.extraslots = new ArrayList<ExtraSlot>();
-    extraslots.add(new ExtraSlot());
+    this.devSlotOlds = new ArrayList<>(3);
+    devSlotOlds.add(new DevSlot_Old_old());
+    devSlotOlds.add(new DevSlot_Old_old());
+    devSlotOlds.add(new DevSlot_Old_old());
+    this.extraslots = new ArrayList<ExtraSlotOld>();
+    extraslots.add(new ExtraSlotOld());
     this.developmentDiscounts = new HashSet<>();
     this.marketDiscounts = new ArrayList<>();
     this.specialDepot = new ArrayList<Resource>();
@@ -438,7 +431,7 @@ public class Player {
     public Boolean hasDevCard(Level level, Color color, int quantity)
     {
         int result=0;
-        for(DevSlot d: devSlots)
+        for(DevSlot_Old_old d: devSlotOlds)
         {
             result +=d.getQuantityDevCard(level, color);
         }
@@ -447,7 +440,7 @@ public class Player {
     public Boolean hasDevCard(Color color, int quantity)
     {
         int result=0;
-        for(DevSlot d: devSlots)
+        for(DevSlot_Old_old d: devSlotOlds)
         {
             result +=d.getQuantityDevCard(color);
         }

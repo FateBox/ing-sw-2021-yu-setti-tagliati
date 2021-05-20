@@ -33,7 +33,6 @@ public class LeaderCard {
         devColorRequirements = new ArrayList<>();
         devLevelRequirements = new ArrayList<>();
         devColLevQuantity = new ArrayList<>();
-
     }
     public LeaderCard setOwner(Player player)
     {
@@ -79,7 +78,7 @@ public class LeaderCard {
     public int getID() {
         return ID;
     }
-    public Boolean isactive() {return active;}
+    public Boolean isActive() {return active;}
     public AbilityType getType() {
         return type;
     }
@@ -153,7 +152,7 @@ public class LeaderCard {
                 break;
                 case PRODUCTION:
                 {
-                    ExtraSlot slot = new ExtraSlot(res);
+                    ExtraSlotOld slot = new ExtraSlotOld(res);
                     player.addExtraslots(slot);
                 }
                 break;
