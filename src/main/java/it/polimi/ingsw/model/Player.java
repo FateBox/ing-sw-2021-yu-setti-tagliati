@@ -14,7 +14,7 @@ public class Player {
     private boolean[] popeFavor;
     /**Resource space**/
     //Array containing number of each resources ordered by: COIN, SERVANT,SHIELD, STONE.
-    private int[] strongBox;
+    private HashMap<Resource,Integer> strongBox;
     //A matrix where only lower diagonal half will be used as a triangular matrix.
     private ArrayList<ArrayList<Resource>> depots;
     //Resource stored in hand by player
@@ -43,7 +43,7 @@ public class Player {
         int i;
         int r = 0;
 
-        //percorso fede
+        //Faith track
         if (getFaithLocation() == 24)
             i = 20;
         else if (getFaithLocation()>20)
@@ -85,7 +85,7 @@ public class Player {
             i = 0;
         }
 
-        //favore papale
+        //Pope favour
         if (popeFavor[0])
         {i+=2;}
         if (popeFavor[1])
@@ -93,23 +93,27 @@ public class Player {
         if (popeFavor[2])
         {i+=4;}
 
-        //Risorse
-        for(int j = 0; j<4; j++) {
-            r += strongBox[j];
+        //Resource
+        ArrayList<Integer> listOfResource=new  ArrayList<Integer>(strongBox.values());
+        for (Integer num:listOfResource) {
+            i+=num.intValue();
         }
-
         for (int h = 0; h< depots.size(); h++) {
             r += depots.get(h).size();
         }
 
         i += (r/5);
 
-        //carte sviluppo
-        for (DevSlot_Old_old d : devSlotOlds) {
-            i += d.getVictoryPoint();
+        //Development cards
+        for (DevSlot d : devSlots) {
+
+            if (d instanceof CardSlot)
+            {
+              i+=((CardSlot) d).getAllVictoryPoint();
+            }
         }
 
-        //carte leader
+        //Leader cards
         for (LeaderCard lc : leaderCards)
         {
             if (lc.isActive()) {
@@ -123,36 +127,30 @@ public class Player {
     /** strongbox **/
     // Requires a storable resource
     // Remove and return resource removed, throw Exception if there's no resource of that type in strongbox
-    public Player drawStrongBox(Resource r) throws Exception
+    public void drawStrongBox(Resource r) throws Exception
     {
         if(r==WHITE || r==FAITH)
             throw new Exception("Wrong input");
-        if(strongBox[r.getValue()]<=0)
+        if(strongBox.get(r)<=0)
             throw new Exception("Resource not present");
-        strongBox[r.getValue()]--;
-        return this;
+        strongBox.put(r,strongBox.get(r)-1);
     }
+
     // Requires a storable resource or throw exception
     // Insert selected resource in strongbox
-    public Player insertStrongBox(Resource r) throws Exception
+    public void insertStrongBox(Resource r) throws Exception
     {
         if(r==WHITE || r==FAITH)
             throw new Exception();
         else
-         this.strongBox[r.getValue()]++;
-
-        return this;
+            strongBox.put(r,strongBox.get(r)+1);
     }
-    public Player insertStrongBox(Resource... res) throws Exception {
-        ArrayList<Resource> resources = new ArrayList<Resource>(Arrays.asList(res));
-        for(Marble m : Marble.values())
-            strongBox[m.getResource().getValue()] += Collections.frequency(resources, m.getResource());
-        return this;}
+
     public int getQuantityStrongBox(Resource r)
     {
         if(r == FAITH || r == WHITE)
             return 0;
-        return strongBox[r.getValue()];
+        return strongBox.get(r);
     }
     /** leaders **/
     //classic getters and setters
@@ -257,20 +255,6 @@ public class Player {
         return depots.get(row -1).remove(0);
         else return null;
     }
-
-    //require 2 cell (empty or not)
-    //swap "things" inside these cell
-    public void swapDepotsCell()
-    {
-
-    }
-
-    //
-    public void isDepotsCellSwappable()
-    {
-
-    }
-
     //
     public void swapDepotsRow(int firstRow, int secondRow) throws Exception
     {
@@ -346,10 +330,10 @@ public class Player {
     public String getNickname() {
         return nickname;
     }
-    public DevSlot_Old_old getDevSlot(int i) throws Exception{
+    /**public DevSlot_Old_old getDevSlot(int i) throws Exception{
         if(i >=0 && i <=2 )return devSlotOlds.get(i);
         throw new Exception("wrong input");
-    }
+    }**/
     public ArrayList<ExtraSlotOld> getExtraslots() {
         return extraslots;
     }
@@ -386,30 +370,31 @@ public class Player {
 
     /** creator **/
     public Player(String nickname) {
-    this.nickname = nickname;
-    this.faithLocation = 0;
-    this.victoryPoints = 0;
-    this.leaderCards = new ArrayList<LeaderCard>(4);
-    popeFavor = new boolean[3];
-    strongBox= new int[4];
-    this.depots = new ArrayList<ArrayList<Resource>>(3);
-    for (int i=1; i<4; i++)
-    {
-        depots.add(new ArrayList<Resource>(i));
-    }
-    this.devSlotOlds = new ArrayList<>(3);
-    devSlotOlds.add(new DevSlot_Old_old());
-    devSlotOlds.add(new DevSlot_Old_old());
-    devSlotOlds.add(new DevSlot_Old_old());
-    this.extraslots = new ArrayList<ExtraSlotOld>();
-    extraslots.add(new ExtraSlotOld());
-    this.developmentDiscounts = new HashSet<>();
-    this.marketDiscounts = new ArrayList<>();
-    this.specialDepot = new ArrayList<Resource>();
+        this.nickname = nickname;
+        this.faithLocation = 0;
+        this.victoryPoints = 0;
+        this.leaderCards = new ArrayList<LeaderCard>();
+        popeFavor = new boolean[3];
+        strongBox= new HashMap<>();
+        strongBox.put(COIN,0);
+        strongBox.put(SHIELD,0);
+        strongBox.put(STONE,0);
+        strongBox.put(SERVANT,0);
+        this.depots = new ArrayList<ArrayList<Resource>>();
+        for (int i=1; i<4; i++)
+        {
+            depots.add(new ArrayList<Resource>(i));
+        }
+        this.devSlots = new ArrayList<>();
+        this.extraslots = new ArrayList<ExtraSlotOld>();
+        extraslots.add(new ExtraSlotOld());
+        this.developmentDiscounts = new HashSet<>();
+        this.marketDiscounts = new ArrayList<>();
+        this.specialDepot = new ArrayList<Resource>();
     }
 
 
-    //
+    /**
     public Boolean ownsResources(ArrayList<Resource> res)
     {
         if(res == null)
@@ -427,7 +412,7 @@ public class Player {
         }
         return true;
     }
-    //
+
     public Boolean hasDevCard(Level level, Color color, int quantity)
     {
         int result=0;
@@ -446,4 +431,5 @@ public class Player {
         }
         return result>=quantity;
     }
+     **/
  }
