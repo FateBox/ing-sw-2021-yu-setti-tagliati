@@ -1,11 +1,19 @@
 package it.polimi.ingsw.connection;
 
+import java.util.List;
+
 public class Message {
+    private boolean broadCast;
     private String playerNick;
     private String opCod;
     private String text;
-
     public Message(String playerNick, String opCod, String text) {
+
+    }
+    public Message(boolean broadCast, String opCod, String text) {
+
+    }
+    public Message(boolean broadCast, String opCod) {
 
     }
 

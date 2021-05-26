@@ -1,4 +1,6 @@
 package it.polimi.ingsw.enumeration;
 
-public class Status {
+public enum State {
+    OFFLINE,
+
 }

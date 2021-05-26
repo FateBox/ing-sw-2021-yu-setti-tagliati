@@ -1,6 +1,7 @@
 package it.polimi.ingsw.connection;
 
 import it.polimi.ingsw.Observable;
+import it.polimi.ingsw.enumeration.State;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,6 +16,7 @@ public class Connection extends Observable<Message> implements Runnable{
     private Server server;
     private String nickname;
     private Boolean active;
+    private State state;
 
     public Connection(Socket socket, Server server)
     {
@@ -40,6 +42,7 @@ public class Connection extends Observable<Message> implements Runnable{
         }).start();
     }
 
+    //* synchronized method (?)
     public void sendText(String text){
 
         try {
@@ -79,7 +82,7 @@ public class Connection extends Observable<Message> implements Runnable{
     private void close(){
         closeConnection();
         System.out.println("De-registering client...");
-        server.getLobby().getConnectionHashMap().remove(nickname);
+        server.getLobbyHandler().removePlayer(nickname);
         System.out.println("Done!");
     }
 
@@ -90,6 +93,9 @@ public class Connection extends Observable<Message> implements Runnable{
             objIn = new ObjectInputStream(socket.getInputStream());
             objOut = new ObjectOutputStream(socket.getOutputStream());
             askNickname();
+            //ask Game mode and player number in case of mp
+
+
 
             while(isActive()){
                 Message newMessage=null;
@@ -113,7 +119,7 @@ public class Connection extends Observable<Message> implements Runnable{
         while(repeatNick)
         {
             String playerNickname= objIn.readUTF();
-            if(server.checkRepeatedNick(playerNickname))
+            if(server.getLobbyHandler().isNickRepeated(playerNickname))
             {
                 sendText("Someone else is already using this Nickname, please insert another.");
             }
@@ -124,6 +130,7 @@ public class Connection extends Observable<Message> implements Runnable{
             }
         }
     }
+
 
 
 
