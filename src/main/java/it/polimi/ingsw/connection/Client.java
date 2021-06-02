@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class Client {
     private String ip;
     private int port;
+    private String nickname;
 
     public Client(String ip, int port){
         this.ip = ip;

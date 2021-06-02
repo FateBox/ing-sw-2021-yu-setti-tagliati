@@ -21,10 +21,10 @@ public class GameController {
     public void prepareFirstAction()
     {
         for(Player p : players) {
-                    p.addLeader(game.drawLeaderCard())
-                    .addLeader(game.drawLeaderCard())
-                    .addLeader(game.drawLeaderCard())
-                    .addLeader(game.drawLeaderCard());
+                    p.addLeader(game.drawLeaderCard());
+                    p.addLeader(game.drawLeaderCard());
+                    p.addLeader(game.drawLeaderCard());
+                    p.addLeader(game.drawLeaderCard());
         }
         //notify
     }

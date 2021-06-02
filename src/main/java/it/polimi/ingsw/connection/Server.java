@@ -10,16 +10,17 @@ import java.util.concurrent.Executors;
 
 public class Server {
     private int port;
+
     public Server(int port){
         this.port = port;
     }
+
     private LobbyHandler lobbyHandler;
 
     public void startServer() throws IOException {
         //It creates threads when necessary, otherwise it re-uses existing one when possible
 
         lobbyHandler=new LobbyHandler();
-        ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try{
             serverSocket = new ServerSocket(port);
@@ -28,16 +29,15 @@ public class Server {
             return;
         }
         System.out.println("Server ready");
-        while (true){
-            try{
+        while (true) {
+            try {
                 Socket socket = serverSocket.accept();
-                Connection newConnection= new Connection(socket,this);
-                executor.submit(newConnection);
-            }catch(IOException e){
+                Connection newConnection = new Connection(socket, this);
+                new Thread(newConnection).start();
+            } catch (IOException e) {
                 break; //In case the serverSocket gets closed
             }
         }
-        executor.shutdown();
         serverSocket.close();
     }
 

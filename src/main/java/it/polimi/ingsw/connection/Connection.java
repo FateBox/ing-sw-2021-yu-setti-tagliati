@@ -15,6 +15,7 @@ public class Connection extends Observable<Message> implements Runnable{
     private ObjectInputStream objIn;
     private Server server;
     private String nickname;
+    private int lobbyId;
     private Boolean active;
     private State state;
 
@@ -28,6 +29,7 @@ public class Connection extends Observable<Message> implements Runnable{
         try {
             objOut.writeObject(m);
             objOut.flush();
+            objOut.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,6 +50,7 @@ public class Connection extends Observable<Message> implements Runnable{
         try {
             objOut.writeUTF(text);
             objOut.flush();
+            objOut.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,7 +70,7 @@ public class Connection extends Observable<Message> implements Runnable{
             String nick=nickname;
             String opcode="0";
             String text="connection closed";
-            sendMessage(new Message(nick,opcode,text));
+            asyncSendMessage(new Message(nick,opcode,text));
             socket.close();
         }catch (IOException e){
             System.err.println(e.getMessage());
@@ -86,6 +89,7 @@ public class Connection extends Observable<Message> implements Runnable{
         System.out.println("Done!");
     }
 
+
     @Override
     public void run() {
 
@@ -94,8 +98,7 @@ public class Connection extends Observable<Message> implements Runnable{
             objOut = new ObjectOutputStream(socket.getOutputStream());
             askNickname();
             //ask Game mode and player number in case of mp
-
-
+            spOrMp();
 
             while(isActive()){
                 Message newMessage=null;
@@ -121,13 +124,24 @@ public class Connection extends Observable<Message> implements Runnable{
             String playerNickname= objIn.readUTF();
             if(server.getLobbyHandler().isNickRepeated(playerNickname))
             {
-                sendText("Someone else is already using this Nickname, please insert another.");
+                asyncSendText("Someone else is already using this Nickname, please insert another.");
             }
             else{
-                sendText("Got it! Welcome to the lobby "+ playerNickname);
+                asyncSendText("Got it! Welcome to the lobby "+ playerNickname);
                 this.nickname = playerNickname;
                 repeatNick = false;
             }
+        }
+    }
+
+    public void spOrMp()//send player to the lobby handler and take the player to a lobby;
+    {
+        int maxPlayer;
+        try {
+                maxPlayer=Integer.parseInt(objIn.readUTF());
+                lobbyId=server.getLobbyHandler().joinLobby(nickname,this, maxPlayer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -108,7 +108,7 @@ public class MarketExecutor extends ActionController{
             }
             if (depots.get(i).size()>0 && i>2) //considera i piani speciali
             {
-                if(depots.get(i).size() > 2 || depots.get(i).size() != Collections.frequency(depots.get(i),game.getCurrentP().getSpecialdepot(i-2)))// controlla che il numero di elementi del primo tipo della riga sia pari al numero di elementi totali della riga
+                if(depots.get(i).size() > 2 || depots.get(i).size() != Collections.frequency(depots.get(i),game.getCurrentP().getSpecialDepot(i-2)))// controlla che il numero di elementi del primo tipo della riga sia pari al numero di elementi totali della riga
                 {
                     throw new Exception ("The resources in the leader depot are wrong");
                 }

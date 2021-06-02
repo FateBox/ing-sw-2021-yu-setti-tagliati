@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.*;
 
+import java.io.IOException;
 import java.util.*;
 
 import static it.polimi.ingsw.enumeration.Resource.*;
@@ -23,10 +24,9 @@ public class Player {
     private ArrayList<DevSlot> devSlots;
     /** Leader properties **/
     // contains base slot and leader slots
-    private ArrayList<ExtraSlotOld> extraslots;
     private HashSet<Resource> developmentDiscounts;
     private ArrayList<Resource> marketDiscounts;
-    private ArrayList<Resource> specialDepot;
+    private ArrayList<SpecialDepot> specialDepots;
 
     public void setFaithLocation(int box)
     {
@@ -38,7 +38,7 @@ public class Player {
         return this.faithLocation;
     }
 
-    public int VP ()
+    public int VP()
     {
         int i;
         int r = 0;
@@ -94,6 +94,7 @@ public class Player {
         {i+=4;}
 
         //Resource
+        /*
         ArrayList<Integer> listOfResource=new  ArrayList<Integer>(strongBox.values());
         for (Integer num:listOfResource) {
             i+=num.intValue();
@@ -103,11 +104,28 @@ public class Player {
         }
 
         i += (r/5);
+        */
+        //strongBox
+        for(Resource resource: strongBox.keySet())
+        {
+            r+=strongBox.get(resource);
+        }
+        //depot
+        for(ArrayList<Resource> row: depots)
+        {
+            r+=row.size();
+        }
+        //special depot
+        for (SpecialDepot sp:specialDepots)
+        {
+            r+=
+        }
+
 
         //Development cards
         for (DevSlot d : devSlots) {
 
-            if (d instanceof CardSlot)
+            if (d.getType()==SlotType.CARD)
             {
               i+=((CardSlot) d).getAllVictoryPoint();
             }
@@ -154,10 +172,9 @@ public class Player {
     }
     /** leaders **/
     //classic getters and setters
-    public Player addLeader(LeaderCard l)
+    public void addLeader(LeaderCard l)
     {
         leaderCards.add(l);
-        return this;
     }
     public boolean removeLeader(LeaderCard l)
     {
@@ -184,158 +201,44 @@ public class Player {
     }
 
     /** depots **/
-    //returns null if special depot required doesn't exists, row is empty or row is wrong
-    //nobody should call it with wrong row, it should be ok, it could be private, but may be usefull in controller
-    //IF USED IN CONTROLLER DEPENDING ON CLIENT INPUT IT'S WORTH MAKE IT LAUNCH EXCEPTIONS
+    //given row, return type of resource inside of this row. Input should be a number between 0 and 2, if no resource is present, returns null
     public Resource getDepotsRowType(int row)
     {
-
-
-        if(row >= 3 && row <5)
-            return specialDepot.get(row-3);
-        if(row >=5 || row<0 || depots.get(row).isEmpty())
-            return null;
-        else return depots.get(row).get(0);
-    }
-    //
-    //
-    private boolean isResViable(Resource resource)
-    {
-            if(resource == FAITH || resource == WHITE)
-                return false;
-            return !(getDepotsRowType(0) == resource || getDepotsRowType(1) == resource || getDepotsRowType(2) == resource);
-    }
-    //
-    //if insert not viable returns an Exception
-    public Player insertDepots(Resource r, int row) throws Exception
-    {
-        if (r == FAITH || r == Resource.WHITE )
-            throw new Exception();
-        else
-        switch (row) {
-            case 1:
-                if (depots.get(0).isEmpty() && isResViable(r)) {
-                    depots.get(0).add(r);
-
-                } else throw new Exception();
-                break;
-            case 2:
-                if ((depots.get(1).contains(r) && depots.get(1).size() <= 2) || (depots.get(1).isEmpty() && isResViable(r) )) {
-                    depots.get(1).add(r);
-
-                } else
-                    throw new Exception();
-                break;
-            case 3:
-                if ((depots.get(2).contains(r) && depots.get(2).size() <= 3) || (depots.get(2).isEmpty() && isResViable(r))) {
-                    depots.get(2).add(r);
-
-                } else throw new Exception();
-                    break;
-            case 4:
-                if(depots.get(3).size()<2 && r == specialDepot.get(0))
-                    depots.get(3).add(r);
-                else throw new Exception();
-                break;
-            case 5:
-                if(depots.get(4).size()<2 && r == specialDepot.get(1))
-                    depots.get(4).add(r);
-                else throw new Exception();
-                break;
-            default:
-                throw new Exception("Unexpected input value");
-        }
-        return this;
-    }
-    //
-    //returns null if it didn't work
-    public Resource removeDepots(int row)
-    {
-        if(row >0 && row <=5 && !(depots.get(row-1).isEmpty()))
-        return depots.get(row -1).remove(0);
-        else return null;
-    }
-    //
-    public void swapDepotsRow(int firstRow, int secondRow) throws Exception
-    {
-        if(firstRow >5 || firstRow <=0 || secondRow >5 || secondRow <=0)
-            throw new Exception("Unexpected input value");
-        else
+        if(depots.get(row).size()>0)
         {
-            if (isDepotRowSwappable(firstRow, secondRow)){
-                ArrayList<Resource> temp = new ArrayList<Resource>( depots.get(firstRow -1));
-                depots.get(firstRow-1).clear();
-                depots.get(firstRow-1).addAll(depots.get(secondRow-1));
-                depots.get(secondRow-1).clear();
-                depots.get(secondRow-1).addAll(temp);
+            return depots.get(row).get(0);
         }
-            else throw new Exception("Operation violate state invariant properties");
-        }
+        return null;
     }
-    //
-    public boolean isDepotRowSwappable(int firstrow, int secondrow) throws Exception
+
+    //given resource, return number of this kind of resource inside depot.
+    public int getQuantityDepot(Resource r)
     {
-        int greater = Math.max(firstrow, secondrow);
-        int lower = Math.min(firstrow, secondrow);
-        if(greater > 5)
-            return false;
-        if(greater>3)
+        int num=0;
+        for(ArrayList<Resource> row:depots)
         {
-            if(greater == lower-1 || specialDepot.get(greater-4)== null)
-                throw new Exception();
-            ArrayList<Resource> greaterRow = depots.get(greater - 1);
-            ArrayList<Resource> lowerRow = depots.get(lower -1);
-            int lowerMaxSize = lower;
-            Resource leaRowType = specialDepot.get(greater-4);
-            Resource depRowType = getDepotsRowType(lower-1);
-
-            if(lower > 3)
-                return false;
-            // checks resource type compatibility
-            if(depRowType == null && !(isResViable(leaRowType) ))
-                return false;
-            if(depRowType != null && (leaRowType != depRowType || !(isResViable(leaRowType))))
-                return false;
-            if(lowerMaxSize < greaterRow.size() || lowerRow.size() > 2)
-                return false;
-
+            for(Resource res: row)
+            {
+                if (res==r)
+                    num++;
+            }
         }
-        else {
-            int size;
-            size = depots.get(greater - 1).size();
-            return size <= lower;
-        }
-        return false;
-
+        return num;
     }
-    public int getQuantityDepots(Resource resource)
-    {
-        int temp=0;
-        int i=0;
-        for(ArrayList<Resource> row : depots)
-        {
-            if(getDepotsRowType(i)==resource)
-                temp += depots.get(i).size();
-            i++;
-        }
-        return temp;
-    }
-    public ArrayList<Resource> getDepots(int row)
+
+    public ArrayList<Resource> getDepotRow(int row)
     {
         return new ArrayList<>(depots.get(row));
     }
+
 
 
     /** various getters **/
     public String getNickname() {
         return nickname;
     }
-    /**public DevSlot_Old_old getDevSlot(int i) throws Exception{
-        if(i >=0 && i <=2 )return devSlotOlds.get(i);
-        throw new Exception("wrong input");
-    }**/
-    public ArrayList<ExtraSlotOld> getExtraslots() {
-        return extraslots;
+    public ArrayList<ArrayList<Resource>> getDepots() {
+        return depots;
     }
     public HashSet<Resource> getDevelopmentDiscounts() {
         return developmentDiscounts;
@@ -343,14 +246,11 @@ public class Player {
     public ArrayList<Resource> getMarketDiscounts() {
         return marketDiscounts;
     }
-    public Resource getSpecialdepot(int i) {
-        return specialDepot.get(i);
+    public Resource getSpecialDepot(int i) {
+        return specialDepots.get(i);
     }
 
     /** various setters **/
-    public void addExtraslots(ExtraSlotOld extraslot) {
-        this.extraslots.add(extraslot) ;
-    }
     public void addDevelopmentDiscounts(Resource developmentDiscounts) {
         this.developmentDiscounts.add( developmentDiscounts );
     }
@@ -358,7 +258,7 @@ public class Player {
         this.marketDiscounts.add(resource);
     }
     public void addSpecialDepot(Resource r) {
-        this.specialDepot.add(r);
+        this.specialDepots.add(r);
         this.depots.add(new ArrayList<Resource> (2));
     }
 
@@ -386,50 +286,68 @@ public class Player {
             depots.add(new ArrayList<Resource>(i));
         }
         this.devSlots = new ArrayList<>();
-        this.extraslots = new ArrayList<ExtraSlotOld>();
-        extraslots.add(new ExtraSlotOld());
+        devSlots.add(new BasicSlot());
+        devSlots.add(new CardSlot());
+        devSlots.add(new CardSlot());
+        devSlots.add(new CardSlot());
         this.developmentDiscounts = new HashSet<>();
         this.marketDiscounts = new ArrayList<>();
         this.specialDepot = new ArrayList<Resource>();
     }
 
-
-    /**
-    public Boolean ownsResources(ArrayList<Resource> res)
+    //For given parameter, check if player has all the required conditions
+    public boolean ownsResources(ArrayList<Resource> resList)
     {
-        if(res == null)
+        ArrayList<Resource> InputResource=new ArrayList<>();
+        InputResource.add(COIN);
+        InputResource.add(STONE);
+        InputResource.add(SERVANT);
+        InputResource.add(SHIELD);
+        int requiredQuantity,playerResource;
+        if (resList==null)
             return true;
-        for(Marble m: Marble.values())
+        for(Resource r: InputResource)
         {
-            int requiredQuantity = Collections.frequency(res, m.getResource());
-            if(requiredQuantity != 0)
+            requiredQuantity= Collections.frequency(resList,r);
+
+            if(requiredQuantity!=0)
             {
-                requiredQuantity = requiredQuantity - getQuantityStrongBox(m.getResource());
-                int temp = getQuantityDepots(m.getResource());
-                requiredQuantity = requiredQuantity - temp;
-                if(requiredQuantity >0) return false;
+                playerResource=getQuantityDepot(r)+getQuantityStrongBox(r);
+                if(playerResource<requiredQuantity)
+                    return false;
             }
         }
         return true;
     }
 
-    public Boolean hasDevCard(Level level, Color color, int quantity)
+    public boolean hasDevCard(Color color, int quantity)
     {
         int result=0;
-        for(DevSlot_Old_old d: devSlotOlds)
+        for(DevSlot devSlot:devSlots)
         {
-            result +=d.getQuantityDevCard(level, color);
+            if(devSlot.getType()==SlotType.CARD)
+            {
+                result+=((CardSlot) devSlot).getQuantityDevCard(color);
+            }
         }
         return result>=quantity;
     }
-    public Boolean hasDevCard(Color color, int quantity)
+
+    public boolean hasDevCard(Level level, Color color, int quantity)
     {
         int result=0;
-        for(DevSlot_Old_old d: devSlotOlds)
+        for(DevSlot devSlot:devSlots)
         {
-            result +=d.getQuantityDevCard(color);
+            if(devSlot.getType()==SlotType.CARD)
+            {
+                result+=((CardSlot) devSlot).getQuantityDevCard(color);
+            }
         }
         return result>=quantity;
     }
-     **/
+
+
+
+
+
  }

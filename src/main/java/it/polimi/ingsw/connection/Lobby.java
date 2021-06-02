@@ -2,13 +2,12 @@ package it.polimi.ingsw.connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Lobby {
 
-    private int lobbyID;
+    private final int lobbyID;
     private HashMap<String,Connection> playerList;
-    private int maxPlayerNumber;
+    private final int maxPlayerNumber;
     private boolean full;
 
 
@@ -37,11 +36,7 @@ public class Lobby {
 
     public boolean isAvailable()
     {
-        if(full)
-        {
-            return false;
-        }
-        return true;
+        return !full;
     }
 
     public int getLobbyID() {

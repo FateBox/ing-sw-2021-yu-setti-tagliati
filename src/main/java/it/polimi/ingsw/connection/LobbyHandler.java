@@ -62,7 +62,7 @@ public class LobbyHandler {
         lobbyHashMap.remove(id);
     }
 
-    public void joinLobby(String nickname, int maxNumPlayer)
+    public int joinLobby(String nickname, Connection connection, int maxNumPlayer)
     {
         int lobbyID=getNotFullLobby(maxNumPlayer);
         if (lobbyID==-1)
@@ -71,12 +71,11 @@ public class LobbyHandler {
             createLobby(lobbyID, maxNumPlayer);
         }
         playerHashMap.put(nickname,lobbyID);
-        lobbyHashMap.get(lobbyID).addPlayer(nickname,);
-
-
+        lobbyHashMap.get(lobbyID).addPlayer(nickname, connection);
+        return lobbyID;
     }
 
-    private int chooseLobbyId()
+    public int chooseLobbyId()
     {
         return countId++;
     }

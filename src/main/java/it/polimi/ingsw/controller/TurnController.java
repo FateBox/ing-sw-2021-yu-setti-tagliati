@@ -29,7 +29,4 @@ public abstract class TurnController {
     {
         return game.getCurrentP();
     }
-
-
-
 }

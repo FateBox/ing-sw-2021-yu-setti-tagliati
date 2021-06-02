@@ -2,19 +2,21 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.Resource;
 
+import java.util.Stack;
+
 public class SpecialDepot {
     Resource res;
-    int Quantity;
+    Stack<Resource> row;
     public void insertResource(Resource resource)
     {
         if (isInsertable(resource))
-            Quantity++;
+            row.push(resource);
     }
     public Resource removeResource() throws Exception
     {
         if(isRemovable())
         {
-            Quantity--;
+            row.pop();
             return res;
         }
         else
@@ -28,11 +30,11 @@ public class SpecialDepot {
     }
     public boolean isRemovable()
     {
-        return (Quantity > 0);
+        return (row.size() > 0);
     }
     SpecialDepot(Resource resource)
     {
         res=resource;
-        Quantity=0;
+        row= new Stack<Resource>();
     }
 }

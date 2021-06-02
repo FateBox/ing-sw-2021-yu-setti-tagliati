@@ -34,11 +34,13 @@ public class LeaderCard {
         devLevelRequirements = new ArrayList<>();
         devColLevQuantity = new ArrayList<>();
     }
+
     public LeaderCard setOwner(Player player)
     {
         owner = player;
         return this;
     }
+
     public LeaderCard setDisResLeader(Color color1, Color color2) //usato per Leader sconto e risorse
     {
         this.devLevelRequirements.add(null);
@@ -53,8 +55,6 @@ public class LeaderCard {
 
         this.devColorRequirements.add(color2);
         this.devColLevQuantity.add(1);
-
-
         return this;
     }
 
@@ -82,6 +82,7 @@ public class LeaderCard {
     public AbilityType getType() {
         return type;
     }
+    /*
     protected LeaderCard setDevRequirements(Color color)
     {
         this.devLevelRequirements.add(null);
@@ -89,7 +90,7 @@ public class LeaderCard {
         this.devColLevQuantity.add(1);
         return this;
     }
-    LeaderCard setDevRequirements(Color color, int quantity)
+    protected LeaderCard setDevRequirements(Color color, int quantity)
     {
         this.devLevelRequirements.add(null);
         this.devColorRequirements.add(color);
@@ -115,64 +116,63 @@ public class LeaderCard {
             resourcesRequirements.add(resource);
         }
         return this;
+    }*/
+
+    public boolean isPlayable()
+    {
+        return isPlayable(owner);
+    }
+    public boolean isPlayable(Player player)
+    {
+        boolean result = player.ownsResources(resourcesRequirements);
+        for (int i=0; i<devColorRequirements.size();i++)
+        {
+            if(devLevelRequirements.get(i) == null) {
+                if (!(player.hasDevCard(devColorRequirements.get(i), devColLevQuantity.get(i))))
+                    return false;
+            }
+            else
+            if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )))
+                result = false;
+        }
+        return result;
     }
 
-        public boolean isPlayable()
+    public boolean use (Player player)
+    {
+        if(active || !isPlayable(player))
         {
-            return isPlayable(owner);
+            return false;
         }
-        public boolean isPlayable(Player player)
-        {
-            boolean result = player.ownsResources(resourcesRequirements);
-            for (int i=0; i<devColorRequirements.size();i++)
+
+        switch (type) {
+            case DISCOUNT:
             {
-                if(devLevelRequirements.get(i) == null) {
-                    if (!(player.hasDevCard(devColorRequirements.get(i), devColLevQuantity.get(i))))
-                        return false;
-                }
-                else
-                if(!(player.hasDevCard(devLevelRequirements.get(i),devColorRequirements.get(i),devColLevQuantity.get(i) )))
-                    result = false;
+                player.addDevelopmentDiscounts(res);
             }
-            return result;
-        }
-
-        public boolean use (Player player)
-        {
-            if(active || !isPlayable(player))
+            break;
+            case PRODUCTION:
             {
-                return false;
+                //
             }
-
-            switch (type) {
-                case DISCOUNT:
-                {
-                    player.addDevelopmentDiscounts(res);
-                }
-                break;
-                case PRODUCTION:
-                {
-                    ExtraSlotOld slot = new ExtraSlotOld(res);
-                    player.addExtraslots(slot);
-                }
-                break;
-                case DEPOT:
-                {
-                    player.addSpecialDepot(res);
-                }
-                break;
-                case RESOURCE:
-                {
-                    player.addMarketDiscounts(res);
-                }
-                break;
-
-                default:
-                    throw new IllegalStateException("Unexpected value: " + type);
+            break;
+            case DEPOT:
+            {
+                player.addSpecialDepot(res);
             }
-            this.active=true;
-            return true;
+            break;
+            case RESOURCE:
+            {
+                player.addMarketDiscounts(res);
+            }
+            break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
         }
+        this.active=true;
+        return true;
+    }
 
     public int getVictoryPoint() { return this.victoryPoint; }
 }

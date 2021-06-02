@@ -68,6 +68,7 @@ public class DevCard {
     public ArrayList<Resource> getCostList() {
         return costList;
     }
+
     //particolare metodo getters che restituisce il prezzo scontato della carta in base all'effetto della carta leader
     public ArrayList<Resource> getReducedCost(Resource r) {
         ArrayList<Resource> reducedCost = new ArrayList<Resource>(this.costList);

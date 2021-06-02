@@ -30,6 +30,7 @@ public class MultiPlayerTurnController extends TurnController{
         return false;
 
     }
+
     public MultiPlayerTurnController(GameController gameController)
     {
         this.gameController = gameController;
