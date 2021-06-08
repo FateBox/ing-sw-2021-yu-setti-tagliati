@@ -16,6 +16,7 @@ public class Game {
     private Player currentPlayer; //oggetto player che punta il player corrente a partire dal primo nella lista playerList
     private boolean[] popeSpace = {true, true, true}; // true indica che il favore papale è attivabile
     private int lorenzoLocation; //indica la posizione di Lorenzo sul percorso Fede
+    private boolean[] readyLeader;
 
     //costruttore
     public Game(ArrayList<Player> p)
@@ -461,22 +462,22 @@ public class Game {
         { //posizioni iniziali primo e secondo giocatore: 0; terzo e quarto giocatore: 1
             for (int i=0; i<s; i++) {
                 if (i < 2) {
-                    playerList.get(i).setFaithLocation(0);
+                    playerList.get(i).forwardFaithLocation(0);
                 }
                 else{
-                    playerList.get(i).setFaithLocation(1);
+                    playerList.get(i).forwardFaithLocation(1);
                 }
             }
         }
         else{ //singleplayer
-            playerList.get(0).setFaithLocation(0);
+            playerList.get(0).forwardFaithLocation(0);
             lorenzoLocation = 0; //posizione di Lorenzo
         }
     }
 
     public void forwardPlayer(int id, int box) //i parametri indicano il giocatore che avanza(da 0 a 3) e il numero di caselle da percorrere
     {
-        playerList.get(id).setFaithLocation(box);
+        playerList.get(id).forwardFaithLocation(box);
         setPope(id);
     }
 
@@ -485,7 +486,7 @@ public class Game {
         int i;
         for (i = 0; i<playerList.size(); i++) {
             if (i != id) {
-                playerList.get(i).setFaithLocation(box);
+                playerList.get(i).forwardFaithLocation(box);
                 //setPope(i);
             }
         }

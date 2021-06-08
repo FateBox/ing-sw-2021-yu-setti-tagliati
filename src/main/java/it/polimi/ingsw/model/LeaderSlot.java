@@ -3,20 +3,15 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.enumeration.SlotType;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class LeaderSlot implements DevSlot{
     private final SlotType type;
-    private final int numOfAnyInput;
-    private final int numOfAnyOutput;
     private ArrayList<Resource> inputResource;
     private ArrayList<Resource> outputResource;
 
-    public LeaderSlot(int id, int numOfAnyOutput, int numOfAnyInput, ArrayList<Resource> inputResource, ArrayList<Resource> outputResource)
+    public LeaderSlot(int id, ArrayList<Resource> inputResource, ArrayList<Resource> outputResource)
     {
-        this.numOfAnyInput=numOfAnyInput;
-        this.numOfAnyOutput=numOfAnyOutput;
         this.type=SlotType.LEADER;
         this.inputResource=inputResource;
         this.outputResource=outputResource;
@@ -46,11 +41,4 @@ public class LeaderSlot implements DevSlot{
         this.outputResource=outputResource;
     }
 
-    public int getNumOfAnyInput() {
-        return numOfAnyInput;
-    }
-
-    public int getNumOfAnyOutput() {
-        return numOfAnyOutput;
-    }
 }

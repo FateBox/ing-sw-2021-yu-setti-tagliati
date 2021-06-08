@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.connection.Message;
+import it.polimi.ingsw.message.Message;
 
 public class Decoder {
     //riceve messaggi da parte del View

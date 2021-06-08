@@ -1,13 +1,6 @@
 package it.polimi.ingsw.model;
-
-
-
 import java.util.ArrayList;
-
-
 import it.polimi.ingsw.enumeration.*;
-
-
 
 public class LeaderCard {
 
@@ -153,7 +146,7 @@ public class LeaderCard {
             break;
             case PRODUCTION:
             {
-                //
+
             }
             break;
             case DEPOT:

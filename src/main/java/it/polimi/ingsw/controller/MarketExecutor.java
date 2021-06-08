@@ -27,7 +27,7 @@ import java.util.Collections;
 
  **/
 
-public class MarketExecutor extends ActionController{
+public class MarketExecutor extends ActionExecutor {
 
     private ArrayList<Resource> gain;
 

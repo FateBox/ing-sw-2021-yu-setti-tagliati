@@ -5,8 +5,19 @@ import it.polimi.ingsw.enumeration.Resource;
 import java.util.Stack;
 
 public class SpecialDepot {
+    public Resource getRes() {
+        return res;
+    }
+
     Resource res;
     Stack<Resource> row;
+
+    public SpecialDepot(Resource resource)
+    {
+        res=resource;
+        row= new Stack<Resource>();
+    }
+
     public void insertResource(Resource resource)
     {
         if (isInsertable(resource))
@@ -21,20 +32,19 @@ public class SpecialDepot {
         }
         else
             throw new Exception();
-
-
     }
     public boolean isInsertable(Resource resource)
     {
-        return (resource==res && Quantity <2);
+        return (resource==res && row.size() <2);
     }
+
     public boolean isRemovable()
     {
         return (row.size() > 0);
     }
-    SpecialDepot(Resource resource)
+
+    public int getQuantity()
     {
-        res=resource;
-        row= new Stack<Resource>();
+        return row.size();
     }
 }

@@ -3,10 +3,7 @@ package it.polimi.ingsw.connection;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 
 public class Server {
     private int port;
@@ -18,7 +15,6 @@ public class Server {
     private LobbyHandler lobbyHandler;
 
     public void startServer() throws IOException {
-        //It creates threads when necessary, otherwise it re-uses existing one when possible
 
         lobbyHandler=new LobbyHandler();
         ServerSocket serverSocket;

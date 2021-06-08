@@ -1,32 +1,7 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.LeaderCard;
-import it.polimi.ingsw.model.Player;
-
-import java.util.ArrayList;
-
-public abstract class TurnController {
-
-    Game game;
-
-    public void setupFirstRoundTurns()
-    {   }
-
-    public void executeFirstAction(Player player, LeaderCard firstDiscard, LeaderCard secondDiscard){
-
-        if(player.getLeader().contains(firstDiscard) && player.getLeader().contains(secondDiscard))
-        {
-            player.removeLeader(firstDiscard);
-            player.removeLeader(secondDiscard);
-        }
-        setupFirstRoundTurns();
-        //else
-        //    errorMSG
-    }
-
-    public Player getPlayerInTurn()
-    {
-        return game.getCurrentP();
-    }
+public interface TurnController {
+    //turn controllers does 2 things, when player choose to end his turn, calls nextTurn, when it happens, it check the condition for *endGame*, if true, changes endGame attribute in model.
+    boolean isGameOver();//check if game has reached "end_Game"
+    void nextTurn();//this is called when player decide to end his turn, changes Current player in the model;
 }

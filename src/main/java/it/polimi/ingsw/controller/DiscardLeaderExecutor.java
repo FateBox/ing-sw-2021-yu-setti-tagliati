@@ -3,10 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.LeaderCard;
 
-import java.awt.*;
 
-
-public class DiscardLeaderExecutor extends ActionController {
+public class DiscardLeaderExecutor extends ActionExecutor {
 
 
     void execute(LeaderCard l) {

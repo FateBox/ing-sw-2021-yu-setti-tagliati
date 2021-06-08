@@ -2,13 +2,12 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.Game;
 
-public abstract class ActionController {
+public abstract class ActionExecutor {
     Game game;
-    TurnController turnController;
-    public ActionController(GameController gameController)
+    //TurnController turnController;
+    public ActionExecutor()
     {
-        this.game= gameController.getGame();
-        this.turnController = gameController.getTurnController();
+
     }
 
 

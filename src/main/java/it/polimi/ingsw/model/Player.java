@@ -27,8 +27,8 @@ public class Player {
     private HashSet<Resource> developmentDiscounts;
     private ArrayList<Resource> marketDiscounts;
     private ArrayList<SpecialDepot> specialDepots;
-
-    public void setFaithLocation(int box)
+    private boolean didAction;
+    public void forwardFaithLocation(int box)
     {
         this.faithLocation += box;
     }
@@ -118,9 +118,9 @@ public class Player {
         //special depot
         for (SpecialDepot sp:specialDepots)
         {
-            r+=
+            r+=sp.getQuantity();
         }
-
+        i += (r/5);
 
         //Development cards
         for (DevSlot d : devSlots) {
@@ -247,7 +247,7 @@ public class Player {
         return marketDiscounts;
     }
     public Resource getSpecialDepot(int i) {
-        return specialDepots.get(i);
+        return specialDepots.get(i).getRes();
     }
 
     /** various setters **/
@@ -257,9 +257,9 @@ public class Player {
     public void addMarketDiscounts(Resource resource) {
         this.marketDiscounts.add(resource);
     }
+
     public void addSpecialDepot(Resource r) {
-        this.specialDepots.add(r);
-        this.depots.add(new ArrayList<Resource> (2));
+        this.specialDepots.add(new SpecialDepot(r));
     }
 
     public void setDepots (ArrayList<ArrayList<Resource>> d)
@@ -292,7 +292,7 @@ public class Player {
         devSlots.add(new CardSlot());
         this.developmentDiscounts = new HashSet<>();
         this.marketDiscounts = new ArrayList<>();
-        this.specialDepot = new ArrayList<Resource>();
+        this.specialDepots = new ArrayList<SpecialDepot>();
     }
 
     //For given parameter, check if player has all the required conditions

@@ -2,9 +2,6 @@ package it.polimi.ingsw.controller;
 
 public class PurchaseExecutor {
 
-
-
-
     /**
      * informazioni richieste
      * scelta della carta comprata (riga+colonna)

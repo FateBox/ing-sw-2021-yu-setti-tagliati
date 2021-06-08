@@ -1,7 +1,7 @@
 package it.polimi.ingsw.connection;
 
 import it.polimi.ingsw.Observable;
-import it.polimi.ingsw.enumeration.State;
+import it.polimi.ingsw.message.Message;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,7 +17,6 @@ public class Connection extends Observable<Message> implements Runnable{
     private String nickname;
     private int lobbyId;
     private Boolean active;
-    private State state;
 
     public Connection(Socket socket, Server server)
     {

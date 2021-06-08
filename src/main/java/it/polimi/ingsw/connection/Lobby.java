@@ -1,5 +1,7 @@
 package it.polimi.ingsw.connection;
 
+import it.polimi.ingsw.controller.GameController;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,7 +11,7 @@ public class Lobby {
     private HashMap<String,Connection> playerList;
     private final int maxPlayerNumber;
     private boolean full;
-
+    GameController gameController;
 
     public Lobby(int lobbyID, int maxPlayerNumber)
     {
@@ -49,5 +51,10 @@ public class Lobby {
 
     public int getMaxPlayerNumber() {
         return maxPlayerNumber;
+    }
+
+    public void startGame()
+    {
+
     }
 }

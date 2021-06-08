@@ -1,14 +1,19 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Observable;
+import it.polimi.ingsw.Observer;
+import it.polimi.ingsw.message.Message;
 import it.polimi.ingsw.model.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
-public class GameController {
+public class GameController extends Observable implements Observer {
 
     private Game game;
     final ArrayList<Player> players;
-    TurnController turnController;
+    //TurnController turnController;
     MarketExecutor marketExecutor;
     DiscardLeaderExecutor discardLeaderExecutor;
     ProductionExecutor productionExecutor;
@@ -17,62 +22,47 @@ public class GameController {
     /*
      */
 
-    //insert 4 leaders to chose and call turnController setupFirstRound
-    public void prepareFirstAction()
-    {
-        for(Player p : players) {
-                    p.addLeader(game.drawLeaderCard());
-                    p.addLeader(game.drawLeaderCard());
-                    p.addLeader(game.drawLeaderCard());
-                    p.addLeader(game.drawLeaderCard());
-        }
-        //notify
-    }
-
     public GameController(ArrayList<String> nicknames) {
         players = new ArrayList<>();
-        if (nicknames.size() < 4)
-            for (int i = 0; i < players.size(); i++)
-                players.add(new Player(nicknames.get(i)));
+        Collections.shuffle(nicknames);
+        for (String nick : nicknames)
+        {
+            players.add(new Player(nick));
+        }
         game = new Game(players);
-        if (nicknames.size() > 1)
+        /*if (nicknames.size() > 1)
             turnController = new MultiPlayerTurnController(this);
         else
-            turnController = new SinglePlayerTurnController();
+            turnController = new SinglePlayerTurnController();*/
         marketExecutor = new MarketExecutor(this);
         discardLeaderExecutor = new DiscardLeaderExecutor(this);
         productionExecutor = new ProductionExecutor(this);
     }
 
-    public Game getGame() {
-        return game;
+    @Override
+    public void update(Object message) {
+
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
+    public void decoder(Object message)
+    {
+
     }
 
-    public TurnController getTurnController() {
-        return turnController;
+    //insert 4 leaders to choose and call turnController setupFirstRound
+    public void prepareFirstAction()
+    {
+        for(Player p : players) {
+            p.addLeader(game.drawLeaderCard());
+            p.addLeader(game.drawLeaderCard());
+            p.addLeader(game.drawLeaderCard());
+            p.addLeader(game.drawLeaderCard());
+        }
+        //notify
     }
 
-    public MarketExecutor getMarketExecutor() {
-        return marketExecutor;
-    }
+    public void setupLeader(Player player, int id1, int id2)
+    {
 
-    public DiscardLeaderExecutor getDiscardLeaderExecutor() {
-        return discardLeaderExecutor;
-    }
-
-    public ProductionExecutor getProductionExecutor() {
-        return productionExecutor;
-    }
-
-    public PurchaseExecutor getPurchaseExecutor() {
-        return purchaseExecutor;
-    }
-
-    public UseLeaderExecutor getUseLeaderExecutor() {
-        return useLeaderExecutor;
     }
 }
