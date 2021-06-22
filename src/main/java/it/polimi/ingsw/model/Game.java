@@ -1,10 +1,12 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Message;
+import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.enumeration.*;
 
 import java.util.*;
 
-public class Game {
+public class Game extends Observable<Message> {
 
     //state
     private ArrayList<Player> playerList;
@@ -16,8 +18,7 @@ public class Game {
     private Player currentPlayer; //oggetto player che punta il player corrente a partire dal primo nella lista playerList
     private boolean[] popeSpace = {true, true, true}; // true indica che il favore papale è attivabile
     private int lorenzoLocation; //indica la posizione di Lorenzo sul percorso Fede
-    private boolean[] readyLeader;
-
+    private boolean readyLeader;
     //costruttore
     public Game(ArrayList<Player> p)
     {
@@ -55,6 +56,7 @@ public class Game {
         return playerList.get(id);
 
     }
+
     public Player getCurrentP ()
     {
         return currentPlayer;
@@ -481,7 +483,7 @@ public class Game {
         setPope(id);
     }
 
-    public void forwardOtherPlayers(int id, int box) //usato solo in multiplayer
+    public void forwardOtherPlayers(int id, int box) //usato solo in multiplayer, scarta risorse
     {
         int i;
         for (i = 0; i<playerList.size(); i++) {
@@ -576,7 +578,6 @@ public class Game {
         return freeMarble;
     }
 
-
     //genera e mescola il mazzo leader
     private void leaderDeckGenerator() {
         this.leaderDeck = new Stack<LeaderCard>();
@@ -626,5 +627,32 @@ public class Game {
             return  null;
         else
             return leaderDeck.pop();
+    }
+
+    public void sendErrorToCurrentPlayer(String text)
+    {
+        notify(new Message(getCurrentP().getNickname(),text));
+    }
+
+
+    public Player getPlayerByNick(String nickname)
+    {
+        for(Player p : playerList)
+        {
+            if (p.getNickname().equals(nickname))
+            {
+                return p;
+            }
+        }
+        return null;
+    }
+
+
+    public boolean isReadyLeader() {
+        return readyLeader;
+    }
+
+    public void setReadyLeader(boolean readyLeader) {
+        this.readyLeader = readyLeader;
     }
 }

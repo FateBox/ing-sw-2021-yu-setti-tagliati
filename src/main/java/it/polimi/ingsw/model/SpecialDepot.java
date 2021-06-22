@@ -2,43 +2,42 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.Resource;
 
-import java.util.Stack;
+import java.util.ArrayList;
 
 public class SpecialDepot {
-    public Resource getRes() {
-        return res;
-    }
+
 
     Resource res;
-    Stack<Resource> row;
+    ArrayList<Resource> row;
+
+    public ArrayList<Resource> getRow() {
+
+        return new ArrayList<>(row);
+    }
+
+    public void setRow(ArrayList<Resource> row) {
+        this.row = new ArrayList<>(row);
+    }
 
     public SpecialDepot(Resource resource)
     {
         res=resource;
-        row= new Stack<Resource>();
+        row= new ArrayList<Resource>();
     }
 
-    public void insertResource(Resource resource)
-    {
-        if (isInsertable(resource))
-            row.push(resource);
+    public Resource getRes() {
+        return res;
     }
-    public Resource removeResource() throws Exception
+
+    public void removeResource(int i)
     {
         if(isRemovable())
         {
-            row.pop();
-            return res;
+            row.remove(i);
         }
-        else
-            throw new Exception();
-    }
-    public boolean isInsertable(Resource resource)
-    {
-        return (resource==res && row.size() <2);
     }
 
-    public boolean isRemovable()
+    private boolean isRemovable()
     {
         return (row.size() > 0);
     }
@@ -47,4 +46,15 @@ public class SpecialDepot {
     {
         return row.size();
     }
+
+    public boolean isCorrect()
+    {
+        for(Resource r:row)
+        {
+            if (r!=res)
+                return false;
+        }
+        return true;
+    }
+
 }

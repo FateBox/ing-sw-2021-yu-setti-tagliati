@@ -24,10 +24,13 @@ public class Player {
     private ArrayList<DevSlot> devSlots;
     /** Leader properties **/
     // contains base slot and leader slots
-    private HashSet<Resource> developmentDiscounts;
+    private ArrayList<Resource> developmentDiscounts;
     private ArrayList<Resource> marketDiscounts;
     private ArrayList<SpecialDepot> specialDepots;
     private boolean didAction;
+    private boolean leaderPicked;
+    private ArrayList<Resource> gain;
+
     public void forwardFaithLocation(int box)
     {
         this.faithLocation += box;
@@ -176,18 +179,9 @@ public class Player {
     {
         leaderCards.add(l);
     }
-    public boolean removeLeader(LeaderCard l)
-    {
-        return
-                this.leaderCards.remove(l);
-    }
     public ArrayList<LeaderCard> getLeader()
     {
         return leaderCards;
-    }
-    public void useLeader (LeaderCard leaderCard)
-    {
-            leaderCard.use(this);
     }
     /** pope favor **/
     //
@@ -240,7 +234,7 @@ public class Player {
     public ArrayList<ArrayList<Resource>> getDepots() {
         return depots;
     }
-    public HashSet<Resource> getDevelopmentDiscounts() {
+    public ArrayList<Resource> getDevelopmentDiscounts() {
         return developmentDiscounts;
     }
     public ArrayList<Resource> getMarketDiscounts() {
@@ -249,7 +243,10 @@ public class Player {
     public Resource getSpecialDepot(int i) {
         return specialDepots.get(i).getRes();
     }
-
+    public ArrayList<DevSlot> getDevSlots()
+    {
+        return this.devSlots;
+    }
     /** various setters **/
     public void addDevelopmentDiscounts(Resource developmentDiscounts) {
         this.developmentDiscounts.add( developmentDiscounts );
@@ -267,9 +264,15 @@ public class Player {
         this.depots = new ArrayList<ArrayList<Resource>> (d);
     }
 
+    public void setSpecialDepots(ArrayList<SpecialDepot> specialDepots)
+    {
+        this.specialDepots=specialDepots;
+    }
 
     /** creator **/
     public Player(String nickname) {
+        this.leaderPicked=false;
+        this.didAction=false;
         this.nickname = nickname;
         this.faithLocation = 0;
         this.victoryPoints = 0;
@@ -290,7 +293,7 @@ public class Player {
         devSlots.add(new CardSlot());
         devSlots.add(new CardSlot());
         devSlots.add(new CardSlot());
-        this.developmentDiscounts = new HashSet<>();
+        this.developmentDiscounts = new ArrayList<>();
         this.marketDiscounts = new ArrayList<>();
         this.specialDepots = new ArrayList<SpecialDepot>();
     }
@@ -303,21 +306,46 @@ public class Player {
         InputResource.add(STONE);
         InputResource.add(SERVANT);
         InputResource.add(SHIELD);
-        int requiredQuantity,playerResource;
-        if (resList==null)
+        int requiredQuantity=0;
+        int playerResource=0;
+        if (resList.size()==0)
             return true;
+
         for(Resource r: InputResource)
         {
             requiredQuantity= Collections.frequency(resList,r);
 
             if(requiredQuantity!=0)
             {
-                playerResource=getQuantityDepot(r)+getQuantityStrongBox(r);
+                playerResource=getNumResource(r);
                 if(playerResource<requiredQuantity)
                     return false;
             }
         }
         return true;
+    }
+    public int getNumResource(Resource r)//return amount of specified resource that player has.
+    {
+        int playerResource=0;
+        for (SpecialDepot sd:specialDepots) {
+            if(sd.getRes().equals(r))
+            {
+                playerResource= sd.getQuantity();
+            }
+        }
+        return playerResource+getQuantityDepot(r)+getQuantityStrongBox(r);
+    }
+
+    public int getNumResourceDepot(Resource r)
+    {
+        int playerResource=0;
+        for (SpecialDepot sd:specialDepots) {
+            if(sd.getRes().equals(r))
+            {
+                playerResource= sd.getQuantity();
+            }
+        }
+        return playerResource+getQuantityDepot(r);
     }
 
     public boolean hasDevCard(Color color, int quantity)
@@ -346,8 +374,61 @@ public class Player {
         return result>=quantity;
     }
 
+    //given id of leaderCard, return true if such leader is present
+    public boolean hasLeader(int id)
+    {
+        for (LeaderCard c:leaderCards) {
+            if(c.getID()==id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isLeaderActive(int id)
+    {
+        for (LeaderCard c:leaderCards) {
+            if(c.getID()==id && c.isActive())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
+    public ArrayList<Resource> getGain() {
+        return gain;
+    }
 
+    public void setGain(ArrayList<Resource> gain) {
+        this.gain = gain;
+    }
 
- }
+    public LeaderCard getLeaderById(int id)
+    {
+        for(LeaderCard l: leaderCards)
+        {
+            if(l.getID()==id)
+                return l;
+        }
+        return null;
+    }
+
+    public boolean isLeaderPicked() {
+        return leaderPicked;
+    }
+
+    public void setLeaderPicked(boolean leaderPicked) {
+        this.leaderPicked = leaderPicked;
+    }
+
+    public boolean isDidAction() {
+        return didAction;
+    }
+
+    public void setDidAction(boolean didAction) {
+        this.didAction = didAction;
+    }
+}

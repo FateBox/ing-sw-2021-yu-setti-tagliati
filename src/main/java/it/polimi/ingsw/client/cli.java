@@ -2,6 +2,9 @@ package it.polimi.ingsw.client;
 
 import java.util.*;
 
+import it.polimi.ingsw.enumeration.Resource;
+import it.polimi.ingsw.model.DevCard;
+import it.polimi.ingsw.model.LeaderCard;
 public class cli extends view{
 
         /**state**/

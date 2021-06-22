@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.Message;
 import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Observer;
 import it.polimi.ingsw.enumeration.Resource;
-import it.polimi.ingsw.message.Message;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.Player;
 
@@ -12,14 +12,14 @@ import java.util.HashMap;
 
 //NON STAMPA NIENTE, CHIAMA CLI/GUI PER STAMPA
 //VIEW CONTROLLA INPUT, PREPARA MESSAGGIO (UTILIZZANDO STRUTTURE DATI) E NOTIFICA A CONNECTION DEL MESSAGGIO PREPARATO
-public class view extends Observable implements Observer {
+public class view extends Observable<Message> implements Observer<Message> {
     //strutture dati
     //logica
     private boolean cli;
     private cli c;
     //private gui g;
-    private String playerClient;
-    private Player currentPlayer;
+    private String nicknameClient;//nick of player of this client
+    private String currentPlayer; //nick of player in turn
     private ArrayList<LeaderCard> leaderCards;
     private HashMap<Resource,Integer> price;
 
@@ -100,8 +100,30 @@ public class view extends Observable implements Observer {
         }
 
     }
-    @Override
-    public void update(Object message) {
 
+    public void showError(String text)
+    {
+        //fai stampare errore da cli o gui.
+    }
+    @Override
+    public void update(Message message) {
+        switch (message.getType())
+        {
+            case UPDATE:
+            {
+                switch (message.getPlayerAction())
+                {
+                    case
+                }
+            }
+
+            case ERROR:
+            {
+                if (this.nicknameClient==message.getPlayerNick())
+                {
+                    showError(message.getText());
+                }
+            }
+        }
     }
 }

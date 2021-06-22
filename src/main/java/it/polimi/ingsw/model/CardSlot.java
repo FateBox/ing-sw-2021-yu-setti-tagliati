@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class CardSlot implements DevSlot {
+
+
     private Stack<DevCard> devCards;
     private ArrayList<Resource> inputResource;
     private ArrayList<Resource> outputResource;
@@ -87,5 +89,9 @@ public class CardSlot implements DevSlot {
     @Override
     public SlotType getType() {
         return type;
+    }
+
+    public Stack<DevCard> getDevCards() {
+        return devCards;
     }
 }

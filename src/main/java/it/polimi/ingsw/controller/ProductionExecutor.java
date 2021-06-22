@@ -1,15 +1,15 @@
 package it.polimi.ingsw.controller;
+import it.polimi.ingsw.model.Game;
 
-public class ProductionExecutor extends ActionExecutor {
+public class ProductionExecutor implements ActionExecutor {
 
     /**
      * informazioni richieste
-     * scelta di quali slot attivare
+     * scelta di quali slot attivare array di Integer
      * scelta di come pagare le risorse richieste
      * {
-     *     per lo base slot, se scelto deve sceglire quali risorse pagare e da quale deposito/strongbox prendere le risorse
-     *     per gli altri slot deve scegliere solo come pagare
-     * }dove inserire le risorse
+     *     per lo base slot, se scelto deve sceglire quali risorse pagare dal deposito
+     * }
      *
      * operazioni da eseguire
      * validare le scelte
@@ -21,9 +21,15 @@ public class ProductionExecutor extends ActionExecutor {
      *
      */
 
-    private GameController gameController;
-    public ProductionExecutor(GameController gameController) {
-        super(gameController);
+    private Game game;
+    public ProductionExecutor(Game game) {
+        this.game=game;
+    }
+
+    public boolean verifyData()
+    {
+
+        return true;
     }
 
     public void execute()

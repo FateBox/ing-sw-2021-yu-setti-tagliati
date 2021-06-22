@@ -13,7 +13,7 @@ public class LorenzoCard {
         this.color = Optional.ofNullable(color);
     }
 
-    public LorenzoType getAbilitytype() {
+    public LorenzoType getAbilityType() {
         return abilitytype;
     }
 

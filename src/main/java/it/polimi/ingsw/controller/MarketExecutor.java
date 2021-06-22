@@ -1,9 +1,12 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.enumeration.*;
-
+import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.model.SpecialDepot;
+import it.polimi.ingsw.Util;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  *
@@ -27,15 +30,16 @@ import java.util.Collections;
 
  **/
 
-public class MarketExecutor extends ActionExecutor {
+public class MarketExecutor implements ActionExecutor {
 
     private ArrayList<Resource> gain;
-
-    public MarketExecutor(GameController gameController) {
-        super(gameController);
+    private Game game;
+    public MarketExecutor(Game game) {
+        this.game=game;
+        gain=new ArrayList<>();
     }
 
-    public void choiseResource (int input) //l'input va da 0 a 6. Prende le risorse dal mercato e fa avanzare se è presente un segnalino fede
+    public void choiceResource(int input) //l'input va da 0 a 6. Prende le risorse dal mercato e fa avanzare se è presente un segnalino fede
     {
 
         if (input < 3) { //da 0 a 2
@@ -52,12 +56,12 @@ public class MarketExecutor extends ActionExecutor {
             if (r == Resource.FAITH)
             {
                 game.forwardPlayer(game.getIndexPlayer(game.getCurrentP()), 1);
+                gain.remove(r);
             }
         }
-
     }
 
-    public void automaticChange () //modifica automatica: non si hanno carte leader attive o se ne possiede una sola relativa al mercato
+    /*public void automaticChange () //modifica automatica: non si hanno carte leader attive o se ne possiede una sola relativa al mercato
     {
         if (game.getCurrentP().getMarketDiscounts().isEmpty())
         {
@@ -75,7 +79,7 @@ public class MarketExecutor extends ActionExecutor {
         game.modifyResources(r, gain);
     }
 
-    public void manualChange (int[] leaderInput) throws Exception //vengono usate entrambe le carte leader. ogni input è relativo ad una singola biglia bianca. 0 prima carta leader, 1 seconda carta leader
+    /*public void manualChange (int[] leaderInput) throws Exception //vengono usate entrambe le carte leader. ogni input è relativo ad una singola biglia bianca. 0 prima carta leader, 1 seconda carta leader
     {
         ArrayList<Resource> s = new ArrayList<Resource>(Collections.frequency(gain, Resource.WHITE));
         if (leaderInput.length == s.size()) {
@@ -88,13 +92,28 @@ public class MarketExecutor extends ActionExecutor {
         {
             throw new Exception ("The number of whites does not match");
         }
+    }*/
+    public void manualChange (ArrayList<Resource> list)
+    {
+        int i=0;
+        if(list.size()!=0)
+        {
+            for (Resource r:gain) {
+                if(r==Resource.WHITE)
+                {
+                    r=list.get(i);
+                    i++;
+                }
+            }
+        }
     }
+
 
     //conclusa prima fase. Unica modifica al model: Market
 
     //seconda fase. Inserimento risorse deposito. //questa parte avviene prevalentemente nel client. Il server si limita a verificare che sia corretta la versione finale
 
-    public void checkDepot (ArrayList<ArrayList<Resource>> depots, ArrayList<Resource> removed) throws Exception
+    /*public void checkDepot (ArrayList<ArrayList<Resource>> depots, ArrayList<Resource> removed) throws Exception
     {
 
         //controllo correttezza
@@ -120,7 +139,42 @@ public class MarketExecutor extends ActionExecutor {
         {
             game.getCurrentP().setDepots(depots); //il deposito inviato al server viene copiato nel deposito del model
         }
+    }*/
 
+    public boolean checkDepot (ArrayList<ArrayList<Resource>> depots, ArrayList<SpecialDepot> specialDepots)
+    {
+        for(ArrayList<Resource> row:depots) {
+            if (!Util.isDepotCorrect(depots)) {
+                return false;
+            }
+        }
+        for (SpecialDepot s:specialDepots)
+        {
+            if(!s.isCorrect())
+                return false;
+        }
+        return true;
+    }
 
+    public boolean checkNumResource(HashMap<Resource,Integer> clientCount)//make sure player didn't send a depot that is not his.
+    {
+        //count each resource from player's gain and depot+leaderDepot server side then compare them to client side
+        for (Resource r: clientCount.keySet()) {
+            if((game.getCurrentP().getNumResourceDepot(r)+Collections.frequency(game.getCurrentP().getGain(),r))!=clientCount.get(r))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkResArray(ArrayList<Resource> discount)//make sure that every thing inside given array is contained by player.marketDiscount
+    {
+        for(Resource res: discount)
+        {
+            if (!game.getCurrentP().getMarketDiscounts().contains(res))
+                return false;
+        }
+        return true;
     }
 }

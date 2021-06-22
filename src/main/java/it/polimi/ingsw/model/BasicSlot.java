@@ -6,8 +6,6 @@ import it.polimi.ingsw.enumeration.SlotType;
 import java.util.ArrayList;
 
 public class BasicSlot implements DevSlot {
-    private final int numOfAnyInput;
-    private final int numOfAnyOutput;
     private ArrayList<Resource> inputResource;
     private ArrayList<Resource> outputResource;
     private SlotType type;
@@ -15,18 +13,8 @@ public class BasicSlot implements DevSlot {
     public BasicSlot()
     {
         type=SlotType.BASIC;
-        numOfAnyInput=2;
-        numOfAnyOutput=1;
         inputResource=new ArrayList<>();
         outputResource=new ArrayList<>();
-    }
-
-    public int getNumOfAnyInput() {
-        return numOfAnyInput;
-    }
-
-    public int getNumOfAnyOutput() {
-        return numOfAnyOutput;
     }
 
     @Override

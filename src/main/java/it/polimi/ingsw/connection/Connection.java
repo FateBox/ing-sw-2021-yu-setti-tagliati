@@ -1,14 +1,15 @@
 package it.polimi.ingsw.connection;
 
 import it.polimi.ingsw.Observable;
-import it.polimi.ingsw.message.Message;
+import it.polimi.ingsw.Message;
+import it.polimi.ingsw.Observer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Connection extends Observable<Message> implements Runnable{
+public class Connection extends Observable<Message> implements Runnable, Observer<Message> {
 
     private Socket socket;
     private ObjectOutputStream objOut;
@@ -66,10 +67,8 @@ public class Connection extends Observable<Message> implements Runnable{
 
     public synchronized void closeConnection() {
         try{
-            String nick=nickname;
-            String opcode="0";
             String text="connection closed";
-            asyncSendMessage(new Message(nick,opcode,text));
+            asyncSendMessage(new Message(text));
             socket.close();
         }catch (IOException e){
             System.err.println(e.getMessage());
@@ -145,6 +144,11 @@ public class Connection extends Observable<Message> implements Runnable{
     }
 
 
-
-
+    @Override
+    public void update(Message message) {
+        if(message.isBroadCast() || message.getPlayerNick().equals(nickname))
+        {
+            sendMessage(message);
+        }
+    }
 }

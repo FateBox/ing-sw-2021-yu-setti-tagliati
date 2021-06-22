@@ -3,7 +3,9 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.enumeration.MessageType;
 import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
+import it.polimi.ingsw.model.SpecialDepot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Message {
@@ -13,8 +15,15 @@ public class Message {
     private PlayerAction playerAction;
     private String text;
     private HashMap<Resource,Integer> payment;
-    private int idLeader;
-
+    private int idLeader1;
+    private int idLeader2;
+    private int rowCol;
+    private int devCardId;
+    private int slotToInsert;
+    private int
+    private ArrayList<Resource> resources;
+    private ArrayList<ArrayList<Resource>> depot;
+    private ArrayList<SpecialDepot> specialDepots;
     //error message
     public Message(String playerNick,String text)
     {
@@ -65,11 +74,59 @@ public class Message {
         this.playerAction = playerAction;
     }
 
-    public int getIdLeader() {
-        return idLeader;
+    public int getRowCol() {
+        return rowCol;
     }
 
-    public void setIdLeader(int idLeader) {
-        this.idLeader = idLeader;
+    public void setRowCol(int rowcol) {
+        this.rowCol = rowcol;
+    }
+
+    public ArrayList<Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(ArrayList<Resource> resources) {
+        this.resources = resources;
+    }
+
+    public ArrayList<ArrayList<Resource>> getDepot() {
+        return depot;
+    }
+
+    public void setDepot(ArrayList<ArrayList<Resource>> depot) {
+        this.depot = depot;
+    }
+
+    public ArrayList<SpecialDepot> getSpecialDepots() {
+        return specialDepots;
+    }
+
+    public void setSpecialDepots(ArrayList<SpecialDepot> specialDepots) {
+        this.specialDepots = specialDepots;
+    }
+
+    public boolean isBroadCast() {
+        return broadCast;
+    }
+
+    public void setBroadCast(boolean broadCast) {
+        this.broadCast = broadCast;
+    }
+
+    public int getIdLeader1() {
+        return idLeader1;
+    }
+
+    public void setIdLeader1(int idLeader1) {
+        this.idLeader1 = idLeader1;
+    }
+
+    public int getIdLeader2() {
+        return idLeader2;
+    }
+
+    public void setIdLeader2(int idLeader2) {
+        this.idLeader2 = idLeader2;
     }
 }
