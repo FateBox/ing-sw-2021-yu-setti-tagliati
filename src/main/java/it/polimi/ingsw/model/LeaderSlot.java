@@ -13,10 +13,10 @@ public class LeaderSlot implements DevSlot{
     public LeaderSlot(Resource resource)
     {
         this.type=SlotType.LEADER;
-        inputResource=new ArrayList<>();
-        outputResource=new ArrayList<>();
-        inputResource.add(resource);
-        outputResource.add(Resource.FAITH);
+        inputResource=new ArrayList<>(1);
+        outputResource=new ArrayList<>(2);
+        inputResource.add(0, resource);
+        outputResource.add(0, Resource.FAITH);
     }
     @Override
     public SlotType getType() {
@@ -28,19 +28,14 @@ public class LeaderSlot implements DevSlot{
         return this.inputResource;
     }
 
-    public void setInputResource(ArrayList<Resource> inputResource)
-    {
-        this.inputResource=inputResource;
-    }
     @Override
     public ArrayList<Resource> getOutputResource()
     {
         return  this.outputResource;
     }
 
-    public void setOutputResource(ArrayList<Resource> outputResource)
+    public void addOutputResource(Resource r)
     {
-        this.outputResource=outputResource;
+        this.outputResource.add(1,r);
     }
-
 }

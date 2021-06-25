@@ -34,6 +34,9 @@ public class Player {
     public void forwardFaithLocation(int box)
     {
         this.faithLocation += box;
+        if (faithLocation > 24) {
+            faithLocation = 24;
+        }
     }
 
     public int getFaithLocation()
@@ -356,6 +359,7 @@ public class Player {
             if(devSlot.getType()==SlotType.CARD)
             {
                 result+=((CardSlot) devSlot).getQuantityDevCard(color);
+                result+=((CardSlot) devSlot).getQuantityDevCard(color);
             }
         }
         return result>=quantity;
@@ -368,7 +372,7 @@ public class Player {
         {
             if(devSlot.getType()==SlotType.CARD)
             {
-                result+=((CardSlot) devSlot).getQuantityDevCard(color);
+                result+=((CardSlot) devSlot).getQuantityDevCard(color, level);
             }
         }
         return result>=quantity;

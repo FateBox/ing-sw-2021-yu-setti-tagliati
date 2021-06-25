@@ -13,8 +13,16 @@ public class BasicSlot implements DevSlot {
     public BasicSlot()
     {
         type=SlotType.BASIC;
-        inputResource=new ArrayList<>();
-        outputResource=new ArrayList<>();
+        inputResource=new ArrayList<>(2);
+        outputResource=new ArrayList<>(1);
+    }
+
+    public void addInputResource(int i, Resource r) {
+        this.inputResource.add(i, r);
+    }
+
+    public void addOutputResource(Resource r) {
+        this.outputResource.add(0,r);
     }
 
     @Override
