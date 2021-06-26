@@ -8,5 +8,6 @@ public enum PlayerAction {
     CHOOSE_LEADER,
     USE_LEADER,
     DISCARD_LEADER,
-    END_TURN;
+    END_TURN,
+    END_ACTION;
 }

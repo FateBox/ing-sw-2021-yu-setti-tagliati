@@ -3,6 +3,9 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.enumeration.MessageType;
 import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
+import it.polimi.ingsw.model.DevCard;
+import it.polimi.ingsw.model.DevSlot;
+import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.SpecialDepot;
 
 import java.util.ArrayList;
@@ -14,31 +17,41 @@ public class Message {
     private MessageType type;
     private PlayerAction playerAction;
     private String text;
-    private HashMap<Resource,Integer> payment;
+    private HashMap<Resource,Integer> paymentDepot;
+    private HashMap<Resource,Integer> paymentLeader;
     private int idLeader1;
     private int idLeader2;
     private int rowCol;
-    private int devCardId;
     private int slotToInsert;
-    private int
     private ArrayList<Resource> resources;
+
+    //update section
+    //init
+    private ArrayList<String> playerNickList;
+    private ArrayList<DevCard> devDeck;
+    private ArrayList<LeaderCard> leaderDeck;
+    //faith track;
+    private ArrayList<Integer> faithTrack;
+    //market
     private ArrayList<ArrayList<Resource>> depot;
     private ArrayList<SpecialDepot> specialDepots;
-    //error message
-    public Message(String playerNick,String text)
-    {
-        this.type=MessageType.ERROR;
-        this.broadCast=false;
-        this.text=text;
-    }
-    //Broadcast error message
-    public Message(String text)
-    {
-        this.type=MessageType.ERROR;
-        this.broadCast=true;
-        this.text=text;
-    }
+    private Resource[][] market;
+    private Resource freeMarble;
+    //purchase
+    private ArrayList<DevSlot> devSlots;
+    private int devCardId;
+    //production
+    private ArrayList<Integer> productionSlots;
+    private ArrayList<Resource> extraInput;
+    private ArrayList<Resource> extraOutput;
+    //
 
+
+
+    //turn indication
+    private String currentPlayer;
+
+    //error message
 
 
     public String getPlayerNick() {
@@ -128,5 +141,126 @@ public class Message {
 
     public void setIdLeader2(int idLeader2) {
         this.idLeader2 = idLeader2;
+    }
+
+    public int getDevCardId() {
+        return devCardId;
+    }
+
+    public void setDevCardId(int devCardId) {
+        this.devCardId = devCardId;
+    }
+
+    public ArrayList<DevSlot> getDevSlots() {
+        return devSlots;
+    }
+
+    public void setDevSlots(ArrayList<DevSlot> devSlots) {
+        this.devSlots = devSlots;
+    }
+
+    public Resource getFreeMarble() {
+        return freeMarble;
+    }
+
+    public void setFreeMarble(Resource freeMarble) {
+        this.freeMarble = freeMarble;
+    }
+
+    public Resource[][] getMarket() {
+        return market;
+    }
+
+    public void setMarket(Resource[][] market) {
+        this.market = market;
+    }
+
+    public ArrayList<Integer> getFaithTrack() {
+        return faithTrack;
+    }
+
+    public void setFaithTrack(ArrayList<Integer> faithTrack) {
+        this.faithTrack = faithTrack;
+    }
+
+    public ArrayList<LeaderCard> getLeaderDeck() {
+        return leaderDeck;
+    }
+
+    public void setLeaderDeck(ArrayList<LeaderCard> leaderDeck) {
+        this.leaderDeck = leaderDeck;
+    }
+
+    public ArrayList<DevCard> getDevDeck() {
+        return devDeck;
+    }
+
+    public void setDevDeck(ArrayList<DevCard> devDeck) {
+        this.devDeck = devDeck;
+    }
+
+    public ArrayList<String> getPlayerNickList() {
+        return playerNickList;
+    }
+
+    public void setPlayerNickList(ArrayList<String> playerNickList) {
+        this.playerNickList = playerNickList;
+    }
+
+
+    public int getSlotToInsert() {
+        return slotToInsert;
+    }
+
+    public void setSlotToInsert(int slotToInsert) {
+        this.slotToInsert = slotToInsert;
+    }
+
+    public HashMap<Resource, Integer> getPaymentDepot() {
+        return paymentDepot;
+    }
+
+    public void setPaymentDepot(HashMap<Resource, Integer> paymentDepot) {
+        this.paymentDepot = paymentDepot;
+    }
+
+    public HashMap<Resource, Integer> getPaymentLeader() {
+        return paymentLeader;
+    }
+
+    public void setPaymentLeader(HashMap<Resource, Integer> paymentLeader) {
+        this.paymentLeader = paymentLeader;
+    }
+
+    public ArrayList<Resource> getExtraInput() {
+        return extraInput;
+    }
+
+    public void setExtraInput(ArrayList<Resource> extraInput) {
+        this.extraInput = extraInput;
+    }
+
+    public ArrayList<Resource> getExtraOutput() {
+        return extraOutput;
+    }
+
+    public void setExtraOutput(ArrayList<Resource> extraOutput) {
+        this.extraOutput = extraOutput;
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public ArrayList<Integer> getProductionSlots() {
+        return productionSlots;
+    }
+
+    public void setProductionSlots(ArrayList<Integer> productionSlots) {
+        this.productionSlots = productionSlots;
     }
 }

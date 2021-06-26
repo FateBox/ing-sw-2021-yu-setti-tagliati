@@ -3,6 +3,7 @@ package it.polimi.ingsw.connection;
 import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Message;
 import it.polimi.ingsw.Observer;
+import it.polimi.ingsw.enumeration.MessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -68,7 +69,7 @@ public class Connection extends Observable<Message> implements Runnable, Observe
     public synchronized void closeConnection() {
         try{
             String text="connection closed";
-            asyncSendMessage(new Message(text));
+            asyncSendMessage(new Message(nickname,text));
             socket.close();
         }catch (IOException e){
             System.err.println(e.getMessage());

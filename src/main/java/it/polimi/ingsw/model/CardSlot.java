@@ -23,6 +23,7 @@ public class CardSlot implements DevSlot {
 
     public CardSlot()
     {
+        devCards=new Stack<>();
         inputResource=new ArrayList<>();
         outputResource=new ArrayList<>();
         type=SlotType.CARD;

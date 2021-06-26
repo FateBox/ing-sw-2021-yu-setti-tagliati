@@ -3,6 +3,7 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.enumeration.Resource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Util {
 
@@ -33,6 +34,16 @@ public class Util {
 
 
         return true;
+    }
+
+    public static HashMap<Resource,Integer> createEmptyPaymentHash()
+    {
+        HashMap<Resource,Integer> temp=new HashMap<>();
+        temp.put(Resource.COIN,0);
+        temp.put(Resource.SERVANT,0);
+        temp.put(Resource.SHIELD,0);
+        temp.put(Resource.STONE,0);
+        return temp;
     }
 
 }

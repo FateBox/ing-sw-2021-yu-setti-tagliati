@@ -38,6 +38,7 @@ public class UseLeaderExecutor {
         if(leaderCard.isPlayable(game.getCurrentP()))
         {
             use(leaderID);
+            game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" activated one of his leader card");
         }
         else{
             game.sendErrorToCurrentPlayer("This leader is not playable! Requirement's are not met.");

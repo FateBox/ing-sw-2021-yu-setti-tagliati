@@ -33,10 +33,10 @@ public class GameController extends Observable<Message> implements Observer<Mess
         }
         game = new Game(players);
         if (nicknames.size() > 1) {
-            turnController = new MpTurnController();
+            turnController = new MpTurnController(game);
         }
         else{
-            turnController = new SpTurnController();
+            turnController = new SpTurnController(game);
         }
         marketExecutor = new MarketExecutor(game);
         purchaseExecutor=new PurchaseExecutor(game);
@@ -94,6 +94,7 @@ public class GameController extends Observable<Message> implements Observer<Mess
                             break;
                         }
                         game.getCurrentP().setDepots(message.getDepot());
+                        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" ");
                         game.getCurrentP().setSpecialDepots(message.getSpecialDepots());
                         game.forwardOtherPlayers(game.getIndexPlayer(game.getCurrentP()), message.getResources().size());
                         game.getCurrentP().setDidAction(true);
@@ -106,9 +107,9 @@ public class GameController extends Observable<Message> implements Observer<Mess
                             game.sendErrorToCurrentPlayer("You already played an action!");
                             break;
                         }
-                        if(purchaseExecutor.verifyData())
+                        if(purchaseExecutor.verifyData(message.getDevCardId(), message.getSlotToInsert(), message.getPaymentDepot(), message.getPaymentLeader(), message.getResources()))
                         {
-                            purchaseExecutor.execute();
+                            purchaseExecutor.execute(message.getSlotToInsert(), message.getPaymentDepot(), message.getPaymentLeader(), message.getResources());
                             game.getCurrentP().setDidAction(true);
                         }
                         break;
@@ -122,7 +123,7 @@ public class GameController extends Observable<Message> implements Observer<Mess
                         }
                         if(productionExecutor.verifyData())
                         {
-                            productionExecutor.execute();
+                            productionExecutor.execute(message.getProductionSlots(), message.getPaymentDepot(), message.getPaymentLeader(), message.getExtraOutput());
                             game.getCurrentP().setDidAction(true);
                         }
                         break;
@@ -157,10 +158,6 @@ public class GameController extends Observable<Message> implements Observer<Mess
                             game.sendErrorToCurrentPlayer("You have to play an action before ending this turn!");
                             break;
                         }
-                        if(turnController.isGameOver())
-                        {
-                            //end game announcement and set ""
-                        }
                         game.getCurrentP().setDidAction(false);
                         turnController.nextTurn();
                         break;
@@ -181,7 +178,7 @@ public class GameController extends Observable<Message> implements Observer<Mess
 
             }
             else{
-                notify(new Message(message.getPlayerNick(),"Error in leader choosing stage"));
+                game.sendErrorToCurrentPlayer("Error in leader choosing stage");
             }
         }
     }

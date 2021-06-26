@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class LorenzoCard {
     private final LorenzoType abilitytype;
-    private final Optional<Color> color;
+    private  Optional<Color> color;
 
     public LorenzoCard(LorenzoType abilitytype, Color color) {
         this.abilitytype = abilitytype;

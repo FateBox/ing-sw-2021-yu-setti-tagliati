@@ -8,6 +8,8 @@ import java.util.*;
 
 public class Game extends Observable<Message> {
 
+
+
     //state
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
@@ -57,6 +59,9 @@ public class Game extends Observable<Message> {
 
     }
 
+    public ArrayList<Player> getPlayerList() {
+        return playerList;
+    }
     public Player getCurrentP ()
     {
         return currentPlayer;
@@ -522,7 +527,7 @@ public class Game extends Observable<Message> {
         int[] r = new int[playerList.size()];
         for (int i = 0; i<playerList.size(); i++)
         {
-            r[i] = playerList.get(i).VP();
+            r[i] = playerList.get(i).vp();
         }
         return r;
     }
@@ -629,11 +634,6 @@ public class Game extends Observable<Message> {
             return leaderDeck.pop();
     }
 
-    public void sendErrorToCurrentPlayer(String text)
-    {
-        notify(new Message(getCurrentP().getNickname(),text));
-    }
-
 
     public Player getPlayerByNick(String nickname)
     {
@@ -654,5 +654,55 @@ public class Game extends Observable<Message> {
 
     public void setReadyLeader(boolean readyLeader) {
         this.readyLeader = readyLeader;
+    }
+
+
+    //Message section
+    public void sendErrorToCurrentPlayer(String text)
+    {
+        Message m=new Message();
+        m.setType(MessageType.ERROR);
+        m.setText(text);
+        m.setBroadCast(false);
+        m.setPlayerNick(getCurrentP().getNickname());
+        notify(m);
+    }
+
+    public void sendLorenzoAnnouncement(String text)
+    {
+        Message m=new Message();
+        m.setType(MessageType.LORENZO);
+        m.setText(text);
+        m.setBroadCast(true);
+        notify(m);
+    }
+
+    public void sendEndAction()
+    {
+        Message m=new Message();
+        m.setType(MessageType.ACTION);
+        m.setPlayerAction(PlayerAction.END_ACTION);
+        m.setBroadCast(true);
+        notify(m);
+    }
+    public void sendEndTurn()
+    {
+        Message m=new Message();
+        m.setType(MessageType.ACTION);
+        m.setPlayerAction(PlayerAction.END_TURN);
+        m.setCurrentPlayer(getCurrentP().getNickname());
+        m.setBroadCast(true);
+        notify(m);
+    }
+
+    public boolean isGameOver()//return true if player has more than 7 devCard or he reached end of faith track
+    {
+        for(Player p:playerList)
+        {
+            if(p.getDevCardCount()>=7 || p.getFaithLocation()==24)
+                return true;
+
+        }
+        return false;
     }
 }

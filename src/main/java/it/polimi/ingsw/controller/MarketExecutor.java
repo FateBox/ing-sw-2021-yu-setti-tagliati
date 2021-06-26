@@ -59,40 +59,16 @@ public class MarketExecutor implements ActionExecutor {
                 gain.remove(r);
             }
         }
+        if(input<3)
+        {
+            game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " chose row "+ input);
+        }else {
+            game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " chose column "+ (input-3));
+        }
+        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " chose ");
+        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" forward by 1 box :" + game.getCurrentP().getFaithLocation()+"/24");
     }
 
-    /*public void automaticChange () //modifica automatica: non si hanno carte leader attive o se ne possiede una sola relativa al mercato
-    {
-        if (game.getCurrentP().getMarketDiscounts().isEmpty())
-        {
-            game.modifyResources(Resource.WHITE, gain);
-        }
-        else
-        {
-            game.modifyResources(game.getCurrentP().getMarketDiscounts().get(0), gain);
-        }
-    }
-
-    public void semiAutomaticChange (int leaderInput) //il giocatore comunica solo quale delle 2 carte leader mercato usare, la modifica è automatica per tutti i bianchi
-    {
-        Resource r = game.getCurrentP().getMarketDiscounts().get(leaderInput);
-        game.modifyResources(r, gain);
-    }
-
-    /*public void manualChange (int[] leaderInput) throws Exception //vengono usate entrambe le carte leader. ogni input è relativo ad una singola biglia bianca. 0 prima carta leader, 1 seconda carta leader
-    {
-        ArrayList<Resource> s = new ArrayList<Resource>(Collections.frequency(gain, Resource.WHITE));
-        if (leaderInput.length == s.size()) {
-            for (int i = 0; i < leaderInput.length; i++) {
-                s.add(game.getCurrentP().getMarketDiscounts().get(leaderInput[i]));
-            }
-            game.leadersResources(s, gain);
-        }
-        else //questo errore in realtà non si dovrebbe verificare, poiché fa parte del controllo dell'input da parte del client
-        {
-            throw new Exception ("The number of whites does not match");
-        }
-    }*/
     public void manualChange (ArrayList<Resource> list)
     {
         int i=0;
@@ -105,6 +81,7 @@ public class MarketExecutor implements ActionExecutor {
                     i++;
                 }
             }
+            game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " used leader ability.");
         }
     }
 
@@ -165,6 +142,7 @@ public class MarketExecutor implements ActionExecutor {
                 return false;
             }
         }
+
         return true;
     }
 

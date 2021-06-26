@@ -13,6 +13,7 @@ public class Player {
     private int victoryPoints;
     private ArrayList<LeaderCard> leaderCards;
     private boolean[] popeFavor;
+    private int devCardCount;
     /**Resource space**/
     //Array containing number of each resources ordered by: COIN, SERVANT,SHIELD, STONE.
     private HashMap<Resource,Integer> strongBox;
@@ -38,13 +39,21 @@ public class Player {
             faithLocation = 24;
         }
     }
+    public void addDevCard()
+    {
+        this.devCardCount++;
+    }
 
+    public int getDevCardCount()
+    {
+        return devCardCount;
+    }
     public int getFaithLocation()
     {
         return this.faithLocation;
     }
 
-    public int VP()
+    public int vp()
     {
         int i;
         int r = 0;
@@ -151,22 +160,15 @@ public class Player {
     /** strongbox **/
     // Requires a storable resource
     // Remove and return resource removed, throw Exception if there's no resource of that type in strongbox
-    public void drawStrongBox(Resource r) throws Exception
+    public void drawStrongBox(Resource r,int num)
     {
-        if(r==WHITE || r==FAITH)
-            throw new Exception("Wrong input");
-        if(strongBox.get(r)<=0)
-            throw new Exception("Resource not present");
-        strongBox.put(r,strongBox.get(r)-1);
+        strongBox.put(r,strongBox.get(r)-num);
     }
 
     // Requires a storable resource or throw exception
     // Insert selected resource in strongbox
-    public void insertStrongBox(Resource r) throws Exception
+    public void insertStrongBox(Resource r)
     {
-        if(r==WHITE || r==FAITH)
-            throw new Exception();
-        else
             strongBox.put(r,strongBox.get(r)+1);
     }
 
@@ -243,8 +245,9 @@ public class Player {
     public ArrayList<Resource> getMarketDiscounts() {
         return marketDiscounts;
     }
-    public Resource getSpecialDepot(int i) {
-        return specialDepots.get(i).getRes();
+    public ArrayList<SpecialDepot> getSpecialDepots()
+    {
+        return this.specialDepots;
     }
     public ArrayList<DevSlot> getDevSlots()
     {
@@ -265,6 +268,7 @@ public class Player {
     public void setDepots (ArrayList<ArrayList<Resource>> d)
     {
         this.depots = new ArrayList<ArrayList<Resource>> (d);
+
     }
 
     public void setSpecialDepots(ArrayList<SpecialDepot> specialDepots)
@@ -277,6 +281,7 @@ public class Player {
         this.leaderPicked=false;
         this.didAction=false;
         this.nickname = nickname;
+        this.devCardCount=0;
         this.faithLocation = 0;
         this.victoryPoints = 0;
         this.leaderCards = new ArrayList<LeaderCard>();
@@ -327,6 +332,14 @@ public class Player {
         }
         return true;
     }
+
+    /*public boolean ownsResources(HashMap<Resource,Integer> payment)
+    {
+        for (Resource resource: payment.keySet())
+        {
+            if(!(payment.get(resource)>=getNumResourceDepot(resource)))
+        }
+    }*/
     public int getNumResource(Resource r)//return amount of specified resource that player has.
     {
         int playerResource=0;
@@ -359,7 +372,7 @@ public class Player {
             if(devSlot.getType()==SlotType.CARD)
             {
                 result+=((CardSlot) devSlot).getQuantityDevCard(color);
-                result+=((CardSlot) devSlot).getQuantityDevCard(color);
+                //result+=((CardSlot) devSlot).getQuantityDevCard(color,level);
             }
         }
         return result>=quantity;
@@ -434,5 +447,38 @@ public class Player {
 
     public void setDidAction(boolean didAction) {
         this.didAction = didAction;
+    }
+
+    public void drawResourceHash(HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader)
+    {
+        //draw resource from Depot
+        for(Resource r:paymentDepot.keySet())
+        {
+            for(ArrayList<Resource> row: getDepots())
+            {
+                if(row.get(0).equals(r))
+                {
+                    for (int i=0;i<paymentDepot.get(r);i++)
+                    {
+                        row.remove(row.lastIndexOf(r));
+                    }
+                }
+
+            }
+        }
+        //draw resource from Leader Depot
+        for (Resource r:paymentLeader.keySet())
+        {
+            for (SpecialDepot sp: getSpecialDepots())
+            {
+                if (sp.getRes().equals(r))
+                {
+                    for(int i=0;i<paymentLeader.get(r);i++)
+                    {
+                        sp.removeResource(sp.getRow().lastIndexOf(r));
+                    }
+                }
+            }
+        }
     }
 }
