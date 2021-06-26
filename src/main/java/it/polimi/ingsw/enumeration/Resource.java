@@ -6,6 +6,5 @@ public enum Resource {
     SHIELD,
     STONE,
     FAITH,
-    WHITE,
-    ANY
+    WHITE;
 }

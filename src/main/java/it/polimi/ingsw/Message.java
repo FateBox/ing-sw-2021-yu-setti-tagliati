@@ -26,6 +26,8 @@ public class Message {
     private ArrayList<Resource> resources;
 
     //update section
+
+
     //init
     private ArrayList<String> playerNickList;
     private ArrayList<DevCard> devDeck;
@@ -44,14 +46,12 @@ public class Message {
     private ArrayList<Integer> productionSlots;
     private ArrayList<Resource> extraInput;
     private ArrayList<Resource> extraOutput;
-    //
-
-
-
+    //ranking
+    private ArrayList<Integer> ranking;
     //turn indication
     private String currentPlayer;
 
-    //error message
+
 
 
     public String getPlayerNick() {
@@ -262,5 +262,13 @@ public class Message {
 
     public void setProductionSlots(ArrayList<Integer> productionSlots) {
         this.productionSlots = productionSlots;
+    }
+
+    public ArrayList<Integer> getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(ArrayList<Integer> ranking) {
+        this.ranking = ranking;
     }
 }

@@ -175,6 +175,7 @@ public class GameController extends Observable<Message> implements Observer<Mess
         {
             if(message.getPlayerAction().equals(PlayerAction.CHOOSE_LEADER))
             {
+                setupLeader(message.getPlayerNick(), message.getIdLeader1(), message.getIdLeader2());
 
             }
             else{
@@ -203,7 +204,7 @@ public class GameController extends Observable<Message> implements Observer<Mess
     }
 
     //insert 4 leaders to choose and call turnController setupFirstRound
-    public void prepare4Leader()
+    private void prepare4Leader()
     {
         for(Player p : players) {
             p.addLeader(game.drawLeaderCard());
@@ -215,10 +216,10 @@ public class GameController extends Observable<Message> implements Observer<Mess
 
     }
 
-    public void setupLeader(String nickname, int id1, int id2)
+    private void setupLeader(String nickname, int id1, int id2)
     {
         Player player= game.getPlayerByNick(nickname);
-        player.getLeader().removeIf(lc -> (lc.getID()!=id1 || lc.getID()!=id2));
+        player.getLeader().removeIf(lc -> (lc.getID()!=id1 && lc.getID()!=id2));
     }
 
     private boolean checkChosenLeader(String nickname, int id1,int id2)
@@ -234,6 +235,30 @@ public class GameController extends Observable<Message> implements Observer<Mess
 
         return true;
     }
+    public void start()
+    {
+        prepare4Leader();
+    }
+    private void setupResource(String playerNick,ArrayList<Resource> resources)// given playerNickname, add resource to the depot
+    {
+        if(resources.size()!=0)
+        {
+            ArrayList<ArrayList<Resource>> depot=game.getPlayerByNick(playerNick).getDepots();
+            if(resources.size()==1)//
+            {
+                depot.get(0).add(resources.get(0));
+            }
+            else if(resources.size()==2 && resources.get(0)==resources.get(1))// if both resource are the same, add them to the second row
+            {
+                depot.get(1).add(resources.get(0));
+                depot.get(1).add(resources.get(1));
+            }
+            else// if resource 1 and 2 are different, add one to first row and one to second row.
+            {
+                depot.get(0).add(resources.get(0));
+                depot.get(1).add(resources.get(1));
+            }
+        }
 
-
+    }
 }

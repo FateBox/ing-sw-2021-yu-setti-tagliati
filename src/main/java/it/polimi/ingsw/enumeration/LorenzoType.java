@@ -4,6 +4,4 @@ public enum LorenzoType {
     DISCARD,
     MOVE,
     SHUFFLE
-
-
 }

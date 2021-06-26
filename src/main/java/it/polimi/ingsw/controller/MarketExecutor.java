@@ -117,7 +117,7 @@ public class MarketExecutor implements ActionExecutor {
             game.getCurrentP().setDepots(depots); //il deposito inviato al server viene copiato nel deposito del model
         }
     }*/
-
+    //market 2
     public boolean checkDepot (ArrayList<ArrayList<Resource>> depots, ArrayList<SpecialDepot> specialDepots)
     {
         for(ArrayList<Resource> row:depots) {

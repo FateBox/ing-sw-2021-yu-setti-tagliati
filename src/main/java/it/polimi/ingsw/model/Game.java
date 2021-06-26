@@ -14,6 +14,7 @@ public class Game extends Observable<Message> {
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
     private ArrayList<ActionLorenzo> lorenzoDeck;
+    private int lorenzoCount;
     private Stack<LeaderCard> leaderDeck;
     private Resource[][] market;
     private Resource freeMarble;
@@ -21,11 +22,13 @@ public class Game extends Observable<Message> {
     private boolean[] popeSpace = {true, true, true}; // true indica che il favore papale è attivabile
     private int lorenzoLocation; //indica la posizione di Lorenzo sul percorso Fede
     private boolean readyLeader;
+    private boolean lastRound;
     //costruttore
     public Game(ArrayList<Player> p)
     {
         this.playerList = new ArrayList<Player>(p); //la classe che crea i giocatori passa poi la lista (senza Lorenzo) all'oggetto game
         currentPlayer = playerList.get(0);
+        lastRound=false;
         marketGenerator();
         leaderDeckGenerator();
         faithTrackGenerator();
@@ -695,14 +698,32 @@ public class Game extends Observable<Message> {
         notify(m);
     }
 
-    public boolean isGameOver()//return true if player has more than 7 devCard or he reached end of faith track
+    public void sendRanking(ArrayList<Integer> ranking)
     {
-        for(Player p:playerList)
-        {
-            if(p.getDevCardCount()>=7 || p.getFaithLocation()==24)
-                return true;
+        Message m=new Message();
+        m.setRanking(ranking);
+        m.setType(MessageType.UPDATE);
+        m.setBroadCast(true);
+        notify(m);
+    }
 
+    public boolean isGameOverMultiplayer()//return true if player has more than 7 devCard or he reached end of faith track
+    {
+        for (Player p:playerList)
+        {
+            if(p.getFaithLocation()==24 || p.getDevCardCount()>=7)
+            {
+                return true;
+            }
         }
         return false;
+    }
+
+    public boolean isLastRound() {
+        return lastRound;
+    }
+
+    public void setLastRound(boolean lastRound) {
+        this.lastRound = lastRound;
     }
 }
