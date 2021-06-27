@@ -10,6 +10,7 @@ public class cli{
 
         /**state**/
     int actionInput; //scelta azione giocatore
+    int[] initialInput;
     int chooseInput; //scelta decisioni
     int depotInput; //scelta cella del deposito
     int leaderInput; //scelta leader
@@ -51,18 +52,48 @@ public class cli{
         return resourcesInput;
     }
 
+    public int[] getInitialInput() { return initialInput; }
+
     public int[] getExchangeInput() {
         return exchangeInput;
+    }
+
+    public int getPositionInput() {
+        return positionInput;
     }
 
         //costruttore
         public cli() {
             devSlotInput = new int[6];//indica tutti i possibili slot, anche quelli non posseduti dal giocatore
             anyInput = new int[2];
+            initialInput = new int[2];
         }
 
-    public int getPositionInput() {
-        return positionInput;
+    public void initialLeader(PlayerInformation pi, String cn, int nPlayer)
+    {
+        System.out.println("\nReceive 4 leader cards: \n");
+        printPlayerLeader(pi, cn);
+        System.out.println("\nChoose 2 to keep during the game: (1) (2) (3) (4)\n");
+        initialInput[0] = input.nextInt();
+        initialInput[1] = input.nextInt();
+    }
+
+    public void initialResource(int nPlayer) {
+        switch (nPlayer) {
+            case 1:
+                System.out.println("\nChoose a resource: Coin(1) Servant(2) Shield(3) Stone(4)\n");
+                initialInput[0] = input.nextInt();
+                initialInput[1] = -1;
+                break;
+            case 2:
+            case 3:
+                System.out.println("\nChoose 2 resource: Coin(1) Servant(2) Shield(3) Stone(4)\n");
+                initialInput[0] = input.nextInt();
+                initialInput[1] = input.nextInt();
+                break;
+            default:
+                break;
+        }
     }
 
     public void position() {
@@ -347,7 +378,7 @@ public class cli{
             else //è inattiva
             {
 
-                System.out.println("Inactive");
+                System.out.print(" Inactive");
                 if (lc.getType() == AbilityType.DEPOT) {
                     System.out.println(" (5 "+lc.getResourcesRequirements()+" are required)");
                 }
@@ -364,18 +395,17 @@ public class cli{
 
         }
 
-        /**metodo che ordina i giocatori in base al punteggio, stampando la classifica. valutare se spostare sul server**/
-        /*public void printRanking ()
+        public void printRanking (ArrayList<Integer> rank, ArrayList<String> nicks) //nicks: lista ordinata dei giocatori rank: lista dei punteggi associata a lista nicks
         {
-            ArrayList<Integer> a = new ArrayList<Integer>(gc.getRanking());
+            ArrayList<Integer> a = new ArrayList<Integer>(rank); //a: copia di rank che verrà ordinata in base al punteggio
             Collections.sort(a);
             Collections.reverse(a);
-            for (Integer i : a) {
-                int index = gc.getRanking().indexOf(i);
-                gc.getRanking().set(index, -1);
-                System.out.println(gc.getPlayerList().get(index).getNickname() + ": " + i);
+            for (Integer i : a) { //per ogni punteggio di a
+                int index = rank.indexOf(i); //trova l'indice in rank
+                rank.set(index, -1); //il valore di quell'indice diventa -1, per evitare ripetizioni
+                System.out.println(nicks.get(index) + ": " + i); //viene stampato indice corrispondente del nome
             }
-        }*/
+        }
 
         private void printSlot (PlayerInformation pi)
         { //stampa il numero di carte sviluppo, slot base, slot normali attivi e slot leader
@@ -406,8 +436,13 @@ public class cli{
         }
 
 
-    public void seeBoards() {
-
+    public void seeBoards(HashMap<String, PlayerInformation> mp, boolean[] popeSPace, String nickClient) {
+            for (String nick : mp.keySet())
+            {
+                if (!nick.equals(nickClient)){
+                    printPlayerBoard(mp.get(nick), popeSPace, nickClient);
+                }
+            }
     }
 
     public void printExpense(HashMap<Resource, Integer> hm) {
