@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.Message;
 import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Observer;
+import it.polimi.ingsw.enumeration.MessageType;
 import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
@@ -22,7 +23,7 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     //informazioni comuni e variabili per operazioni
     private String nickClient;//nick of player of this client
-    private ArrayList<String> nickList;//nick dei giocatori di playerlist
+    private ArrayList<String> nickList;//nick ordinati dei giocatori di playerlist
     private String currentPlayer; //nick of player in turn
     private HashMap<String, PlayerInformation> player;
     private PlayerInformation p; //client player pointer
@@ -37,6 +38,7 @@ public class View extends Observable<Message> implements Observer<Message> {
     private HashMap<Resource,Integer> specialTaking;
     private ArrayList<Resource> gain; //mandato dal server dopo market
 
+
     public View()
     {
         p = player.get(nickClient);
@@ -46,6 +48,62 @@ public class View extends Observable<Message> implements Observer<Message> {
         price.put(Resource.SERVANT, 0);
         price.put(Resource.SHIELD, 0);
         price.put(Resource.STONE, 0);
+    }
+
+    public void askInitially()
+    {
+        int n = nickList.indexOf(nickClient);
+        if(cli)
+        {
+            c.initialLeader(player.get(nickClient),nickClient, n);
+        }
+        else
+        {
+
+        }
+        Message message=new Message();
+        message.setPlayerNick(p.getNick());
+        message.setType(MessageType.ACTION);
+        message.setPlayerAction(PlayerAction.CHOOSE_LEADER);
+        message.setIdLeader1(p.getLeaderCards().get(c.getInitialInput()[0]-1).getID());
+        message.setIdLeader2(p.getLeaderCards().get(c.getInitialInput()[1]-1).getID());
+        if(cli)
+        {
+            c.initialResource(n);
+        }
+        else
+        {
+
+        }
+        for (int i:c.getInitialInput()) {
+            switch (i)
+            {
+
+                case 1:
+                {
+                    message.getResources().add(Resource.COIN);
+                    break;
+                }
+                case 2:
+                {
+                    message.getResources().add(Resource.SERVANT);
+                    break;
+                }
+                case 3:
+                {
+                    message.getResources().add(Resource.SHIELD);
+                    break;
+                }
+                case 4:
+                {
+                    message.getResources().add(Resource.STONE);
+                    break;
+                }
+                default:
+                {}
+            }
+        }
+
     }
 
     public void askAction () {
@@ -65,7 +123,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                         askSlot();
                         break;
                     case 5:
-                        c.seeBoards();
+                        c.seeBoards(player, popeSpace, nickClient);
                         break;
                     default:
                         break;
@@ -80,7 +138,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                         c.printMarket(market, freeMarble);
                         break;
                     case 3:
-                        c.seeBoards();
+                        c.seeBoards(player, popeSpace, nickClient);
                         break;
                     default:
                         break;
@@ -171,7 +229,7 @@ public class View extends Observable<Message> implements Observer<Message> {
             default:
                 return;
         }
-        gain.remove(c.chooseInput);
+        gain.remove(c.getChooseInput());
         askDepot();
     }
 
@@ -181,9 +239,9 @@ public class View extends Observable<Message> implements Observer<Message> {
         ArrayList<Resource> pointer;
         addNullDepot();
         c.chooseSwap(p);
-        p1 = cellConvert(c.chooseInput);
-        p2 = cellConvert(c.depotInput);
-        if (c.chooseInput > 5)
+        p1 = cellConvert(c.getChooseInput());
+        p2 = cellConvert(c.getDepotInput());
+        if (c.getChooseInput() > 5)
         {
             pointer = p.getLeaderDepots().get(p1[0]).getRow();
             r = p.getLeaderDepots().get(p1[0]).getRow().get(p1[1]);
@@ -194,7 +252,7 @@ public class View extends Observable<Message> implements Observer<Message> {
             r = p.getDepot().get(p1[0]).get(p1[1]);
         }
 
-        if (c.depotInput>5)
+        if (c.getDepotInput()>5)
         {
             s = p.getLeaderDepots().get(p2[0]).getRow().get(p2[1]);
             pointer.set(p1[1], s);
@@ -292,7 +350,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         {
             for(i = 0; i<4; i++)
             {
-                if (market[i][c.getChooseInput()-1] == Resource.WHITE)
+                if (market[c.getChooseInput()-1][i] == Resource.WHITE)
                     w++;
             }
         }
@@ -323,7 +381,7 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     }
 
-    public void askSlot(){
+    public void askSlot(){/**da modificare*/
             c.chooseSlot(p);
             for(int  n : c.getDevSlotInput())
             {
