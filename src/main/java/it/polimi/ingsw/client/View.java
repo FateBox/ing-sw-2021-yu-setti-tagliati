@@ -22,7 +22,7 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     //informazioni comuni e variabili per operazioni
     private String nickClient;//nick of player of this client
-    private ArrayList<String> nickList;//nick ordinati dei giocatori di playerlist
+    private ArrayList<String> nickList;//nick dei giocatori di playerlist
     private String currentPlayer; //nick of player in turn
     private HashMap<String, PlayerInformation> player;
     private PlayerInformation p; //client player pointer
@@ -37,7 +37,6 @@ public class View extends Observable<Message> implements Observer<Message> {
     private HashMap<Resource,Integer> specialTaking;
     private ArrayList<Resource> gain; //mandato dal server dopo market
 
-
     public View()
     {
         p = player.get(nickClient);
@@ -47,27 +46,6 @@ public class View extends Observable<Message> implements Observer<Message> {
         price.put(Resource.SERVANT, 0);
         price.put(Resource.SHIELD, 0);
         price.put(Resource.STONE, 0);
-    }
-
-    public void askInitially()
-    {
-      int n = nickList.indexOf(nickClient);
-      c.initialLeader(player.get(nickClient),nickClient, n);
-      for(int i : c.getInitialInput()) {
-          switch (i){
-              case 0:
-                  p.getLeaderCards().
-                  break;
-              case 1:
-                  break;
-              case 2:
-                  break;
-              case 3:
-                  break;
-              case 4:
-                  break;
-          }
-      }
     }
 
     public void askAction () {
@@ -87,7 +65,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                         askSlot();
                         break;
                     case 5:
-                        c.seeBoards(player, popeSpace, nickClient);
+                        c.seeBoards();
                         break;
                     default:
                         break;
@@ -102,7 +80,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                         c.printMarket(market, freeMarble);
                         break;
                     case 3:
-                        c.seeBoards(player, popeSpace, nickClient);
+                        c.seeBoards();
                         break;
                     default:
                         break;

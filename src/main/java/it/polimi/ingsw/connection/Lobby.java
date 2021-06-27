@@ -36,9 +36,9 @@ public class Lobby {
         full=false;
     }
 
-    public boolean isAvailable()
+    public boolean isFull()
     {
-        return !full;
+        return full;
     }
 
     public int getLobbyID() {
@@ -53,8 +53,18 @@ public class Lobby {
         return maxPlayerNumber;
     }
 
-    public void startGame()
-    {
+
+    public void startGame(Lobby lobby) {
+
+        GameController gameController = new GameController(lobby.getPlayerNickList());
+
+        for(Connection c : playerList.values()) {
+            c.addObserver(gameController);
+            gameController.addObs(c);
+        }
+
+        gameController.start();
 
     }
+
 }

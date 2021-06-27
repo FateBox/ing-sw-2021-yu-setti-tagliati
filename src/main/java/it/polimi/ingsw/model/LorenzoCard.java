@@ -8,11 +8,13 @@ public class LorenzoCard {
 
     public LorenzoCard(LorenzoType type)
     {
+        this.type=type;
         this.color=null;
     }
     public LorenzoCard(LorenzoType type, Color color)
     {
-
+        this.type=type;
+        this.color=color;
     }
 
     public LorenzoType getType() {

@@ -49,6 +49,8 @@ public class SpecialDepot {
 
     public boolean isCorrect()
     {
+        if (row.size()>2)
+            return false;
         for(Resource r:row)
         {
             if (r!=res)

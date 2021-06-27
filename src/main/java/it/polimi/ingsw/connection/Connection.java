@@ -8,7 +8,9 @@ import it.polimi.ingsw.enumeration.MessageType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UTFDataFormatException;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Connection extends Observable<Message> implements Runnable, Observer<Message> {
 
@@ -24,6 +26,7 @@ public class Connection extends Observable<Message> implements Runnable, Observe
     {
         this.socket=socket;
         this.server=server;
+        this.active=true;
     }
 
     public void sendMessage(Message m)  {
@@ -36,35 +39,16 @@ public class Connection extends Observable<Message> implements Runnable, Observe
         }
     }
 
-    public void asyncSendMessage(final Message m){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                    sendMessage(m);
-            }
-        }).start();
-    }
 
     //* synchronized method (?)
     public void sendText(String text){
 
-        try {
-            objOut.writeUTF(text);
-            objOut.flush();
-            objOut.reset();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Message message=new Message();
+        message.setText(text);
+        message.setType(MessageType.SERVER);
+        sendMessage(message);
     }
 
-    public void asyncSendText(final String text){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                sendText(text);
-            }
-        }).start();
-    }
 
     public synchronized void closeConnection() {
         try{
@@ -73,7 +57,7 @@ public class Connection extends Observable<Message> implements Runnable, Observe
             m.setBroadCast(false);
             m.setType(MessageType.ERROR);
             m.setText(text);
-            asyncSendMessage(m);
+            sendMessage(m);
             socket.close();
         }catch (IOException e){
             System.err.println(e.getMessage());
@@ -99,21 +83,28 @@ public class Connection extends Observable<Message> implements Runnable, Observe
         try{
             objIn = new ObjectInputStream(socket.getInputStream());
             objOut = new ObjectOutputStream(socket.getOutputStream());
+
             askNickname();
+            System.out.println("Player " + nickname + " join the game");
             //ask Game mode and player number in case of mp
             spOrMp();
 
-            while(isActive()){
-                Message newMessage=null;
-                try {
-                    newMessage=(Message) objIn.readObject();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-                notify(newMessage);
+            Lobby l = server.getLobbyHandler().findLobby(lobbyId);
+            if(l.isFull()) {
+                l.startGame(server.getLobbyHandler().findLobby(lobbyId));
             }
-        } catch(IOException e){
-            System.err.println(e.getMessage());
+
+            while(isActive()){
+
+                Message newMessage=(Message) objIn.readObject();
+                System.out.println("Message from " + nickname);
+
+                notify(newMessage);
+
+            }
+
+        } catch(Exception e){
+            System.out.println(nickname + ": connection stop");
         } finally {
             close();
         }
@@ -122,30 +113,53 @@ public class Connection extends Observable<Message> implements Runnable, Observe
     private void askNickname() throws IOException {
         boolean repeatNick=true;
         sendText("Welcome! What's your name?");
+        String playerNickname = "ok";
         while(repeatNick)
         {
-            String playerNickname= objIn.readUTF();
+            try {
+                playerNickname= ((Message)objIn.readObject()).getText();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            System.out.println(playerNickname);
+
             if(server.getLobbyHandler().isNickRepeated(playerNickname))
             {
-                asyncSendText("Someone else is already using this Nickname, please insert another.");
+                sendText("Someone else is already using this Nickname, please insert another.");
             }
             else{
-                asyncSendText("Got it! Welcome to the lobby "+ playerNickname);
+                sendText("Got it! Welcome to the lobby "+ playerNickname);
                 this.nickname = playerNickname;
                 repeatNick = false;
             }
         }
+
     }
 
     public void spOrMp()//send player to the lobby handler and take the player to a lobby;
     {
         int maxPlayer;
-        try {
-                maxPlayer=Integer.parseInt(objIn.readUTF());
-                lobbyId=server.getLobbyHandler().joinLobby(nickname,this, maxPlayer);
-        } catch (IOException e) {
-            e.printStackTrace();
+        boolean done = false;
+
+        while(!done) {
+            try {
+                sendText("Choose mode: 1/2/3/4 player(s)");
+                maxPlayer=Integer.parseInt(((Message)objIn.readObject()).getText());
+                if(maxPlayer>0 && maxPlayer<5) {
+                    lobbyId=server.getLobbyHandler().joinLobby(nickname,this, maxPlayer);
+                    sendText("You join the lobby " + lobbyId);
+                    System.out.println("Player " + nickname + " join the lobby " + lobbyId);
+                    done = true;
+                } else {
+                    sendText("Wrong number");
+                }
+            } catch (IOException e) {
+                sendText("Input error");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
 

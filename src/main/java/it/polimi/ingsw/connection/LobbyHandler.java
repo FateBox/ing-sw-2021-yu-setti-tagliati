@@ -14,6 +14,7 @@ public class LobbyHandler {
         playerHashMap=new HashMap<>();
         countId=0;
     }
+
     public void addPlayer(String nickname)
     {
         playerHashMap.put(nickname,-1);
@@ -28,7 +29,7 @@ public class LobbyHandler {
     public int getNotFullLobby(int maxNumPlayer)
     {
         for (Lobby l:lobbyHashMap.values()) {
-            if(l.isAvailable()&&l.getMaxPlayerNumber()==maxNumPlayer)
+            if((!l.isFull())&&l.getMaxPlayerNumber()==maxNumPlayer)
             {
                 return l.getLobbyID();
             }
@@ -71,7 +72,11 @@ public class LobbyHandler {
             createLobby(lobbyID, maxNumPlayer);
         }
         playerHashMap.put(nickname,lobbyID);
-        lobbyHashMap.get(lobbyID).addPlayer(nickname, connection);
+
+        Lobby lobby = lobbyHashMap.get(lobbyID);
+        lobby.addPlayer(nickname, connection);
+
+
         return lobbyID;
     }
 

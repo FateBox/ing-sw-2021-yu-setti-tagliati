@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.Message;
 import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Observer;
+import it.polimi.ingsw.connection.Connection;
 import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class GameController extends Observable<Message> implements Observer<Message> {
+public class GameController implements Observer<Message> {
 
     private Game game;
     final ArrayList<Player> players;
@@ -21,8 +22,6 @@ public class GameController extends Observable<Message> implements Observer<Mess
     private PurchaseExecutor purchaseExecutor;
     private UseLeaderExecutor useLeaderExecutor;
     private TurnController turnController;
-    /*
-     */
 
     public GameController(ArrayList<String> nicknames) {
         players = new ArrayList<>();
@@ -176,7 +175,12 @@ public class GameController extends Observable<Message> implements Observer<Mess
             if(message.getPlayerAction().equals(PlayerAction.CHOOSE_LEADER))
             {
                 setupLeader(message.getPlayerNick(), message.getIdLeader1(), message.getIdLeader2());
-
+                setupResource(message.getPlayerNick(), message.getResources());
+                game.getPlayerByNick(message.getPlayerNick()).setLeaderPicked(true);
+                if(game.isReadyLeader())
+                {
+                    game.sendEndTurn();
+                }
             }
             else{
                 game.sendErrorToCurrentPlayer("Error in leader choosing stage");
@@ -261,4 +265,10 @@ public class GameController extends Observable<Message> implements Observer<Mess
         }
 
     }
+
+
+    public void addObs(Connection c) {
+        game.addObserver(c);
+    }
+
 }

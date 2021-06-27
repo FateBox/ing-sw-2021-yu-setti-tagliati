@@ -14,7 +14,6 @@ public class Game extends Observable<Message> {
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
     private ArrayList<LorenzoCard> lorenzoDeck;
-    private int lorenzoCount;
     private Stack<LeaderCard> leaderDeck;
     private Resource[][] market;
     private Resource freeMarble;
@@ -29,12 +28,14 @@ public class Game extends Observable<Message> {
         this.playerList = new ArrayList<Player>(p); //la classe che crea i giocatori passa poi la lista (senza Lorenzo) all'oggetto game
         currentPlayer = playerList.get(0);
         lastRound=false;
+
         marketGenerator();
         leaderDeckGenerator();
         faithTrackGenerator();
         devCardGenerator();
         lorenzoDeckGenerator();
     }
+
 
     public void nextPlayer ()
     {
@@ -456,7 +457,7 @@ public class Game extends Observable<Message> {
     //Viene chiamato al posto di modifyResource quando il giocatore decide di usare entrambe le carte leader per potenziare i bianchi
     //il giocatore deve per ogni biglia bianca definire la risorsa che vuole
     //il metodo si limita a prendere la lista contenete le risorse che vanno a sostituire i bianchi
-    public void leadersResources (ArrayList<Resource> r, ArrayList<Resource> gain)
+    /*public void leadersResources (ArrayList<Resource> r, ArrayList<Resource> gain)
     {
         int j = 0;
         for (int i = 0; i< gain.size(); i++) {
@@ -465,7 +466,7 @@ public class Game extends Observable<Message> {
                 j++;
             }
         }
-    }
+    }*/
 
     //metodi gestione percorso fede
 
@@ -530,11 +531,11 @@ public class Game extends Observable<Message> {
             this.popeSpace[0] = false;
         }
     }
-    public ArrayList<Integer> ranking(){
-        ArrayList<Integer> r = new ArrayList<Integer>(playerList.size());
+    public int[] ranking(){
+        int[] r = new int[playerList.size()];
         for (int i = 0; i<playerList.size(); i++)
         {
-            r.add(playerList.get(i).vp());
+            r[i] = playerList.get(i).vp();
         }
         return r;
     }
@@ -719,6 +720,12 @@ public class Game extends Observable<Message> {
         m.setBroadCast(true);
         notify(m);
     }
+
+    public void sendUpdateMarket()
+    {}
+
+
+
     public boolean isGameOverMP()//return true if player has more than 7 devCard or he reached end of faith track
     {
         for (Player p:playerList)
@@ -738,14 +745,6 @@ public class Game extends Observable<Message> {
         this.lastRound = lastRound;
     }
 
-    public int getLorenzoCount() {
-        return lorenzoCount;
-    }
-
-    public void setLorenzoCount(int lorenzoCount) {
-        this.lorenzoCount = lorenzoCount;
-    }
-
     public ArrayList<LorenzoCard> getLorenzoDeck() {
         return lorenzoDeck;
     }
@@ -755,6 +754,61 @@ public class Game extends Observable<Message> {
     }
     private void lorenzoDeckGenerator()
     {
+        lorenzoDeck=new ArrayList<>();
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.SHUFFLE));
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.MOVE));
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.MOVE));
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.DISCARD,Color.GREEN));
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.DISCARD,Color.BLUE));
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.DISCARD,Color.PURPLE));
+        lorenzoDeck.add(new LorenzoCard(LorenzoType.DISCARD,Color.YELLOW));
+        shuffleLorenzo();
+    }
 
+    public void shuffleLorenzo()
+    {
+        Collections.shuffle(lorenzoDeck);
+    }
+
+    public void lorenzoDiscard(Color color) //draw 2 card of specified color from devGrid.
+    {
+        int i=0;
+        switch(color)
+        {
+            case GREEN:
+            {
+                i=0;
+                break;
+            }
+            case BLUE:
+            {
+                i=1;
+                break;
+            }
+            case YELLOW:
+            {
+                i=2;
+                break;
+            }
+            case PURPLE:
+            {
+                i=3;
+                break;
+            }
+        }
+        for(int j=0;j<2;j++)
+        {
+            if(devGrid[i].size()!=0)
+            {
+                devGrid[i].pop();
+            }else if(devGrid[i+4].size()!=0)
+            {
+                devGrid[i+4].pop();
+            }
+            else
+            {
+                devGrid[i+8].pop();
+            }
+        }
     }
 }

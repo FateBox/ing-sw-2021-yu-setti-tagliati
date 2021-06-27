@@ -16,11 +16,6 @@ public class CardSlot implements DevSlot {
     private ArrayList<Resource> outputResource;
     private SlotType type;
 
-    public Level showSlotMaxLevel()
-    {
-       return devCards.peek().getLevel();
-    }
-
     public CardSlot()
     {
         devCards=new Stack<>();

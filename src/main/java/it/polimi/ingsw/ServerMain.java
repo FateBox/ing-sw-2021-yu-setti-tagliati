@@ -7,12 +7,13 @@ import java.io.IOException;
 public class ServerMain {
     public static void main( String[] args )
     {
-        Server server;
-        server =new Server(8000);
+        Server server = new Server();
+
         try {
-            server.startServer();
+            server.start();
         } catch (IOException e) {
             System.err.println("Impossible to initialize the server: " + e.getMessage());
         }
+
     }
 }

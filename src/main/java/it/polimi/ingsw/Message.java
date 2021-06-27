@@ -8,10 +8,11 @@ import it.polimi.ingsw.model.DevSlot;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.SpecialDepot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Message {
+public class Message implements Serializable {
     private boolean broadCast;
     private String playerNick;
     private MessageType type;
