@@ -5,5 +5,6 @@ public enum MessageType {
     ACTION,
     ERROR,
     UPDATE,
-    LORENZO;
+    LORENZO,
+    WIN;
 }

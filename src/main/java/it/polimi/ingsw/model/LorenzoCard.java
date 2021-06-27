@@ -6,6 +6,15 @@ public class LorenzoCard {
     private LorenzoType type;
     private Color color;
 
+    public LorenzoCard(LorenzoType type)
+    {
+        this.color=null;
+    }
+    public LorenzoCard(LorenzoType type, Color color)
+    {
+
+    }
+
     public LorenzoType getType() {
         return type;
     }

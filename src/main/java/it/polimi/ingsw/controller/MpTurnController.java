@@ -15,7 +15,7 @@ public class MpTurnController implements TurnController{
 
     public void nextTurn()//calls nextPlayer in game, if current player is last player and it's lastRound, end game.
     {
-        if(game.isGameOverMultiplayer())
+        if(game.isGameOverMP())
         {
             game.setLastRound(true);
         }

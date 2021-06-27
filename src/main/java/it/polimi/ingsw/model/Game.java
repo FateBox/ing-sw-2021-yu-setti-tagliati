@@ -13,7 +13,7 @@ public class Game extends Observable<Message> {
     //state
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
-    private ArrayList<ActionLorenzo> lorenzoDeck;
+    private ArrayList<LorenzoCard> lorenzoDeck;
     private int lorenzoCount;
     private Stack<LeaderCard> leaderDeck;
     private Resource[][] market;
@@ -33,7 +33,7 @@ public class Game extends Observable<Message> {
         leaderDeckGenerator();
         faithTrackGenerator();
         devCardGenerator();
-        //lorenzoDeckGenerator();
+        lorenzoDeckGenerator();
     }
 
     public void nextPlayer ()
@@ -56,6 +56,10 @@ public class Game extends Observable<Message> {
         return playerList.indexOf(p);
     }
 
+    public Stack<DevCard>[] getDevGrid()
+    {
+        return devGrid;
+    }
     public Player getPlayer (int id)
     {
         return playerList.get(id);
@@ -707,7 +711,15 @@ public class Game extends Observable<Message> {
         notify(m);
     }
 
-    public boolean isGameOverMultiplayer()//return true if player has more than 7 devCard or he reached end of faith track
+    public void sendWin(String text)
+    {
+        Message m=new Message();
+        m.setText(text);
+        m.setType(MessageType.WIN);
+        m.setBroadCast(true);
+        notify(m);
+    }
+    public boolean isGameOverMP()//return true if player has more than 7 devCard or he reached end of faith track
     {
         for (Player p:playerList)
         {
@@ -718,12 +730,31 @@ public class Game extends Observable<Message> {
         }
         return false;
     }
-
     public boolean isLastRound() {
         return lastRound;
     }
 
     public void setLastRound(boolean lastRound) {
         this.lastRound = lastRound;
+    }
+
+    public int getLorenzoCount() {
+        return lorenzoCount;
+    }
+
+    public void setLorenzoCount(int lorenzoCount) {
+        this.lorenzoCount = lorenzoCount;
+    }
+
+    public ArrayList<LorenzoCard> getLorenzoDeck() {
+        return lorenzoDeck;
+    }
+
+    public void setLorenzoDeck(ArrayList<LorenzoCard> lorenzoDeck) {
+        this.lorenzoDeck = lorenzoDeck;
+    }
+    private void lorenzoDeckGenerator()
+    {
+
     }
 }

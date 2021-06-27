@@ -69,7 +69,11 @@ public class Connection extends Observable<Message> implements Runnable, Observe
     public synchronized void closeConnection() {
         try{
             String text="connection closed";
-            asyncSendMessage(new Message(nickname,text));
+            Message m=new Message();
+            m.setBroadCast(false);
+            m.setType(MessageType.ERROR);
+            m.setText(text);
+            asyncSendMessage(m);
             socket.close();
         }catch (IOException e){
             System.err.println(e.getMessage());
