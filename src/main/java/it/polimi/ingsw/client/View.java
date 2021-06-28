@@ -683,23 +683,77 @@ public class View extends Observable<Message> implements Observer<Message> {
     }
     @Override
     public void update(Message message) {
-        /*switch (message.getType())
-        {
-            case UPDATE:
-            {
-                switch (message.getPlayerAction())
-                {
-                    case
+        switch (message.getType()) {
+            case UPDATE: {
+                switch (message.getPlayerAction()) {
+                    case LEADER_READY: {
+                        p.setLeaderCards(message.getLeaderDeck());
+                        //print leader,ask player which leader he want to keep then choose initial resources
+                        break;
+                    }
+
+                    case CHOOSE_LEADER:// receive this and the game begin, all information in view should be initialized
+                    {
+                        p.setLeaderCards(message.getLeaderDeck());
+                        p.setDepot(message.getDepot());
+                        //game is actually started.
+                        //ask first player which action he wants to play
+                        askAction();
+                        break;
+                    }
+                    case MARKET1: {
+                        market = message.getMarket();
+                        freeMarble = message.getFreeMarble();
+                        gain = message.getResources();
+
+                        break;
+                    }
+                    case MARKET2: {
+
+                        break;
+                    }
+                    case PRODUCTION: {
+
+                        break;
+                    }
+                    case PURCHASE: {
+
+                        break;
+                    }
+                    case USE_LEADER: {
+
+                        break;
+                    }
+                    case DISCARD_LEADER: {
+
+                        break;
+                    }
+                    case END_TURN: {
+
+                        break;
+                    }
+                    case END_ACTION: {
+                        //ristampa askaction
+                        break;
+                    }
+
                 }
+                break;
             }
 
-            case ERROR:
-            {
-                if (this.nickClient==message.getPlayerNick())
-                {
-                    showError(message.getText());
-                }
+            case WIN: {
+                //if mp stampa ranking,
+                //else(sp) stampa testo nel messaggio
+                //dare un bottone, su click chiude tutto.
+                break;
             }
-        }*/
+            case ERROR: {
+                if (this.nickClient == message.getPlayerNick()) {
+                    showError(message.getText());
+                    //askAction();
+                }
+                break;
+            }
+        }
     }
 }

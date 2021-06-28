@@ -1,6 +1,7 @@
 package it.polimi.ingsw.enumeration;
 
 public enum PlayerAction {
+    LEADER_READY,
     MARKET1,
     MARKET2,
     PRODUCTION,
