@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class View extends Observable<Message> implements Observer<Message> {
     //attributi visualizzazione
     private boolean cli;
-    private cli c;
+    private Cli c;
     //private gui g;
 
     //informazioni comuni e variabili per operazioni
@@ -41,13 +41,62 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     public View()
     {
-        c = new cli();
+        c = new Cli();
         market = new Resource[3][4];
         popeSpace = new boolean[3];
         player = new HashMap<>(4);
         price = new HashMap<>(4);
         taking = new HashMap<>(4);
         specialTaking = new HashMap<>(4);
+    }
+
+    //metodi get
+
+    public Cli getC() {
+        return c;
+    }
+
+    public ArrayList<DevCard> getVisibleDevGrid() {
+        return visibleDevGrid;
+    }
+
+    public Resource[][] getMarket() {
+        return market;
+    }
+
+    public Resource getFreeMarble() {
+        return freeMarble;
+    }
+
+    public boolean[] getPopeSpace() {
+        return popeSpace;
+    }
+
+    public ArrayList<Resource> getMarketChange() {
+        return marketChange;
+    }
+
+    public HashMap<Resource, Integer> getPrice() {
+        return price;
+    }
+
+    public HashMap<Resource, Integer> getTaking() {
+        return taking;
+    }
+
+    public HashMap<Resource, Integer> getSpecialTaking() {
+        return specialTaking;
+    }
+
+    public ArrayList<Resource> getGain() {
+        return gain;
+    }
+
+    //metodi set
+
+    public void setCli (boolean b)
+    {
+        this.cli = b;
     }
 
     public void setPlayerView(String nc, ArrayList<String> nl)
@@ -59,46 +108,56 @@ public class View extends Observable<Message> implements Observer<Message> {
         p = player.get(nickClient);
     }
 
-    private void setNickList(ArrayList<String> nl) {
+    public void setNickList(ArrayList<String> nl) {
         nickList = new ArrayList<>(nl);
     }
 
-    private void setPlayer() {
+    public void setPlayer() {
         for (String s : nickList) {
             player.put(s, new PlayerInformation(s));
         }
     }
 
-    private void setCurrentPlayer(String s) {
+    public void setCurrentPlayer(String s) {
         currentPlayer = s;
     }
 
-    private void setNickClient(String nc) {
+    public void setNickClient(String nc) {
         nickClient = nc;
     }
 
-    public void setGameView(Resource[][] m, boolean[] ps, ArrayList<DevCard> deck)
+    public void setFreeMarble(Resource freeMarble) {
+        this.freeMarble = freeMarble;
+    }
+
+    public void setGameView(Resource[][] m, Resource fm, boolean[] ps, ArrayList<DevCard> deck)
     {
         setMarket(m);
+        setFreeMarble(fm);
         setPopeSpace(ps);
         setVisibleDevGrid(deck);
     }
 
-    private void setVisibleDevGrid(ArrayList<DevCard> deck) {
+    public void setVisibleDevGrid(ArrayList<DevCard> deck) {
         visibleDevGrid = new ArrayList<DevCard>(deck);
     }
 
-    private void setPopeSpace(boolean[] ps) {
+    public void setPopeSpace(boolean[] ps) {
         System.arraycopy(ps, 0, popeSpace, 0, 3);
     }
 
-    private void setMarket(Resource[][] market) {
+    public void setMarket(Resource[][] market) {
         for (int i = 0; i<3; i++) //per ognuna delle 3 righe
         {
             System.arraycopy(market[i], 0, this.market[i], 0, 4); //copia tutti e 4 gli elementi
         }
     }
 
+    public void setGain(ArrayList<Resource> gain) {
+        this.gain = new ArrayList<>(gain);
+    }
+
+    //metodi gestione input
     public void askInitially()
     {
         int n = nickList.indexOf(nickClient);
@@ -158,7 +217,7 @@ public class View extends Observable<Message> implements Observer<Message> {
     public void askAction () {
         if (cli) {
             if (nickClient.equals(currentPlayer)) { //griglia 1 market 2 leader 3 produzione 4 plance 5
-                c.action();
+                c.action(p, popeSpace, nickClient, player);
                 switch (c.getAction()) {
                     case 1:
                         askDev();
@@ -168,6 +227,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                         break;
                     case 3:
                         askLeader();
+                        break;
                     case 4:
                         askSlot();
                         break;
@@ -371,7 +431,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         }
     }
 
-    private void askMarket() {
+    public void askMarket() {
         //mercato1
         int w=0;
         int i;

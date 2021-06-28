@@ -6,7 +6,7 @@ import it.polimi.ingsw.enumeration.AbilityType;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
 
-public class cli{
+public class Cli{
 
         /**state**/
     private int actionInput; //scelta azione giocatore
@@ -63,7 +63,7 @@ public class cli{
     }
 
         //costruttore
-        public cli() {
+        public Cli() {
             devSlotInput = new int[6];//indica tutti i possibili slot, anche quelli non posseduti dal giocatore
             anyInput = new int[2];
             initialInput = new int[2];
@@ -129,10 +129,11 @@ public class cli{
             while (actionInput<1 || actionInput>3);
         }
 
-        public void action()
+        public void action(PlayerInformation pi, boolean[] popeSpace, String cn, HashMap<String, PlayerInformation> m)
         {
+            printPlayerBoard(pi,popeSpace, cn);
+            //printFaithTrack(m, popeSpace);
             System.out.println("\nAction: Development grid (1), Market (2), Leader (3), Production (4), Opponent boards (5)\n");
-            actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
             do {
                 actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
             }
@@ -160,7 +161,7 @@ public class cli{
 
         public  void chooseInsert(PlayerInformation pi, ArrayList<Resource> gain){
             printGain(gain);
-            printDepotInsert(pi);
+            printDepot(pi);
             System.out.println("\nChoose a gain element\n");
             do {
                 chooseInput = input.nextInt();
@@ -173,7 +174,7 @@ public class cli{
             while (chooseInput<0||chooseInput>(pi.getLeaderDepots().size()+3));
         }
 
-    private void printGain(ArrayList<Resource> gain) {
+    public void printGain(ArrayList<Resource> gain) {
             int i = 1;
             for(Resource r: gain)
             {
@@ -312,17 +313,17 @@ public class cli{
             }
             System.out.println("Victory points: 1 (3/24), 2 (6/24), 4 (9/24), 6 (12/24), 9 (15/24), 12 (18/24), 16 (21/24), 20 (24/24)");
             if (popeSpace[0])
-                System.out.println("Next : 8/24\n");
+                System.out.println("Next Pope Space: 8/24\n");
             else if(popeSpace[1])
-                System.out.println("Next : 16/24\n");
+                System.out.println("Next Pope Space: 16/24\n");
             else if(popeSpace[2])
-                System.out.println("Next : 24/24\n");
+                System.out.println("Next Pope Space: 24/24\n");
             else {
                 System.out.println("all Pope Space have been activated\n");
             }
         }
 
-        private void printPlayerBoard(PlayerInformation pi, boolean[] popeSpace, String cn) {
+        public void printPlayerBoard(PlayerInformation pi, boolean[] popeSpace, String cn) {
             printDepot(pi);
             printStrongBox(pi);
             printSlot(pi);
@@ -330,7 +331,7 @@ public class cli{
             printPopeFavor(pi, popeSpace);
         }
 
-        private void printPlayerLeader(PlayerInformation pi, String cn) {
+        public void printPlayerLeader(PlayerInformation pi, String cn) {
             if (pi.getNick().equals(cn)) {
                 for (LeaderCard lc : pi.getLeaderCards()) {
 
@@ -344,7 +345,7 @@ public class cli{
             }
         }
 
-        private void printPopeFavor(PlayerInformation pi, boolean[] popeSpace) {
+        public void printPopeFavor(PlayerInformation pi, boolean[] popeSpace) {
             String[] s = new String[3];
             for (int i = 0; i < 3; i++) {
                 if (pi.getPopeFavor()[i]) {
@@ -355,7 +356,7 @@ public class cli{
                     s[i] = "missed";
                 }
             }
-            System.out.println("Pope Favor \n 2 PV (5-8):" + s[0] + ", 3 PV (12-16): " + s[1] + ", 4 PV (19-24): " + s[2] + "\n"); //inserire variabili
+            System.out.println("\nPope Favor \n 2 PV (5-8):" + s[0] + ", 3 PV (12-16): " + s[1] + ", 4 PV (19-24): " + s[2] + "\n"); //inserire variabili
         }
 
         public void printStrongBox(PlayerInformation pi) {
@@ -363,27 +364,20 @@ public class cli{
         }
 
         public void printDepot (PlayerInformation pi) { //Stampa del deposito normale
-            for (int i = 0; i<3; i++) {
-                System.out.println(pi.getDepot().get(i));
-            }
-            for (int i =0; i<pi.getLeaderDepots().size(); i++)
-            {
-                System.out.println(pi.getLeaderDepots().get(i).getRow());
-            }
-        }
-
-    public void printDepotInsert (PlayerInformation pi) { //tutte le righe sono numerate
             int j = 1;
-        for (int i = 0; i<3; i++) {
-            System.out.println(pi.getDepot().get(i)+" "+"("+j+")");
-            j++;
+            System.out.println("Depot:\n");
+            for (int i = 0; i<3; i++) {
+                System.out.println(j+")"+pi.getDepot().get(i));
+                j++;
+            }
+            if (pi.getLeaderDepots().size()>0) {
+                System.out.println("\nSpecial depot:\n");
+                for (int i = 0; i < pi.getLeaderDepots().size(); i++) {
+                    System.out.println(j + ")" + pi.getLeaderDepots().get(i).getRow() + " (" + pi.getLeaderDepots().get(i).getRes() + ")"); //j può essere 4 o 5
+                    j++;
+                }
+            }
         }
-        for (int i =0; i<pi.getLeaderDepots().size(); i++)
-        {
-            System.out.println(pi.getLeaderDepots().get(i).getRow()+" "+"("+j+")"); //j può essere 4 o 5
-            j++;
-        }
-    }
 
     public void printDepotSwap (PlayerInformation pi) //Tutte le celle del deposito sono numerate, anche quelle nulle
     {
@@ -419,7 +413,7 @@ public class cli{
 
 
         public void printDevCard (DevCard dc){
-            System.out.println(dc.getLevel() + " | " + dc.getColor() + " | " + dc.getVictoryPoint() + " | " + dc.getCostList() + " | " + dc.getProductInputList() + " --> " + dc.getProductOutputList());
+            System.out.println(dc.getLevel() + " | " + dc.getColor() + " | " + dc.getVictoryPoint() + " | Cost:  " + dc.getCostList() + " | Production: " + dc.getProductInputList() + " --> " + dc.getProductOutputList());
         }
 
         public void printPartlyDevCard (DevCard dc){
@@ -429,7 +423,7 @@ public class cli{
         public void printDevGrid (ArrayList<DevCard> deck)
         {
             for (int i = 0; i < 12; i++) {
-                System.out.print(i + ") ");
+                System.out.print(i+1 + ") ");
                 if (deck.get(i) == null) {
                     System.out.println("empty deck");
                 } else {
@@ -451,7 +445,7 @@ public class cli{
         }
 
         public void printLeader (LeaderCard lc) {
-            System.out.print("Leader Card "+lc.getType()+" "+lc.getRes()+": "+lc.getVictoryPoint()+" VP");
+            System.out.print("Leader Card " +lc.getRes()+" "+lc.getType()+": "+lc.getVictoryPoint()+" VP | ");
             if (lc.isActive())
             {
                 System.out.println("Active");
@@ -459,18 +453,18 @@ public class cli{
             else //è inattiva
             {
 
-                System.out.print(" Inactive");
+                System.out.print(" Inactive:");
                 if (lc.getType() == AbilityType.DEPOT) {
-                    System.out.println(" (5 "+lc.getResourcesRequirements()+" are required)");
+                    System.out.println(" (5 "+lc.getResourcesRequirements().get(0)+" are required)");
                 }
                 else if (lc.getType() == AbilityType.DISCOUNT) {
-                    System.out.println(" (a "+lc.getDevColorRequirements().get(0)+" and a"+lc.getDevColorRequirements().get(1)+" DevCards are required)");
+                    System.out.println(" (a "+lc.getDevColorRequirements().get(0)+" and a "+lc.getDevColorRequirements().get(1)+" DevCards are required)");
                 }
                 else if (lc.getType() == AbilityType.PRODUCTION) {
                     System.out.println(" (a second level "+lc.getDevColorRequirements().get(0)+" is required)");
                 }
-                else{               //AbilityType.RESOURCE:
-                    System.out.println(" (two "+lc.getDevColorRequirements().get(0)+" cards and a"+lc.getDevColorRequirements().get(1)+" card are required)");
+                else if (lc.getType() == AbilityType.RESOURCE){               //AbilityType.RESOURCE:
+                    System.out.println(" (two "+lc.getDevColorRequirements().get(0)+" cards and a "+lc.getDevColorRequirements().get(1)+" card are required)");
                 }
             }
 
@@ -488,7 +482,7 @@ public class cli{
             }
         }
 
-        private void printSlot (PlayerInformation pi)
+        public void printSlot (PlayerInformation pi)
         { //stampa il numero di carte sviluppo, slot base, slot normali attivi e slot leader
             ArrayList<Integer> slot;
             int i = -1;

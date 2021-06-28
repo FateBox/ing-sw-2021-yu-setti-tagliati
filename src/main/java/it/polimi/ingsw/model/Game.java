@@ -14,6 +14,11 @@ public class Game extends Observable<Message> {
     private ArrayList<Player> playerList;
     private Stack<DevCard>[] devGrid;
     private ArrayList<LorenzoCard> lorenzoDeck;
+
+    public Stack<LeaderCard> getLeaderDeck() {
+        return leaderDeck;
+    }
+
     private Stack<LeaderCard> leaderDeck;
     private Resource[][] market;
     private Resource freeMarble;
@@ -544,6 +549,10 @@ public class Game extends Observable<Message> {
         return  playerList.get(id).getFaithLocation();
     }
 
+    public Resource[][] getMarket() {
+        return market;
+    }
+
     private void setPope (int id)//metodo ausiliario utilizzato dai metodi forward del tracciato fede
     {
         if (popeSpace[2] && getLocationPlayer(id)>23)
@@ -586,6 +595,11 @@ public class Game extends Observable<Message> {
         return popeSpace[n];
     }
 
+    public boolean[] getPopeSpace ()
+    {
+        return popeSpace;
+    }
+
     public Resource getFreeMarble ()
     {
         return freeMarble;
@@ -604,13 +618,13 @@ public class Game extends Observable<Message> {
         this.leaderDeck.push(new LeaderCard(3, 2, AbilityType.DISCOUNT, Resource.COIN));
         leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.PURPLE);
         //Leader Market
-        this.leaderDeck.push(new LeaderCard(4, 5, AbilityType.DEPOT, Resource.SHIELD ));
+        this.leaderDeck.push(new LeaderCard(4, 5, AbilityType.RESOURCE, Resource.SHIELD ));
         leaderDeck.peek().setDisResLeader(Color.GREEN, Color.PURPLE);
-        this.leaderDeck.push(new LeaderCard(5, 5, AbilityType.DEPOT, Resource.STONE));
+        this.leaderDeck.push(new LeaderCard(5, 5, AbilityType.RESOURCE, Resource.STONE));
         leaderDeck.peek().setDisResLeader(Color.BLUE, Color.YELLOW);
-        this.leaderDeck.push(new LeaderCard(6, 5, AbilityType.DEPOT, Resource.SERVANT));
+        this.leaderDeck.push(new LeaderCard(6, 5, AbilityType.RESOURCE, Resource.SERVANT));
         leaderDeck.peek().setDisResLeader(Color.YELLOW, Color.BLUE);
-        this.leaderDeck.push(new LeaderCard(7, 5, AbilityType.DEPOT, Resource.COIN));
+        this.leaderDeck.push(new LeaderCard(7, 5, AbilityType.RESOURCE, Resource.COIN));
         leaderDeck.peek().setDisResLeader(Color.PURPLE, Color.GREEN);
         //Leader Sviluppo
         this.leaderDeck.push(new LeaderCard(8, 4, AbilityType.PRODUCTION, Resource.SHIELD));
@@ -631,7 +645,7 @@ public class Game extends Observable<Message> {
         this.leaderDeck.push(new LeaderCard(15, 3, AbilityType.DEPOT, Resource.COIN));
         leaderDeck.peek().setDepLeader(Resource.SHIELD);
 
-        Collections.shuffle(this.leaderDeck);
+        //Collections.shuffle(this.leaderDeck);
     }
 
     public LeaderCard drawLeaderCard()

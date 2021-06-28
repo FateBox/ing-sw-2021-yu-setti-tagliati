@@ -29,12 +29,17 @@ public class PlayerInformation {
         depot.add(new ArrayList<Resource>(2)); //row2
         depot.add(new ArrayList<Resource>(3)); //row3
         strongBox = new HashMap<>(4);
+        strongBox.put(Resource.COIN,0);
+        strongBox.put(Resource.SERVANT,0);
+        strongBox.put(Resource.SHIELD,0);
+        strongBox.put(Resource.STONE,0);
         leaderCards = new ArrayList<>(4);
         leaderDiscount = new ArrayList<>(4);
         leaderDepots = new ArrayList<>(4);
         leaderMarket = new ArrayList<>(4);
         devSlots = new ArrayList<>(5);
         popeFavor = new boolean[3];
+        position = 0;
     }
 
     public ArrayList<ArrayList<Resource>> getDepot() {
