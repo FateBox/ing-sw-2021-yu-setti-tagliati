@@ -645,7 +645,7 @@ public class Game extends Observable<Message> {
         this.leaderDeck.push(new LeaderCard(15, 3, AbilityType.DEPOT, Resource.COIN));
         leaderDeck.peek().setDepLeader(Resource.SHIELD);
 
-        //Collections.shuffle(this.leaderDeck);
+        Collections.shuffle(this.leaderDeck);
     }
 
     public LeaderCard drawLeaderCard()
