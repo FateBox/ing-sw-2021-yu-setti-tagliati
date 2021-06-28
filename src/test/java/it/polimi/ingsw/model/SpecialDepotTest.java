@@ -30,7 +30,7 @@ public class SpecialDepotTest {
         assertEquals(row1, sd.getRow());
         sd.removeResource(0);
         assertEquals(row1.size() - 1, sd.getQuantity());
-        row1 = sd.getRow();
+        row1 = new ArrayList<Resource>(sd.getRow());
         row1.add(res);
         assertEquals(row1.size() - 1, sd.getQuantity());
         ArrayList<Resource> row2 = new ArrayList<>();

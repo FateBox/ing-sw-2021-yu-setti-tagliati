@@ -12,7 +12,7 @@ public class SpecialDepot {
 
     public ArrayList<Resource> getRow() {
 
-        return new ArrayList<>(row);
+        return row;
     }
 
     public void setRow(ArrayList<Resource> row) {
