@@ -74,8 +74,14 @@ public class cli{
         System.out.println("\nReceive 4 leader cards: \n");
         printPlayerLeader(pi, cn);
         System.out.println("\nChoose 2 to keep during the game: (1) (2) (3) (4)\n");
-        initialInput[0] = input.nextInt();
-        initialInput[1] = input.nextInt();
+        do {
+            initialInput[0] = input.nextInt();
+        }
+        while (initialInput[0]<1 || initialInput[0]>4);
+        do {
+            initialInput[1] = input.nextInt();
+        }
+        while (initialInput[1]<1 || initialInput[1]>4);
     }
 
     public void initialResource(int nPlayer) {
@@ -86,128 +92,204 @@ public class cli{
                 break;
             case 1:
                 System.out.println("\nChoose a resource: Coin(1) Servant(2) Shield(3) Stone(4)\n");
-                initialInput[0] = input.nextInt();
+                do {
+                    initialInput[0] = input.nextInt();
+                }
+                while (initialInput[0]<1 || initialInput[0]>4);
                 initialInput[1] = -1;
                 break;
             default:
                 System.out.println("\nChoose 2 resource: Coin(1) Servant(2) Shield(3) Stone(4)\n");
-                initialInput[0] = input.nextInt();
-                initialInput[1] = input.nextInt();
+                do {
+                    initialInput[0] = input.nextInt();
+                }
+                while (initialInput[0]<1 || initialInput[0]>4);
+                do {
+                    initialInput[1] = input.nextInt();
+                }
+                while (initialInput[1]<1 || initialInput[1]>4);
         }
     }
 
     public void position() {
         System.out.println("\nChoose a slot to insert the DevCard: 1 | 2 | 3 \n");
-        positionInput = input.nextInt();
+        do {
+            positionInput = input.nextInt();
+        }
+        while (positionInput<1 || positionInput>3);
     }
         //metodi che prendono in ingresso gli input dell'utente
 
         public void watch()
         {
             System.out.println("\nWatch: Development grid (1), Market (2), Opponent boards (3)\n");
-            actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
+            do {
+                actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
+            }
+            while (actionInput<1 || actionInput>3);
         }
 
         public void action()
         {
             System.out.println("\nAction: Development grid (1), Market (2), Leader (3), Production (4), Opponent boards (5)\n");
             actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
+            do {
+                actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
+            }
+            while (actionInput<1 || actionInput>5);
         }
 
         public void depotAction(PlayerInformation pi)
     {
         printDepot(pi);
         System.out.println("\nAction: Insert (1), Swap (2), Confirm (3)\n");
-        actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
+        do {
+            actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
+        }
+        while (actionInput < 1 || actionInput > 3);
     }
 
         public void chooseMarket(Resource[][] m, Resource fm){
             printMarket(m, fm);
             System.out.println("\nChoose a row or column or come back (0)\n");
-            chooseInput = input.nextInt(); //questo input indica la striscia scelta nel caso di mercato (1..7) o il voler tornare indietro (0)
-
+            do {
+                chooseInput = input.nextInt();
+            }                       //questo input indica la striscia scelta nel caso di mercato (1..7) o il voler tornare indietro (0)
+            while (chooseInput<0 || chooseInput>7);
         }
 
-        public  void chooseInsert(PlayerInformation pi){
+        public  void chooseInsert(PlayerInformation pi, ArrayList<Resource> gain){
+            printGain(gain);
             printDepotInsert(pi);
             System.out.println("\nChoose a gain element\n");
-            chooseInput = input.nextInt();
-            System.out.println("\nChoose a cell\n");
-            depotInput = input.nextInt();
+            do {
+                chooseInput = input.nextInt();
+            }
+            while (chooseInput<1 || chooseInput> gain.size());
+            System.out.println("\nChoose a row\n");
+            do {
+                depotInput = input.nextInt();
+            }
+            while (chooseInput<0||chooseInput>(pi.getLeaderDepots().size()+3));
         }
 
-        public void chooseSwap(PlayerInformation pi){
+    private void printGain(ArrayList<Resource> gain) {
+            int i = 1;
+            for(Resource r: gain)
+            {
+                System.out.print(r+" ("+i+") ");
+                i++;
+            }
+            System.out.println();
+    }
+
+    public void chooseSwap(PlayerInformation pi){
             printDepotSwap(pi);
             System.out.println("\nChoose a cell\n");
-            chooseInput = input.nextInt();
+            do{
+            chooseInput = input.nextInt(); }
+            while (chooseInput<0 && chooseInput>9);
             System.out.println("\nChoose another cell\n");
-            depotInput = input.nextInt();
+            do{
+            depotInput = input.nextInt(); }
+            while (chooseInput<0 && chooseInput>9);
         }
 
         public void chooseDev(ArrayList<DevCard> deck){
             printDevGrid(deck);
             System.out.println("\nChoose a card or come back (0)\n");
-            chooseInput = input.nextInt();//è lo stesso inoput di prima, ma in questo caso indica la carta scelta dalla griglia (1..12) o 0
+            do{
+            chooseInput = input.nextInt(); }//è lo stesso inoput di prima, ma in questo caso indica la carta scelta dalla griglia (1..12) o 0
+            while (chooseInput<0 || chooseInput>12);
         }
 
         public void chooseLeader(PlayerInformation pi, String cn) { //usato per scegliere il leader da attivare o scartare
             printPlayerLeader(pi,cn);
             System.out.print("\nChoose a leader or come back (0)");
-            leaderInput = input.nextInt();
+            do{
+            leaderInput = input.nextInt(); }
+            while (leaderInput<0 || leaderInput>pi.getLeaderCards().size());
         }
 
         public void interactLeader()
         {
-            System.out.println("\nDiscard (0) or activate (1) the leader\n");
-            chooseInput = input.nextInt(); //l'input indica cosa si intende fare con la carta leader scelta.
+            System.out.println("\nDiscard (1) or activate (2) the leader\n");
+            do{
+            chooseInput = input.nextInt();}//l'input indica cosa si intende fare con la carta leader scelta.
+            while (chooseInput<1 || chooseInput>2);
         }
 
         public void marketLeader(int w){ //usato se si hanno 2 leader mercato, il giocatore deve specificare per ogni bianco
             exchangeInput = new int[w];
-            System.out.println("\nFor each white resource, choose a leader card: (0) or (1)\n");
+            System.out.println("\nFor each white resource, choose a leader card: (1) or (2)\n");
             for (int i = 0; i < w; i++) {
-                exchangeInput[i] = input.nextInt(); //questo array di input indica per ciascun bianco quale risorsa si vuole ottenere
+                do{
+                exchangeInput[i] = input.nextInt()-1;} //questo array di input indica per ciascun bianco quale risorsa si vuole ottenere
+                while (exchangeInput[i]<0 || exchangeInput[i]>1);
             }
         }
 
         public void discountLeader(int q){ //q è passata dal controller e indica quante carte discount ha attivato il giocatore
             switch(q)
             {
-                case 1: System.out.println("\nDo you want to use the discount? No (0) Yes (1)\n");
+                case 1: System.out.println("\nDo you want to use the discount? No (1) Yes (2)\n");
+                    do{
+                        leaderInput = input.nextInt();}
+                    while (leaderInput<1 || leaderInput>2);
                     break;
-                case 2: System.out.println("\nWhich discount do you want to use? None (0) First (1) Second (2) Both (3)\n");
+                case 2: System.out.println("\nWhich discount do you want to use? None (1) First (2) Second (3) Both (4)\n");
+                    do{
+                        leaderInput = input.nextInt();}
+                    while (leaderInput<1 || leaderInput>4);
                     break;
                 default:
                     break;
             }
-            leaderInput = input.nextInt();
+
         }
 
-        public void chooseAny(int n, String s) //s è "pay" o "take"
+        public void chooseAny(int n)
         {
 
-            System.out.println("\nChoose "+n+" resource to"+s+": COIN (0), SERVANT (1), SHIELD (2), STONE (3), FAITH (4)\n");
             if(n == 1)
             {
-                anyInput[0] = input.nextInt();
+                System.out.println("\nChoose "+n+" resource to take: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)\n");
+                do{
+                    anyInput[0] = input.nextInt();}
+                while (anyInput[0]<1 || anyInput[0]>5);
                 anyInput[1] = -1;
             }
             else
             {
-                    anyInput[0] = input.nextInt();
-                    anyInput[1] = input.nextInt();;
+                    System.out.println("\nChoose "+n+" resource to pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4)\n");
+                    do{
+                    anyInput[0] = input.nextInt();}
+                    while (anyInput[0]<1 || anyInput[0]>4);
+                    do{
+                    anyInput[1] = input.nextInt();}
+                    while (anyInput[1]<1 || anyInput[1]>4);
             }
         }
+
+
         public void chooseSlot(PlayerInformation pi) {
             printSlot(pi); // printa solo gli slot attivi
-            int i = 0;
-            System.out.println("\nChoose slots, 6 to confirm\n");// 0 base 1-3 normale 4-5 speciale 6 ok
-            devSlotInput[i] = input.nextInt();
-            while(devSlotInput[i] != 6 && i < 6) {
-                i++;
-                devSlotInput[i] = input.nextInt();
-            }
 
+            boolean check;
+            System.out.println("\nChoose slots, 6 to confirm\n");// 0 base 1-3 normale 4-5 speciale 6 ok
+
+            for (int i = 0; (devSlotInput[i] != 6 && i < 6); i++) {
+                do {
+                    check = false;
+                    devSlotInput[i] = input.nextInt();
+                    for (int a = 0; a < i; a++) {
+                        if (devSlotInput[i] == devSlotInput[a]) {
+                            check = true;
+                        }
+                    }
+                }
+                while (devSlotInput[i] < 0 || devSlotInput[i] > (pi.getDevSlots().size() - 1) || check);
+            }
         }
 
 
@@ -296,7 +378,6 @@ public class cli{
             System.out.println(pi.getDepot().get(i)+" "+"("+j+")");
             j++;
         }
-        j--; //Quando esce dal for sarà 4, invece di 3
         for (int i =0; i<pi.getLeaderDepots().size(); i++)
         {
             System.out.println(pi.getLeaderDepots().get(i).getRow()+" "+"("+j+")"); //j può essere 4 o 5
@@ -409,19 +490,26 @@ public class cli{
 
         private void printSlot (PlayerInformation pi)
         { //stampa il numero di carte sviluppo, slot base, slot normali attivi e slot leader
-            int i = 0;
+            ArrayList<Integer> slot;
+            int i = -1;
             for (DevSlot dv : pi.getDevSlots()) {
                 i++;
                 switch (dv.getType()) {
                     case LEADER:
-                        System.out.print(i + ") Leader Slot: " + dv.getInputResource() + " --> " + dv.getOutputResource());
+                        System.out.print(i + ") Leader Slot: any" + " --> any " + dv.getOutputResource());
                         break;
 
                     case CARD:
                         System.out.print(i + ") Card Slot: ");
-                        printDevCard(((CardSlot) dv).getDevCards().get(((CardSlot)dv).getDevCards().size() - 1)); //mi stampa totalmente la prima in cima
-                        for (int j = ((CardSlot)dv).getDevCards().size() - 2; j > -1; j--) { //mi stampa parzialmente le altre
-                            printDevCard(((CardSlot)dv).getDevCards().get(j));
+                        if(((CardSlot)dv).getDevCards().size()==0)
+                        {
+                            System.out.print(i + ") no card");
+                        }
+                        else {
+                            printDevCard(((CardSlot) dv).getDevCards().peek()); //mi stampa totalmente la prima in cima
+                            for (int j = ((CardSlot) dv).getDevCards().size() - 2; j > -1; j--) { //mi stampa parzialmente le altre
+                                printPartlyDevCard(((CardSlot) dv).getDevCards().get(j));
+                            }
                         }
                         break;
 
@@ -449,7 +537,7 @@ public class cli{
         System.out.print("Price: ");
         for (Resource r : hm.keySet())
         {
-            System.out.print(hm.get(r) +" "+ r);
+            System.out.print(" "+hm.get(r) +" "+ r);
         }
         System.out.println("\n");
 

@@ -41,13 +41,62 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     public View()
     {
-        p = player.get(nickClient);
+        c = new cli();
         market = new Resource[3][4];
         popeSpace = new boolean[3];
-        price.put(Resource.COIN, 0);
-        price.put(Resource.SERVANT, 0);
-        price.put(Resource.SHIELD, 0);
-        price.put(Resource.STONE, 0);
+        player = new HashMap<>(4);
+        price = new HashMap<>(4);
+        taking = new HashMap<>(4);
+        specialTaking = new HashMap<>(4);
+    }
+
+    public void setPlayerView(String nc, ArrayList<String> nl)
+    {
+        setNickClient(nc);
+        setNickList(nl);
+        setCurrentPlayer(nickList.get(0));
+        setPlayer();
+        p = player.get(nickClient);
+    }
+
+    private void setNickList(ArrayList<String> nl) {
+        nickList = new ArrayList<>(nl);
+    }
+
+    private void setPlayer() {
+        for (String s : nickList) {
+            player.put(s, new PlayerInformation(s));
+        }
+    }
+
+    private void setCurrentPlayer(String s) {
+        currentPlayer = s;
+    }
+
+    private void setNickClient(String nc) {
+        nickClient = nc;
+    }
+
+    public void setGameView(Resource[][] m, boolean[] ps, ArrayList<DevCard> deck)
+    {
+        setMarket(m);
+        setPopeSpace(ps);
+        setVisibleDevGrid(deck);
+    }
+
+    private void setVisibleDevGrid(ArrayList<DevCard> deck) {
+        visibleDevGrid = new ArrayList<DevCard>(deck);
+    }
+
+    private void setPopeSpace(boolean[] ps) {
+        System.arraycopy(ps, 0, popeSpace, 0, 3);
+    }
+
+    private void setMarket(Resource[][] market) {
+        for (int i = 0; i<3; i++) //per ognuna delle 3 righe
+        {
+            System.arraycopy(market[i], 0, this.market[i], 0, 4); //copia tutti e 4 gli elementi
+        }
     }
 
     public void askInitially()
@@ -165,29 +214,18 @@ public class View extends Observable<Message> implements Observer<Message> {
         removeNullDepot();
     }
 
-    private void removeNullDepot() {
+    public void removeNullDepot() { //testato
         for (int i = 0; i<3; i++)
         {
-            for (Resource r : p.getDepot().get(i))
-            {
-                if (r == null)
-                {
-                    p.getDepot().get(i).remove(null);
-                }
-            }
+            p.getDepot().get(i).removeAll(Collections.singleton(null));
         }
         for (int i = 0; i<p.getLeaderDepots().size(); i++ )
         {
-            for (Resource r : p.getLeaderDepots().get(i).getRow())
-            {
-                if(r == null) {
-                    p.getLeaderDepots().get(i).getRow().remove(null);
-                }
-            }
+            p.getLeaderDepots().get(i).getRow().removeAll(Collections.singleton(null));
         }
     }
 
-    private void addNullDepot() {
+    public void addNullDepot() { //testato
     //questa funzione aggiunge elementi nulli al deposito dove non ci sono risorse per permettere lo scambio di celle
         for (int i = 0; i<3; i++)
         {
@@ -207,8 +245,8 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     public void askInsert(){
         Resource r;
-        c.chooseInsert(p);
-        r = gain.get(c.getChooseInput());
+        c.chooseInsert(p, gain);
+        r = gain.get(c.getChooseInput()-1);
         switch (c.getDepotInput())
         {
             case 1:
@@ -321,10 +359,10 @@ public class View extends Observable<Message> implements Observer<Message> {
             {return;}//se size è 2, leaderinput può essere MAX 3
             c.interactLeader();
             switch (c.getChooseInput()){
-                case 0:
+                case 1:
                     //messaggio di scarto
                     break;
-                case 1:
+                case 2:
                     //messaggio attivazione
                     break;
                 default:
@@ -383,72 +421,50 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     public void askSlot(){/**da modificare*/
             c.chooseSlot(p);
+            ArrayList<Resource> anyIn = new ArrayList<>();
+            ArrayList<Resource> anyOut = new ArrayList<>();
             for(int  n : c.getDevSlotInput())
             {
-                if (n == 0)
-                {
-                    c.chooseAny(2, "to pay");
-                    for (int i = 0; i<2; i++) {
+                if (n == 0) { //base
+
+                    c.chooseAny(2);
+                    for (int i = 0; i < 2; i++) {
                         switch (c.getAnyInput()[i]) {
-                            case 0:
-                                ((BasicSlot) p.getDevSlots().get(0)).addInputResource(i, Resource.COIN);
-                                break;
                             case 1:
-                                ((BasicSlot) p.getDevSlots().get(0)).addInputResource(i, Resource.SERVANT);
+                                anyIn.add(Resource.COIN);
                                 break;
                             case 2:
-                                ((BasicSlot) p.getDevSlots().get(0)).addInputResource(i, Resource.SHIELD);
+                                anyIn.add(Resource.SERVANT);
                                 break;
                             case 3:
-                                ((BasicSlot) p.getDevSlots().get(0)).addInputResource(i, Resource.STONE);
+                                anyIn.add(Resource.SHIELD);
                                 break;
                             case 4:
-                                ((BasicSlot) p.getDevSlots().get(0)).addInputResource(i, Resource.FAITH);
+                                anyIn.add(Resource.STONE);
                                 break;
                             default:
                                 return;
                         }
                     }
-
-                    c.chooseAny(1, "to take for the basic slot ");
-                    switch (c.getAnyInput()[0]) {
-                        case 0:
-                            ((BasicSlot) p.getDevSlots().get(0)).addOutputResource(Resource.COIN);
-                            break;
-                        case 1:
-                            ((BasicSlot) p.getDevSlots().get(0)).addOutputResource(Resource.SERVANT);
-                            break;
-                        case 2:
-                            ((BasicSlot) p.getDevSlots().get(0)).addOutputResource(Resource.SHIELD);
-                            break;
-                        case 3:
-                            ((BasicSlot) p.getDevSlots().get(0)).addOutputResource(Resource.STONE);
-                            break;
-                        case 4:
-                            ((BasicSlot) p.getDevSlots().get(0)).addOutputResource(Resource.FAITH);
-                            break;
-                        default:
-                            return;
-                    }
                 }
-                else if (n == 4 || n == 5)
+                if (n==0||n==4||n==5) //base o leader
                 {
-                    c.chooseAny(1, "to take for the leader slot");
+                    c.chooseAny(1);
                     switch (c.getAnyInput()[0]) {
-                        case 0:
-                            ((LeaderSlot) p.getDevSlots().get(n)).addOutputResource(Resource.COIN);
-                            break;
                         case 1:
-                            ((LeaderSlot) p.getDevSlots().get(n)).addOutputResource(Resource.SERVANT);
+                            anyOut.add(Resource.COIN);
                             break;
                         case 2:
-                            ((LeaderSlot) p.getDevSlots().get(n)).addOutputResource(Resource.SHIELD);
+                            anyOut.add(Resource.SERVANT);
                             break;
                         case 3:
-                            ((LeaderSlot) p.getDevSlots().get(n)).addOutputResource(Resource.STONE);
+                            anyOut.add(Resource.SHIELD);
                             break;
                         case 4:
-                            ((LeaderSlot) p.getDevSlots().get(n)).addOutputResource(Resource.FAITH);
+                            anyOut.add(Resource.STONE);
+                            break;
+                        case 5:
+                            anyOut.add(Resource.FAITH);
                             break;
                         default:
                             return;
@@ -456,26 +472,30 @@ public class View extends Observable<Message> implements Observer<Message> {
                 }
                 else if (n == 6)
                 {
-                   return;
+                   break;
                 }
             }
-            productionExpense();
+            productionExpense(anyOut);
             askPayment();
             return;
         }
 
-    private void productionExpense() {
-        price.put(Resource.COIN, 0);
+    public void productionExpense(ArrayList<Resource> any) {
+        price.put(Resource.COIN, 0); //reset del prezzo a zero per ogni risorsa
         price.put(Resource.SERVANT, 0);
         price.put(Resource.SHIELD, 0);
         price.put(Resource.STONE, 0);
-        for (int i : c.getDevSlotInput())
+        for (Resource r : any) //aggiunta delle risorse di anyInput al prezzo
         {
-            ArrayList<Resource> ar = p.getDevSlots().get(i).getInputResource();
-            price.put(Resource.COIN, price.get(Resource.COIN)+Collections.frequency(ar, Resource.COIN));
-            price.put(Resource.SERVANT, price.get(Resource.SERVANT)+Collections.frequency(ar, Resource.SERVANT));
-            price.put(Resource.SHIELD, price.get(Resource.SHIELD)+Collections.frequency(ar, Resource.SHIELD));
-            price.put(Resource.STONE, price.get(Resource.STONE)+Collections.frequency(ar, Resource.STONE));
+            price.put(r, price.get(r)+1);
+        }
+        for (int i : c.getDevSlotInput()) //per ogni devSlot vengono aggiunte le risorse delle inputResource
+        {
+            ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copia delle inputResource
+            for (Resource r : ar)
+            {
+                price.put(r, price.get(r)+1);
+            }
         }
         c.printExpense(price);
     }
@@ -506,17 +526,17 @@ public class View extends Observable<Message> implements Observer<Message> {
                         c.discountLeader(p.getLeaderDiscount().size());
                         switch (c.getLeaderInput())
                         {
-                            case 0:
-                                break;
                             case 1:
+                                break;
+                            case 2:
                                 r1 = p.getLeaderDiscount().get(0);
                                 r2 = null;
                                 break;
-                            case 2:
+                            case 3:
                                 r1 = null;
                                 r2 = p.getLeaderDiscount().get(1);
                                 break;
-                            case 3:
+                            case 4:
                                 r1 = p.getLeaderDiscount().get(0);
                                 r2 = p.getLeaderDiscount().get(1);
                                 break;
@@ -571,6 +591,30 @@ public class View extends Observable<Message> implements Observer<Message> {
                 }
             }
 
+    }
+
+    //getters
+
+    // metodi get
+
+    public String getNickClient() {
+        return nickClient;
+    }
+
+    public ArrayList<String> getNickList() {
+        return nickList;
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public HashMap<String, PlayerInformation> getPlayer() {
+        return player;
+    }
+
+    public PlayerInformation getP() {
+        return p;
     }
 
     public void showError(String text)

@@ -531,11 +531,11 @@ public class Game extends Observable<Message> {
             this.popeSpace[0] = false;
         }
     }
-    public int[] ranking(){
-        int[] r = new int[playerList.size()];
+    public ArrayList<Integer> ranking(){
+        ArrayList<Integer> r = new ArrayList<Integer>(playerList.size());
         for (int i = 0; i<playerList.size(); i++)
         {
-            r[i] = playerList.get(i).vp();
+            r.add(playerList.get(i).vp());
         }
         return r;
     }

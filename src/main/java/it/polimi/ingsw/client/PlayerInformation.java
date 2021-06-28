@@ -21,9 +21,20 @@ public class PlayerInformation {
     private Integer position; //posizione percorso fede
     private boolean[] popeFavor;
 
-    public PlayerInformation()
+    public PlayerInformation(String s)
     {
-
+        nick = s;
+        depot = new ArrayList<ArrayList<Resource>>();
+        depot.add(new ArrayList<Resource>(1)); //row1
+        depot.add(new ArrayList<Resource>(2)); //row2
+        depot.add(new ArrayList<Resource>(3)); //row3
+        strongBox = new HashMap<>(4);
+        leaderCards = new ArrayList<>(4);
+        leaderDiscount = new ArrayList<>(4);
+        leaderDepots = new ArrayList<>(4);
+        leaderMarket = new ArrayList<>(4);
+        devSlots = new ArrayList<>(5);
+        popeFavor = new boolean[3];
     }
 
     public ArrayList<ArrayList<Resource>> getDepot() {
