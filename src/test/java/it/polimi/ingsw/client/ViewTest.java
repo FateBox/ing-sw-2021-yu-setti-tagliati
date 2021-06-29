@@ -35,16 +35,6 @@ class ViewTest {
         assertNull(v2.getPlayer().get("Andrea"));
     }
 
-    @Test
-    void NullDepotTest()
-    {
-        nl.add("Fede");
-        v1.setPlayerView("Fede", nl);
-        v1.getP().getLeaderDepots().add(new SpecialDepot(Resource.COIN));
-        v1.addNullDepot();
-        v1.removeNullDepot();
-    }
-
 
     @Test
     void productionExpense()

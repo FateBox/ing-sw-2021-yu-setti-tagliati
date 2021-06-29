@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.enumeration.Resource;
+import it.polimi.ingsw.model.BasicSlot;
 import it.polimi.ingsw.model.DevSlot;
 import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.SpecialDepot;

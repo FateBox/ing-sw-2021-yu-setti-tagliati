@@ -8,10 +8,8 @@ import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+import java.lang.reflect.Array;
+import java.util.*;
 
 //NON STAMPA NIENTE, CHIAMA CLI/GUI PER STAMPA
 //VIEW CONTROLLA INPUT, PREPARA MESSAGGIO (UTILIZZANDO STRUTTURE DATI) E NOTIFICA A CONNECTION DEL MESSAGGIO PREPARATO
@@ -48,6 +46,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         price = new HashMap<>(4);
         taking = new HashMap<>(4);
         specialTaking = new HashMap<>(4);
+        marketChange = new ArrayList<>();
     }
 
     //metodi get
@@ -258,114 +257,117 @@ public class View extends Observable<Message> implements Observer<Message> {
     }
     public void askDepot() {
 
-        c.depotAction(p);
-        switch (c.getAction()) {
-            case 1:
-                askInsert();
-                break;
-            case 2:
-                askSwap();
-                break;
-            case 3:
-                break;
-            default:
-                return;
-        }
-        removeNullDepot();
-    }
-
-    public void removeNullDepot() { //testato
-        for (int i = 0; i<3; i++)
-        {
-            p.getDepot().get(i).removeAll(Collections.singleton(null));
-        }
-        for (int i = 0; i<p.getLeaderDepots().size(); i++ )
-        {
-            p.getLeaderDepots().get(i).getRow().removeAll(Collections.singleton(null));
-        }
-    }
-
-    public void addNullDepot() { //testato
-    //questa funzione aggiunge elementi nulli al deposito dove non ci sono risorse per permettere lo scambio di celle
-        for (int i = 0; i<3; i++)
-        {
-            while (p.getDepot().get(i).size()<i+1)
-            {
-                p.getDepot().get(i).add(null);
+        while (c.getAction() != 3) {
+            c.depotAction(p);
+            switch (c.getAction()) {
+                case 1:
+                    askInsert();
+                    break;
+                case 2:
+                    askSwap();
+                    break;
+                default:
+                    return;
             }
-        }
-        for (int i = 0; i<p.getLeaderDepots().size(); i++ )
-        {
-           while(p.getLeaderDepots().get(i).getQuantity()<2)
-           {
-               p.getLeaderDepots().get(i).getRow().add(null);
-           }
         }
     }
 
     public void askInsert(){
         Resource r;
         c.chooseInsert(p, gain);
+        if(gain.isEmpty()) {
+            return;
+        }
         r = gain.get(c.getChooseInput()-1);
         switch (c.getDepotInput())
         {
             case 1:
+                if(p.getDepot().get(0).size()>0) {
+                    System.out.println("The row is full");
+                    return;
+                }
                 p.getDepot().get(0).add(r);
                 break;
             case 2:
+                if(p.getDepot().get(1).size()>1) {
+                    System.out.println("The row is full");
+                    return;
+                }
                 p.getDepot().get(1).add(r);
                 break;
             case 3:
+                if(p.getDepot().get(2).size()>2) {
+                    System.out.println("The row is full\n");
+                    return;
+                }
                 p.getDepot().get(2).add(r);
                 break;
             case 4:
+                if(p.getLeaderDepots().get(0).getQuantity()>1) {
+                    System.out.println("The row is full\n");
+                    return;
+                }
                 p.getLeaderDepots().get(0).getRow().add(r);
                 break;
             case 5:
+                if(p.getLeaderDepots().get(0).getQuantity()>1) {
+                    System.out.println("The row is full\n");
+                    return;
+                }
                 p.getLeaderDepots().get(1).getRow().add(r);
                 break;
             default:
                 return;
         }
-        gain.remove(c.getChooseInput());
-        askDepot();
+        gain.remove(c.getChooseInput()-1);
     }
 
-    public void askSwap() {
-        int[] p1, p2 = new int[2];
-        Resource r,s;
-        ArrayList<Resource> pointer;
-        addNullDepot();
-        c.chooseSwap(p);
-        p1 = cellConvert(c.getChooseInput());
-        p2 = cellConvert(c.getDepotInput());
-        if (c.getChooseInput() > 5)
-        {
-            pointer = p.getLeaderDepots().get(p1[0]).getRow();
-            r = p.getLeaderDepots().get(p1[0]).getRow().get(p1[1]);
-        }
-        else
-        {
-            pointer = p.getDepot().get(p1[0]);
-            r = p.getDepot().get(p1[0]).get(p1[1]);
-        }
+   public void askSwap() {
+       Resource[][] arrayDepot = new Resource[5][3];
+       Resource aux;
+       for (int i = 0; i < 3; i++) {
+           int j = 0;
+           for (Resource r : p.getDepot().get(i)) {
+               arrayDepot[i][j] = r;
+               j++;
+           }
+       }
+       for (int i = 0; i < p.getLeaderDepots().size(); i++) {
+           int j = 0;
+           for (Resource r : p.getLeaderDepots().get(i).getRow()) {
+               arrayDepot[i + 3][j] = r;
+               j++;
+           }
+       }
+       c.chooseSwap(p, arrayDepot);
+       int[] c1 = cellConvert(c.getChooseInput());
+       int[] c2 = cellConvert(c.getDepotInput());
+       aux = arrayDepot[c1[0]][c1[1]];
+       arrayDepot[c1[0]][c1[1]] = arrayDepot[c2[0]][c2[1]];
+       arrayDepot[c2[0]][c2[1]] = aux;
 
-        if (c.getDepotInput()>5)
-        {
-            s = p.getLeaderDepots().get(p2[0]).getRow().get(p2[1]);
-            pointer.set(p1[1], s);
-            p.getLeaderDepots().get(p2[0]).getRow().set(p2[1], r);
-        }
-        else
-        {
-            s = p.getDepot().get(p2[0]).get(p2[1]);
-            pointer.set(p1[1],s);
-            p.getDepot().get(p2[0]).set(p2[1], r);
+       for (int i = 0; i < 3; i++) {
+           ArrayList<Resource> a = new ArrayList<Resource>();
+           for (Resource r : arrayDepot[i]) {
+               if (r != null) {
+                   a.add(r);
+               }
+           }
+           p.getDepot().set(i, a);
+       }
 
-        }
-        removeNullDepot();
+       for (int i = 0; i < p.getLeaderDepots().size(); i++) {
 
-    }
+           ArrayList<Resource> b = new ArrayList<Resource>();
+           for (Resource r : arrayDepot[i+3]) {
+               if (r != null) {
+                   b.add(r);
+               }
+               p.getLeaderDepots().get(i).setRow(b);
+           }
+       }
+   }
+
 
     private int[] cellConvert(int c)
     {
@@ -392,16 +394,16 @@ public class View extends Observable<Message> implements Observer<Message> {
                 break;
             //leader
             case 6:
-                r = new int[]{0, 0}; //i1 sta per il leader deposito, i2 sta per l'elemento della riga
+                r = new int[]{3, 0};
                 break;
             case 7:
-                r = new int[]{0, 1}; //i1 sta per il leader deposito, i2 sta per l'elemento della riga
+                r = new int[]{3, 1};
                 break;
             case 8:
-                r = new int[]{1, 0}; //i1 sta per il leader deposito, i2 sta per l'elemento della riga
+                r = new int[]{4, 0};
                 break;
             case 9:
-                r = new int[]{1, 1}; //i1 sta per il leader deposito, i2 sta per l'elemento della riga
+                r = new int[]{4, 1};
                 break;
             default:
                 r = new int[] {-1, -1};
@@ -479,17 +481,24 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     }
 
-    public void askSlot(){/**da modificare*/
-            c.chooseSlot(p);
+    public void askSlot(){
+            c.chooseSlot(p);//testato
+        int i =0, o=0;
             ArrayList<Resource> anyIn = new ArrayList<>();
             ArrayList<Resource> anyOut = new ArrayList<>();
-            for(int  n : c.getDevSlotInput())
-            {
+            for(int  n : c.getDevSlotInput()) {
                 if (n == 0) { //base
-
-                    c.chooseAny(2);
-                    for (int i = 0; i < 2; i++) {
-                        switch (c.getAnyInput()[i]) {
+                    i = i + 2;
+                    o = o + 1;
+                }
+                if (n == 4 || n == 5)
+                    o = o + 1;
+            }
+                //anyIn
+                    if (i>0)
+                        c.chooseAny(i, false);
+                    for (int h = 0; h < i; h++) {
+                        switch (c.getAnyInput()[h]) {
                             case 1:
                                 anyIn.add(Resource.COIN);
                                 break;
@@ -503,14 +512,13 @@ public class View extends Observable<Message> implements Observer<Message> {
                                 anyIn.add(Resource.STONE);
                                 break;
                             default:
-                                return;
+                                break;
                         }
                     }
-                }
-                if (n==0||n==4||n==5) //base o leader
-                {
-                    c.chooseAny(1);
-                    switch (c.getAnyInput()[0]) {
+                    if (o>0)
+                        c.chooseAny(o, true);
+                    for (int h = o; h < o; h++){
+                    switch (c.getAnyInput()[h]) {
                         case 1:
                             anyOut.add(Resource.COIN);
                             break;
@@ -527,34 +535,30 @@ public class View extends Observable<Message> implements Observer<Message> {
                             anyOut.add(Resource.FAITH);
                             break;
                         default:
-                            return;
+                            break;
                     }
                 }
-                else if (n == 6)
-                {
-                   break;
-                }
-            }
-            productionExpense(anyOut);
+            productionExpense(anyIn);
             askPayment();
             return;
         }
 
-    public void productionExpense(ArrayList<Resource> any) {
+    public void productionExpense(ArrayList<Resource> anyInput) {
         price.put(Resource.COIN, 0); //reset del prezzo a zero per ogni risorsa
         price.put(Resource.SERVANT, 0);
         price.put(Resource.SHIELD, 0);
         price.put(Resource.STONE, 0);
-        for (Resource r : any) //aggiunta delle risorse di anyInput al prezzo
+        for (Resource r : anyInput) //aggiunta delle risorse di anyInput al prezzo
         {
             price.put(r, price.get(r)+1);
         }
         for (int i : c.getDevSlotInput()) //per ogni devSlot vengono aggiunte le risorse delle inputResource
         {
-            ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copia delle inputResource
-            for (Resource r : ar)
-            {
-                price.put(r, price.get(r)+1);
+            if(i!=6 && i!=-1) {
+                ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copia delle inputResource
+                for (Resource r : ar) {
+                    price.put(r, price.get(r) + 1);
+                }
             }
         }
         c.printExpense(price);
@@ -581,9 +585,10 @@ public class View extends Observable<Message> implements Observer<Message> {
                         return;
                     }
                     idSlot = c.getPositionInput();
+                    //uso carta leader
                     if (p.getLeaderDiscount().size() >0)
                     {
-                        c.discountLeader(p.getLeaderDiscount().size());
+                        c.discountLeader(p);
                         switch (c.getLeaderInput())
                         {
                             case 1:
@@ -604,7 +609,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                                 return;
                         }
 
-                    }
+                    } //fino a qui testato
                         purchaseExpense(r1, r2);
                         askPayment();
                 }
@@ -615,22 +620,30 @@ public class View extends Observable<Message> implements Observer<Message> {
         }
 
     private void purchaseExpense(Resource r1, Resource r2) {
-        ArrayList<Resource> ar = visibleDevGrid.get(c.getChooseInput()-1).getCostList();
-        price.put(Resource.COIN, Collections.frequency(ar, Resource.COIN));
-        price.put(Resource.SERVANT, Collections.frequency(ar, Resource.SERVANT));
-        price.put(Resource.SHIELD, Collections.frequency(ar, Resource.SHIELD));
-        price.put(Resource.STONE, Collections.frequency(ar, Resource.STONE));
-        if(r1 != null)
-        {price.put(r1, price.get(r1)-1);}
-        if(r2 != null)
-        {price.put(r2, price.get(r1)-1);}
-        for (Resource r : price.keySet())
-        {
-            if (price.get(r)<1)
-            {
-                price.remove(r);
-            }
+        ArrayList<Resource> ar = visibleDevGrid.get(c.getChooseInput()-1).getCostList();//prende il costo della carta
+
+        price.put(Resource.COIN, 0); //reset del prezzo a zero per ogni risorsa
+        price.put(Resource.SERVANT, 0);
+        price.put(Resource.SHIELD, 0);
+        price.put(Resource.STONE, 0);
+
+        for (Resource r : ar) {
+            price.put(r, price.get(r) + 1);
         }
+        if(r1 != null)
+        {
+            price.put(r1, price.get(r1)-1);
+            if (price.get(r1)<0)
+                price.put(r1,0);
+        }
+        if(r2 != null)
+        {
+            price.put(r2, price.get(r1)-1);
+            if (price.get(r2)<0)
+                price.put(r2,0);
+        }
+
+
         c.printExpense(price);
     }
 
@@ -638,16 +651,18 @@ public class View extends Observable<Message> implements Observer<Message> {
     {
                 if (cli) {
                     c.printDepot(p);
-                    c.printStrongBox(p);
-                for (Resource r : price.keySet()) { //chiama un metodo di cli che prende un Resource come parametro e restituisce un intero.
-                    c.depotTaking(r);
-                    taking.put(r, c.getResourcesInput());
-                    for (SpecialDepot sd : p.getLeaderDepots()) {
-                        if (r == sd.getRes()){
-                            c.specialDepotTaking(r);
+                    c.printStrongBox(p); //testato
+                for (Resource r : price.keySet()) {
+                    if(price.get(r)>0) {
+                        c.depotTaking(r, "");
+                        taking.put(r, c.getResourcesInput());
+                        for (SpecialDepot sd : p.getLeaderDepots()) {
+                            if (r == sd.getRes()) {
+                                c.depotTaking(r, "special");
+                                specialTaking.put(r,c.getResourcesInput());
+                            }
                         }
                     }
-                    c.specialDepotTaking(r);
                 }
             }
 

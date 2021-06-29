@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import java.util.*;
 
+import com.sun.source.tree.BreakTree;
 import it.polimi.ingsw.enumeration.AbilityType;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
@@ -16,7 +17,7 @@ public class Cli{
     private int leaderInput; //scelta leader
     private int positionInput; //scelta dello slot per la carta sviluppo comprata
     private int[] devSlotInput; //scelta slot da attivare
-    private int[] anyInput; //scelta risorse any
+    private int[] anyInput; //scelta risorse any (input in quanto variabile immessa dal giocatore, indica anche le risorse prodotte)
     private int resourcesInput; //risorse prelevate dal deposito
     private int[] exchangeInput;  //scelta risorse bianche
     private Scanner input = new Scanner(System.in); //variabile ingresso input
@@ -64,7 +65,6 @@ public class Cli{
 
         //costruttore
         public Cli() {
-            devSlotInput = new int[6];//indica tutti i possibili slot, anche quelli non posseduti dal giocatore
             anyInput = new int[2];
             initialInput = new int[2];
         }
@@ -132,7 +132,7 @@ public class Cli{
         public void action(PlayerInformation pi, boolean[] popeSpace, String cn, HashMap<String, PlayerInformation> m)
         {
             printPlayerBoard(pi,popeSpace, cn);
-            //printFaithTrack(m, popeSpace);
+            printFaithTrack(m, popeSpace);
             System.out.println("\nAction: Development grid (1), Market (2), Leader (3), Production (4), Opponent boards (5)\n");
             do {
                 actionInput = input.nextInt(); //questo input indica quale azione l'utente ha intenzione di fare
@@ -160,9 +160,14 @@ public class Cli{
         }
 
         public  void chooseInsert(PlayerInformation pi, ArrayList<Resource> gain){
-            printGain(gain);
+            if(gain.isEmpty())
+            {
+                System.out.println("You have no resources to insert\n");
+                return;
+            }
             printDepot(pi);
-            System.out.println("\nChoose a gain element\n");
+            System.out.println("\nChoose a element to insert\n");
+            printGain(gain);
             do {
                 chooseInput = input.nextInt();
             }
@@ -171,7 +176,7 @@ public class Cli{
             do {
                 depotInput = input.nextInt();
             }
-            while (chooseInput<0||chooseInput>(pi.getLeaderDepots().size()+3));
+            while (depotInput<0||depotInput>(pi.getLeaderDepots().size()+3));
         }
 
     public void printGain(ArrayList<Resource> gain) {
@@ -184,19 +189,42 @@ public class Cli{
             System.out.println();
     }
 
-    public void chooseSwap(PlayerInformation pi){
-            printDepotSwap(pi);
+    public void chooseSwap(PlayerInformation pi,Resource[][] matrix){
+            int k = printMatrix(matrix, pi.getLeaderDepots().size());
             System.out.println("\nChoose a cell\n");
             do{
             chooseInput = input.nextInt(); }
-            while (chooseInput<0 && chooseInput>9);
+            while (chooseInput<0 || chooseInput>k);
             System.out.println("\nChoose another cell\n");
             do{
             depotInput = input.nextInt(); }
-            while (chooseInput<0 && chooseInput>9);
+            while (chooseInput<0 || chooseInput>k);
         }
 
-        public void chooseDev(ArrayList<DevCard> deck){
+    public int printMatrix(Resource[][] matrix, int ld) {
+            int k = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < i+1; j++)
+            {
+                System.out.print(matrix[i][j] +" ("+k+") ");
+                k++;
+            }
+            System.out.println();
+            }
+        for (int i = 0; i < ld; i++) {
+            for (int j = 0; j < 2; j++)
+            {
+                System.out.print(matrix[i+3][j] +" ("+k+") ");
+                k++;
+            }
+            System.out.println();
+
+        }
+
+        return k-1;
+    }
+
+    public void chooseDev(ArrayList<DevCard> deck){
             printDevGrid(deck);
             System.out.println("\nChoose a card or come back (0)\n");
             do{
@@ -230,7 +258,12 @@ public class Cli{
             }
         }
 
-        public void discountLeader(int q){ //q è passata dal controller e indica quante carte discount ha attivato il giocatore
+        public void discountLeader(PlayerInformation pi){ //q è passata dal controller e indica quante carte discount ha attivato il giocatore
+            int q = pi.getLeaderDiscount().size();
+            for (Resource r : pi.getLeaderDiscount())
+            {
+                System.out.println("Leader: -1 "+ r+"\n");
+            }
             switch(q)
             {
                 case 1: System.out.println("\nDo you want to use the discount? No (1) Yes (2)\n");
@@ -249,53 +282,49 @@ public class Cli{
 
         }
 
-        public void chooseAny(int n)
-        {
-
-            if(n == 1)
-            {
-                System.out.println("\nChoose "+n+" resource to take: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)\n");
-                do{
-                    anyInput[0] = input.nextInt();}
-                while (anyInput[0]<1 || anyInput[0]>5);
-                anyInput[1] = -1;
+        public void chooseAny(int n, boolean b) {
+            anyInput = new int[n];
+            if (b) {
+                System.out.println("\nChoose " + n + " resource to take: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)\n");
+            } else {
+                System.out.println("\nChoose " + n + " resource to pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4)\n");
+            }                for (int i = 0; i < n; i++) {
+                    do {
+                        anyInput[i] = input.nextInt();
+                    }
+                    while (anyInput[i] < 1 || anyInput[i] > 5);
+                }
             }
-            else
-            {
-                    System.out.println("\nChoose "+n+" resource to pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4)\n");
-                    do{
-                    anyInput[0] = input.nextInt();}
-                    while (anyInput[0]<1 || anyInput[0]>4);
-                    do{
-                    anyInput[1] = input.nextInt();}
-                    while (anyInput[1]<1 || anyInput[1]>4);
-            }
-        }
 
 
         public void chooseSlot(PlayerInformation pi) {
             printSlot(pi); // printa solo gli slot attivi
-
-            boolean check;
+            devSlotInput = new int[pi.getDevSlots().size()];
+            boolean check; //controlla che un giocatore non inserisca nuovamente lo stesso slot
             System.out.println("\nChoose slots, 6 to confirm\n");// 0 base 1-3 normale 4-5 speciale 6 ok
 
-            for (int i = 0; (devSlotInput[i] != 6 && i < 6); i++) {
+            for (int i = 0; i < pi.getDevSlots().size(); i++) {
                 do {
                     check = false;
                     devSlotInput[i] = input.nextInt();
+                    if (devSlotInput[i] == 6){
+                        for(int j = i+1; j<devSlotInput.length; j++){
+                        devSlotInput[j] = -1;}
+                        return;}
                     for (int a = 0; a < i; a++) {
                         if (devSlotInput[i] == devSlotInput[a]) {
                             check = true;
                         }
                     }
                 }
-                while (devSlotInput[i] < 0 || devSlotInput[i] > (pi.getDevSlots().size() - 1) || check);
+                while (devSlotInput[i] < 0 || (devSlotInput[i] > (pi.getDevSlots().size())-1) || check);
+                System.out.println("accepted value\n");
             }
         }
 
 
-        public void depotTaking(Resource r){
-            System.out.println("\nIndicate how many "+r+" you want to withdraw from depot\n");
+        public void depotTaking(Resource r, String s){
+            System.out.println("\nIndicate how many "+r+" you want to withdraw from"+s+" depot\n");
             resourcesInput = input.nextInt(); //questo input indica per ogni risorsa passata, quante risorse il giocatore vuole prelevare dal deposito
         }
 
@@ -490,14 +519,14 @@ public class Cli{
                 i++;
                 switch (dv.getType()) {
                     case LEADER:
-                        System.out.print(i + ") Leader Slot: any" + " --> any " + dv.getOutputResource());
+                        System.out.println(i + ") Leader Slot: "+dv.getInputResource() + " --> [ANY, FAITH]" );
                         break;
 
                     case CARD:
                         System.out.print(i + ") Card Slot: ");
                         if(((CardSlot)dv).getDevCards().size()==0)
                         {
-                            System.out.print(i + ") no card");
+                            System.out.println("no card");
                         }
                         else {
                             printDevCard(((CardSlot) dv).getDevCards().peek()); //mi stampa totalmente la prima in cima
@@ -508,7 +537,7 @@ public class Cli{
                         break;
 
                     case BASIC:
-                        System.out.print(i + ") Basic Slot: Any, Any --> Any");
+                        System.out.println(i + ") Basic Slot: [ANY, ANY] --> [ANY]");
                         break;
                     default:
                         break;
@@ -531,6 +560,7 @@ public class Cli{
         System.out.print("Price: ");
         for (Resource r : hm.keySet())
         {
+            if(hm.get(r)>0)
             System.out.print(" "+hm.get(r) +" "+ r);
         }
         System.out.println("\n");
