@@ -34,7 +34,13 @@ public class View extends Observable<Message> implements Observer<Message> {
     private HashMap<Resource,Integer> price;
     private HashMap<Resource,Integer> taking;
     private HashMap<Resource,Integer> specialTaking;
+    private ArrayList<Resource> discountRes;
     private ArrayList<Resource> gain; //mandato dal server dopo market
+
+    //Backup //questi dati vengono aggiornati nello stesso modo insieme al deposito, deposito speciale e guadagno normali
+    ArrayList<ArrayList<Resource>> depotBackUp;
+    ArrayList<Resource> gainBackUp;
+    ArrayList<SpecialDepot> spDepotBackUp;
 
 
     public View()
@@ -47,6 +53,10 @@ public class View extends Observable<Message> implements Observer<Message> {
         taking = new HashMap<>(4);
         specialTaking = new HashMap<>(4);
         marketChange = new ArrayList<>();
+        depotBackUp = new ArrayList<ArrayList<Resource>>();
+        gainBackUp = new ArrayList<Resource>();
+        spDepotBackUp = new ArrayList<SpecialDepot>();
+        discountRes = new ArrayList<Resource>();
     }
 
     //metodi get
@@ -174,6 +184,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         message.setPlayerAction(PlayerAction.CHOOSE_LEADER);
         message.setIdLeader1(p.getLeaderCards().get(c.getInitialInput()[0]-1).getID());
         message.setIdLeader2(p.getLeaderCards().get(c.getInitialInput()[1]-1).getID());
+
         if(cli)
         {
             c.initialResource(n);
@@ -213,6 +224,7 @@ public class View extends Observable<Message> implements Observer<Message> {
 
     }
 
+    //fa visualizzare al giocatore la sua palncia e le possibili azioni se è il suo turno o cosa vuole visualizzare se non lo è
     public void askAction () {
         if (cli) {
             if (nickClient.equals(currentPlayer)) { //griglia 1 market 2 leader 3 produzione 4 plance 5
@@ -232,31 +244,56 @@ public class View extends Observable<Message> implements Observer<Message> {
                         break;
                     case 5:
                         c.seeBoards(player, popeSpace, nickClient);
+                        askAction();
                         break;
+                    case 6:
+                        Message message = new Message();
+                        message.setPlayerNick(p.getNick());
+                        message.setType(MessageType.ACTION);
+                        message.setPlayerAction(PlayerAction.END_TURN);
+                        break;
+
                     default:
                         break;
                 }
             } else {
-                c.watch();
-                switch (c.getAction()) {
-                    case 1:
-                        c.printDevGrid(visibleDevGrid);
-                        break;
-                    case 2:
-                        c.printMarket(market, freeMarble);
-                        break;
-                    case 3:
-                        c.seeBoards(player, popeSpace, nickClient);
-                        break;
-                    default:
-                        break;
+                    c.watch();
+                    switch (c.getAction()) {
+                        case 1:
+                            c.printDevGrid(visibleDevGrid);
+                            askAction();
+                            break;
+                        case 2:
+                            c.printMarket(market, freeMarble);
+                            askAction();
+                            break;
+                        case 3:
+                            c.seeBoards(player, popeSpace, nickClient);
+                            askAction();
+                            break;
+                        default:
+                            break;
 
+                    }
                 }
             }
+        else{
+            //gui
         }
     }
-    public void askDepot() {
 
+    //viene chiamato al posto di askAction per la gestione del deposito dopo il mercato.
+    //invia al server il deposito, il deposito speciale e le risorse non inserite
+    //Corrisponde a MARKET2
+
+    public void askDepot() {
+        //Quando viene chiamato askDepot i depositi e gain vengono ripristinati alle informazioni dell'ultimo update
+        //in questo modo, in caso di un messaggio d'errore con deposito sbagliato, questo viene ripristinato
+        p.setDepot(depotBackUp);
+        gain = new ArrayList<Resource>(gainBackUp);
+        p.setLeaderDepots(spDepotBackUp);
+
+    if (cli){
         while (c.getAction() != 3) {
             c.depotAction(p);
             switch (c.getAction()) {
@@ -267,11 +304,25 @@ public class View extends Observable<Message> implements Observer<Message> {
                     askSwap();
                     break;
                 default:
-                    return;
+                    break;
             }
         }
+        }
+    else{
+        //gui
+        }
+
+        Message message=new Message();
+        message.setPlayerNick(p.getNick());
+        message.setType(MessageType.ACTION);
+        message.setPlayerAction(PlayerAction.MARKET2);
+        //informazioni messaggio
+        message.setDepot(p.getDepot());
+        message.setSpecialDepots(p.getLeaderDepots());
+        message.setResources(gain);
     }
 
+    //metodo ausiliare di askDepot, permette di inserire un elemento all'interno del deposito
     public void askInsert(){
         Resource r;
         c.chooseInsert(p, gain);
@@ -322,6 +373,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         gain.remove(c.getChooseInput()-1);
     }
 
+    //metodo ausiliare di askDepot, permette di scambaire 2 celle del deposito, andandolo prima a convertire in una matrice
    public void askSwap() {
        Resource[][] arrayDepot = new Resource[5][3];
        Resource aux;
@@ -368,7 +420,7 @@ public class View extends Observable<Message> implements Observer<Message> {
        }
    }
 
-
+    //metodo ausiliario di askSwap, trasforma l'input del giocatore negli indici della cella
     private int[] cellConvert(int c)
     {
         int [] r;
@@ -412,32 +464,47 @@ public class View extends Observable<Message> implements Observer<Message> {
         return r;
     }
 
-
+    //Corrisponde a UseLeader e DiscardLeader: Chiede quale carta si voglia attivare o scartare
     private void askLeader() {
         if (cli)
         {
             c.chooseLeader(p, nickClient);
             if (c.getLeaderInput() == 0 || c.getLeaderInput()-1 > p.getLeaderCards().size())
-            {return;}//se size è 2, leaderinput può essere MAX 3
+            {   askAction();
+                return;
+            }//se size è 2, leaderinput può essere MAX 3
             c.interactLeader();
-            switch (c.getChooseInput()){
-                case 1:
-                    //messaggio di scarto
-                    break;
-                case 2:
-                    //messaggio attivazione
-                    break;
-                default:
-                    return;
-            }
+        }
+        else{
+            //gui
+        }
+        Message message = new Message();
+        switch (c.getChooseInput()) {
+            case 1:
+                message = new Message();
+                message.setPlayerNick(p.getNick());
+                message.setType(MessageType.ACTION);
+                message.setPlayerAction(PlayerAction.DISCARD_LEADER);
+                message.setIdLeader1(p.getLeaderCards().get(c.getLeaderInput() - 1).getID());
+                break;
+            case 2:
+                message = new Message();
+                message.setPlayerNick(p.getNick());
+                message.setType(MessageType.ACTION);
+                message.setPlayerAction(PlayerAction.USE_LEADER);
+                message.setIdLeader1(p.getLeaderCards().get(c.getLeaderInput() - 1).getID());
+                break;
+            default:
+                return;
         }
     }
 
+    //Corrisponde a Market1, chiede al giocatore le risorse del mercato
     public void askMarket() {
-        //mercato1
         int w=0;
         int i;
-        c.chooseMarket(market, freeMarble);
+        if (cli) {
+            c.chooseMarket(market, freeMarble);
         if (c.getChooseInput() > 3) //column
         {
             for(i = 0; i<3; i++) //3 elements
@@ -454,70 +521,85 @@ public class View extends Observable<Message> implements Observer<Message> {
                     w++;
             }
         }
-
         else{
+            askAction();
             return;
         }
-        switch(p.getLeaderMarket().size())
-        {
+
+        switch(p.getLeaderMarket().size()) {
             case 0:
+                for (i = 0; i < w; i++) {
+                    marketChange.add(null);
+                }
                 break;
             case 1:
-                for (i = 0; i<w; i++)
-                {
+                for (i = 0; i < w; i++) {
                     marketChange.add(p.getLeaderMarket().get(0));
                 }
                 break;
             case 2:
                 c.marketLeader(w);
-                for(int r : c.getExchangeInput())
-                {
-                    marketChange.add(p.getLeaderMarket().get(r));
+                for (int h : c.getExchangeInput()) {
+                    marketChange.add(p.getLeaderMarket().get(h)); //non c'è bisogno di mettere -1
                 }
                 break;
             default:
-                return;
+                break;
         }
+        }
+        else{
+            //gui
+        }
+        Message message = new Message();
+        message.setPlayerNick(p.getNick());
+        message.setType(MessageType.ACTION);
+        message.setPlayerAction(PlayerAction.MARKET1);
+        //informazioni mandate: indice mercato, risorse cambiate con leader
+        message.setRowCol(c.getChooseInput()-1);
+        message.setResources(marketChange);
 
     }
 
+    //Corrisponde a PRODUCTION
     public void askSlot(){
-            c.chooseSlot(p);//testato
+
         int i =0, o=0;
             ArrayList<Resource> anyIn = new ArrayList<>();
             ArrayList<Resource> anyOut = new ArrayList<>();
-            for(int  n : c.getDevSlotInput()) {
-                if (n == 0) { //base
-                    i = i + 2;
-                    o = o + 1;
-                }
-                if (n == 4 || n == 5)
-                    o = o + 1;
-            }
-                //anyIn
-                    if (i>0)
-                        c.chooseAny(i, false);
-                    for (int h = 0; h < i; h++) {
-                        switch (c.getAnyInput()[h]) {
-                            case 1:
-                                anyIn.add(Resource.COIN);
-                                break;
-                            case 2:
-                                anyIn.add(Resource.SERVANT);
-                                break;
-                            case 3:
-                                anyIn.add(Resource.SHIELD);
-                                break;
-                            case 4:
-                                anyIn.add(Resource.STONE);
-                                break;
-                            default:
-                                break;
-                        }
+            if(cli) {
+                c.chooseSlot(p);
+                for (int n : c.getDevSlotInput()) {
+                    if (n == 0) { //base
+                        i = i + 2;
+                        o = o + 1;
                     }
-                    if (o>0)
-                        c.chooseAny(o, true);
-                    for (int h = o; h < o; h++){
+                    if (n == 4 || n == 5)
+                        o = o + 1;
+                }
+                //anyIn
+                if (i > 0)
+                    c.chooseAny(i, false);
+                for (int h = 0; h < i; h++) {
+                    switch (c.getAnyInput()[h]) {
+                        case 1:
+                            anyIn.add(Resource.COIN);
+                            break;
+                        case 2:
+                            anyIn.add(Resource.SERVANT);
+                            break;
+                        case 3:
+                            anyIn.add(Resource.SHIELD);
+                            break;
+                        case 4:
+                            anyIn.add(Resource.STONE);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (o > 0)
+                    c.chooseAny(o, true);
+                for (int h = o; h < o; h++) {
                     switch (c.getAnyInput()[h]) {
                         case 1:
                             anyOut.add(Resource.COIN);
@@ -538,11 +620,20 @@ public class View extends Observable<Message> implements Observer<Message> {
                             break;
                     }
                 }
-            productionExpense(anyIn);
-            askPayment();
-            return;
+                productionExpense(anyIn);
+                askPayment();
+            }
+            else{
+            }
+        Message message = new Message();
+        message.setPlayerNick(p.getNick());
+        message.setType(MessageType.ACTION);
+        message.setPlayerAction(PlayerAction.PRODUCTION);
+        //informazioni mandate
+
         }
 
+        //metodo ausiliare di askSlot
     public void productionExpense(ArrayList<Resource> anyInput) {
         price.put(Resource.COIN, 0); //reset del prezzo a zero per ogni risorsa
         price.put(Resource.SERVANT, 0);
@@ -564,6 +655,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         c.printExpense(price);
     }
 
+    //Corrisponde a PURCHASE
     public void askDev()
     {
         int idDev;
@@ -573,52 +665,66 @@ public class View extends Observable<Message> implements Observer<Message> {
         if (cli) {
             c.chooseDev(visibleDevGrid);
             if (c.getChooseInput() == 0) {
+                askAction();
                 return;
-            } else if (c.getChooseInput() > 0 && c.getChooseInput() < 13) {
-                if (visibleDevGrid.get(c.getChooseInput()-1) == null) {
+            }
+            else if (c.getChooseInput() > 0 && c.getChooseInput() < 13) {
+                if (visibleDevGrid.get(c.getChooseInput() - 1) == null) {
                     System.out.println("Deck is void");
+                    askAction();
                     return;
                 }
-                    idDev = visibleDevGrid.get(c.getChooseInput()).getId();
-                    c.position();
-                    if (c.getPositionInput() < 1 || c.getPositionInput() > 3) {
-                        return;
+                c.position();
+                idSlot = c.getPositionInput();
+                //uso carta leader
+                if (p.getLeaderDiscount().size() > 0) {
+                    c.discountLeader(p);
+                    switch (c.getLeaderInput()) {
+                        case 1:
+                            break;
+                        case 2:
+                            r1 = p.getLeaderDiscount().get(0);
+                            r2 = null;
+                            break;
+                        case 3:
+                            r1 = null;
+                            r2 = p.getLeaderDiscount().get(1);
+                            break;
+                        case 4:
+                            r1 = p.getLeaderDiscount().get(0);
+                            r2 = p.getLeaderDiscount().get(1);
+                            break;
+                        default:
+                            break;
                     }
-                    idSlot = c.getPositionInput();
-                    //uso carta leader
-                    if (p.getLeaderDiscount().size() >0)
-                    {
-                        c.discountLeader(p);
-                        switch (c.getLeaderInput())
-                        {
-                            case 1:
-                                break;
-                            case 2:
-                                r1 = p.getLeaderDiscount().get(0);
-                                r2 = null;
-                                break;
-                            case 3:
-                                r1 = null;
-                                r2 = p.getLeaderDiscount().get(1);
-                                break;
-                            case 4:
-                                r1 = p.getLeaderDiscount().get(0);
-                                r2 = p.getLeaderDiscount().get(1);
-                                break;
-                            default:
-                                return;
-                        }
 
-                    } //fino a qui testato
-                        purchaseExpense(r1, r2);
-                        askPayment();
+
                 }
-
-            } else {
-                //exception
+                purchaseExpense(r1, r2);
+                askPayment();
+            }
+            else {
+                askAction();
+                return;
             }
         }
+        else{
+             //gui
+            }
+        Message message = new Message();
+        message.setPlayerNick(p.getNick());
+        message.setType(MessageType.ACTION);
+        message.setPlayerAction(PlayerAction.PRODUCTION);
+        //informazioni mandate
+        message.setDevCardId(visibleDevGrid.get(c.getChooseInput() - 1).getId());
+        message.setSlotToInsert(c.getPositionInput()); //da 1 a 3
+        message.setPaymentDepot(taking);
+        message.setPaymentLeader(specialTaking);
+        message.setResources(discountRes);
 
+        }
+
+        //metodo ausiliario per ottenere price
     private void purchaseExpense(Resource r1, Resource r2) {
         ArrayList<Resource> ar = visibleDevGrid.get(c.getChooseInput()-1).getCostList();//prende il costo della carta
 
@@ -632,12 +738,14 @@ public class View extends Observable<Message> implements Observer<Message> {
         }
         if(r1 != null)
         {
+            discountRes.add(r1);
             price.put(r1, price.get(r1)-1);
             if (price.get(r1)<0)
                 price.put(r1,0);
         }
         if(r2 != null)
         {
+            discountRes.add(r2);
             price.put(r2, price.get(r1)-1);
             if (price.get(r2)<0)
                 price.put(r2,0);
@@ -647,6 +755,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         c.printExpense(price);
     }
 
+    //metodo ausiliario per prelevare risorse dai depositi
     public void askPayment()
     {
                 if (cli) {
@@ -696,6 +805,7 @@ public class View extends Observable<Message> implements Observer<Message> {
     {
         //fai stampare errore da cli o gui.
     }
+
     @Override
     public void update(Message message) {
         switch (message.getType()) {

@@ -81,7 +81,7 @@ public class Cli{
         do {
             initialInput[1] = input.nextInt();
         }
-        while (initialInput[1]<1 || initialInput[1]>4);
+        while (initialInput[1]<1 || initialInput[1]>4 || initialInput[1]==initialInput[0]);
     }
 
     public void initialResource(int nPlayer) {
@@ -353,6 +353,14 @@ public class Cli{
         }
 
         public void printPlayerBoard(PlayerInformation pi, boolean[] popeSpace, String cn) {
+
+            if (pi.isInkWell())
+            {
+                System.out.println(pi.getNick()+" (Inkwell)\n");
+            }
+            else {
+                System.out.println(pi.getNick()+"\n");
+            }
             printDepot(pi);
             printStrongBox(pi);
             printSlot(pi);
@@ -361,14 +369,18 @@ public class Cli{
         }
 
         public void printPlayerLeader(PlayerInformation pi, String cn) {
+            int i =0;
             if (pi.getNick().equals(cn)) {
                 for (LeaderCard lc : pi.getLeaderCards()) {
-
+                    i++;
+                    System.out.print(i+")");
                     printLeader(lc);
                 }
             }
             else{
                 for (LeaderCard lc : pi.getLeaderCards()) {
+                    i++;
+                    System.out.print(i+")");
                     printPartlyLeader(lc);
                 }
             }

@@ -12,6 +12,7 @@ import java.util.HashMap;
 public class PlayerInformation {
 
     private String nick;
+    private boolean inkWell;
     private ArrayList<ArrayList<Resource>> depot;
     private HashMap<Resource, Integer> strongBox;
     private ArrayList<LeaderCard> leaderCards;
@@ -40,6 +41,7 @@ public class PlayerInformation {
         leaderMarket = new ArrayList<>(4);
         devSlots = new ArrayList<>(5);
         popeFavor = new boolean[3];
+        inkWell = false;
         position = 0;
     }
 
@@ -47,8 +49,16 @@ public class PlayerInformation {
         return depot;
     }
 
+    public boolean isInkWell() {
+        return inkWell;
+    }
+
     public void setDepot(ArrayList<ArrayList<Resource>> depot) {
         this.depot = depot;
+    }
+
+    public void setInkWell(boolean inkWell) {
+        this.inkWell = inkWell;
     }
 
     public String getNick() {
