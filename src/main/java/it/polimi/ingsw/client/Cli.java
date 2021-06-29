@@ -248,8 +248,9 @@ public class Cli{
             while (chooseInput<1 || chooseInput>2);
         }
 
-        public void marketLeader(int w){ //usato se si hanno 2 leader mercato, il giocatore deve specificare per ogni bianco
+        public void marketLeader(int w, PlayerInformation pi){ //usato se si hanno 2 leader mercato, il giocatore deve specificare per ogni bianco
             exchangeInput = new int[w];
+            printMarketLeader(pi);
             System.out.println("\nFor each white resource, choose a leader card: (1) or (2)\n");
             for (int i = 0; i < w; i++) {
                 do{
@@ -307,10 +308,14 @@ public class Cli{
                 do {
                     check = false;
                     devSlotInput[i] = input.nextInt();
-                    if (devSlotInput[i] == 6){
+                    /*if (devSlotInput[i] == 6){
                         for(int j = i+1; j<devSlotInput.length; j++){
                         devSlotInput[j] = -1;}
-                        return;}
+                        return;}*/
+                    if(input.nextInt()==6){
+                        for (int j = 1;j<devSlotInput.length; j++)
+                            devSlotInput[j] = -1;}
+                    }
                     for (int a = 0; a < i; a++) {
                         if (devSlotInput[i] == devSlotInput[a]) {
                             check = true;
@@ -509,6 +514,13 @@ public class Cli{
                 }
             }
 
+        }
+
+        public void printMarketLeader(PlayerInformation pi){
+            for(Resource r : pi.getLeaderMarket())
+            {
+                System.out.println("Leader Market: "+r+"\n");
+            }
         }
 
         public void printRanking (ArrayList<Integer> rank, ArrayList<String> nicks) //nicks: lista ordinata dei giocatori rank: lista dei punteggi associata a lista nicks

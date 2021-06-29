@@ -289,9 +289,9 @@ public class View extends Observable<Message> implements Observer<Message> {
     public void askDepot() {
         //Quando viene chiamato askDepot i depositi e gain vengono ripristinati alle informazioni dell'ultimo update
         //in questo modo, in caso di un messaggio d'errore con deposito sbagliato, questo viene ripristinato
-        p.setDepot(depotBackUp);
-        gain = new ArrayList<Resource>(gainBackUp);
-        p.setLeaderDepots(spDepotBackUp);
+        //p.setDepot(depotBackUp);
+        //gain = new ArrayList<Resource>(gainBackUp);
+        //p.setLeaderDepots(spDepotBackUp);
 
     if (cli){
         while (c.getAction() != 3) {
@@ -485,6 +485,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                 message.setPlayerNick(p.getNick());
                 message.setType(MessageType.ACTION);
                 message.setPlayerAction(PlayerAction.DISCARD_LEADER);
+                //informazioni mandate
                 message.setIdLeader1(p.getLeaderCards().get(c.getLeaderInput() - 1).getID());
                 break;
             case 2:
@@ -492,6 +493,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                 message.setPlayerNick(p.getNick());
                 message.setType(MessageType.ACTION);
                 message.setPlayerAction(PlayerAction.USE_LEADER);
+                //informazioni mandate
                 message.setIdLeader1(p.getLeaderCards().get(c.getLeaderInput() - 1).getID());
                 break;
             default:
@@ -538,7 +540,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                 }
                 break;
             case 2:
-                c.marketLeader(w);
+                c.marketLeader(w, p);
                 for (int h : c.getExchangeInput()) {
                     marketChange.add(p.getLeaderMarket().get(h)); //non c'è bisogno di mettere -1
                 }
@@ -554,7 +556,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         message.setPlayerNick(p.getNick());
         message.setType(MessageType.ACTION);
         message.setPlayerAction(PlayerAction.MARKET1);
-        //informazioni mandate: indice mercato, risorse cambiate con leader
+        //informazioni mandate:
         message.setRowCol(c.getChooseInput()-1);
         message.setResources(marketChange);
 
@@ -566,6 +568,7 @@ public class View extends Observable<Message> implements Observer<Message> {
         int i =0, o=0;
             ArrayList<Resource> anyIn = new ArrayList<>();
             ArrayList<Resource> anyOut = new ArrayList<>();
+            ArrayList<Integer> slot = new ArrayList<>();
             if(cli) {
                 c.chooseSlot(p);
                 for (int n : c.getDevSlotInput()) {
@@ -575,6 +578,11 @@ public class View extends Observable<Message> implements Observer<Message> {
                     }
                     if (n == 4 || n == 5)
                         o = o + 1;
+
+                    if(n!=6 && n!=-1)
+                    {
+                        slot.add(n);
+                    }
                 }
                 //anyIn
                 if (i > 0)
@@ -625,11 +633,16 @@ public class View extends Observable<Message> implements Observer<Message> {
             }
             else{
             }
+
         Message message = new Message();
         message.setPlayerNick(p.getNick());
         message.setType(MessageType.ACTION);
         message.setPlayerAction(PlayerAction.PRODUCTION);
         //informazioni mandate
+        message.setProductionSlots(slot);
+        message.setPaymentDepot(taking);
+        message.setPaymentLeader(specialTaking);
+        message.setExtraOutput(anyOut);
 
         }
 
@@ -658,8 +671,6 @@ public class View extends Observable<Message> implements Observer<Message> {
     //Corrisponde a PURCHASE
     public void askDev()
     {
-        int idDev;
-        int idSlot;
         Resource r1 = null;
         Resource r2 = null;
         if (cli) {
@@ -675,7 +686,6 @@ public class View extends Observable<Message> implements Observer<Message> {
                     return;
                 }
                 c.position();
-                idSlot = c.getPositionInput();
                 //uso carta leader
                 if (p.getLeaderDiscount().size() > 0) {
                     c.discountLeader(p);
@@ -714,14 +724,13 @@ public class View extends Observable<Message> implements Observer<Message> {
         Message message = new Message();
         message.setPlayerNick(p.getNick());
         message.setType(MessageType.ACTION);
-        message.setPlayerAction(PlayerAction.PRODUCTION);
+        message.setPlayerAction(PlayerAction.PURCHASE);
         //informazioni mandate
         message.setDevCardId(visibleDevGrid.get(c.getChooseInput() - 1).getId());
         message.setSlotToInsert(c.getPositionInput()); //da 1 a 3
         message.setPaymentDepot(taking);
         message.setPaymentLeader(specialTaking);
         message.setResources(discountRes);
-
         }
 
         //metodo ausiliario per ottenere price
@@ -830,6 +839,7 @@ public class View extends Observable<Message> implements Observer<Message> {
                         market = message.getMarket();
                         freeMarble = message.getFreeMarble();
                         gain = message.getResources();
+                        gainBackUp = message.getResources();
 
                         break;
                     }
