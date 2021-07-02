@@ -1,19 +1,16 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.Player;
 
+/**
+ * It works on the leaders that the player wants to discard.
+ * Operations to do:
+ * - Checks if the chosen leader card is present or is already used.
+ * - Removes the leader card from the player.
+ * - Adds a faith point to the player (game.forward(player))
+ * - If it's not present, it calls a Util method to send an Error message to the player.
+ */
 public class DiscardLeaderExecutor implements ActionExecutor {
-    /**
-     * informazioni
-     * quale leader l'utente vuole scartare
-     *
-     * operazioni da eseguire
-     * verifica se tale leader sia presente o già utilizzato
-     * rimuovi il leader dal player
-     * aggiungi un punto fede (game.forward(player))
-     * se non presente chiama un metodo di util per tornare un messaggio d'errore all'utente
-     */
 
     private Game game;
     public DiscardLeaderExecutor(Game game)
@@ -21,6 +18,11 @@ public class DiscardLeaderExecutor implements ActionExecutor {
         this.game=game;
     }
 
+    /**
+     * Checks if the player has the chosen leader card, or if the card is already activated.
+     * @param leaderID ID of the leader card.
+     * @return True if it's possible to remove it, false otherwise.
+     */
     public boolean verifyData(int leaderID)
     {
         if (!game.getCurrentP().hasLeader(leaderID))
@@ -31,6 +33,10 @@ public class DiscardLeaderExecutor implements ActionExecutor {
         return true;
     }
 
+    /**
+     * Executes the leader card removal.
+     * @param leaderID ID of the chosen leader card.
+     */
     public void execute(int leaderID)
     {
         game.getCurrentP().getLeader().removeIf(lc -> lc.getID() == leaderID);

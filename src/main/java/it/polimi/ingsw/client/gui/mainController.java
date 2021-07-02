@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.gui;
 
 import it.polimi.ingsw.client.PlayerInformation;
 import it.polimi.ingsw.client.View;
-import it.polimi.ingsw.enumeration.AbilityType;
 import it.polimi.ingsw.enumeration.ImageEnum;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
@@ -23,6 +22,9 @@ import javafx.scene.layout.VBox;
 
 import java.util.*;
 
+/**
+ * Handles the processes after joining the game while using GUI.
+ */
 public class MainController {
 
     private View view;
@@ -50,16 +52,16 @@ public class MainController {
     private TextArea text;
 
     private int[] initialInput;
-    int actionInput; //scelta azione giocatore
-    int chooseInput; //scelta decisioni
-    int depotInput; //scelta cella del deposito
-    int leaderInput; //scelta leader
-    int positionInput; //scelta dello slot per la carta sviluppo comprata
-    int[] devSlotInput; //scelta slot da attivare
-    int[] anyInput; //scelta risorse any
-    int resourcesInput; //risorse prelevate dal deposito
-    int[] exchangeInput;  //scelta risorse bianche
-    Scanner input = new Scanner(System.in); //variabile ingresso input
+    int actionInput; // player action choice
+    int chooseInput; // decisions choice
+    int depotInput; // depot cell choice
+    int leaderInput; // leader choice
+    int positionInput; // slot choice for the acquired development card
+    int[] devSlotInput; // slot to activate choice
+    int[] anyInput; // any resource choice
+    int resourcesInput; // resources taken from the depot
+    int[] exchangeInput;  // white resources choice
+    Scanner input = new Scanner(System.in); // input variable
 
 
 
@@ -107,9 +109,15 @@ public class MainController {
         return positionInput;
     }
 
+    /**
+     * Allows the player to select two initial leader cards.
+     * @param pi Player information register.
+     * @param cn Client nickname.
+     */
     public void initialLeader(PlayerInformation pi, String cn, int nPlayer)
     {
         done=false;
+        initialInput=new int[2];
         initialInput[0]=0;
         initialInput[1]=0;
         for(int i=0;i<4;i++){
@@ -126,16 +134,23 @@ public class MainController {
 
     }
 
+    /**
+     * Handles the initial leader selection.
+     * @param i Leader card counter.
+     * @param lc Leader card chosen.
+     */
     private void il(int i,LeaderCard lc){
         ((GridPane)leadercards.getChildren().get(0)).getChildren().get(i).setDisable(false);
         ((GridPane)leadercards.getChildren().get(0)).getChildren().get(i).setVisible(true);
         ((ImageView)((GridPane)leadercards.getChildren().get(0)).getChildren().get(i)).setImage(new Image(ImageEnum.getUrl(("LEADER"+lc.getID()))));
         ((GridPane)leadercards.getChildren().get(0)).getChildren().get(i).setOnMouseClicked(e->{
             if(initialInput[0]==0){
-                initialInput[0]=+1;
+                System.out.println("first");
+                initialInput[0]=i+1;
             }
-            else {
-                initialInput[1]=+1;
+            else if(initialInput[1]==0){
+                System.out.println("second");
+                initialInput[1]=i+1;
                 done=true;
                 leadercards.setDisable(true);
                 leadercards.setVisible(false);
@@ -144,6 +159,10 @@ public class MainController {
         });
     }
 
+    /**
+     * Allows the player to select the initial resource.
+     * @param nPlayer Player's index in the game.
+     */
     public void initialResource(int nPlayer) {
         done=false;
         switch (nPlayer) {
@@ -156,9 +175,6 @@ public class MainController {
                 Platform.runLater(()->{
                     ((Label)actions.getChildren().get(5)).setText("Choose a resource: Coin(1) Servant(2) Shield(3) Stone(4)");
                 });
-
-
-
                ir(1);
                 break;
             default:
@@ -171,6 +187,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles the initial resource selection.
+     * @param i Index of the initial resource.
+     */
     private void ir(int i){
         Platform.runLater(()->{
 
@@ -256,26 +276,40 @@ public class MainController {
         });});
     }
 
+    /**
+     * Allows the player to select the position to insert the DevCard.
+     */
     public void position() {
+        System.out.println("position");
         for(Node x : devslots.getChildren()){
             x.setVisible(false);
             x.setDisable(true);
         }
+        text.appendText("Choose a slot to insert the DevCard: 1 | 2 | 3 ");
         done=false;
-        devcards.setDisable(false);
-        devcards.setVisible(true);
+        devslots.setDisable(false);
+        devslots.setVisible(true);
+        ((ImageView) devslots.getChildren().get(0)).setVisible(true);
+        ((ImageView) devslots.getChildren().get(0)).setDisable(false);
         ((ImageView) devslots.getChildren().get(0)).setOnMouseClicked(e -> {positionInput=1;
             done=true;
             devslots.setDisable(true);
         });
+        ((ImageView) devslots.getChildren().get(1)).setVisible(true);
+        ((ImageView) devslots.getChildren().get(1)).setDisable(false);
         ((ImageView) devslots.getChildren().get(1)).setOnMouseClicked(e -> {positionInput=2;
             done=true;
             devslots.setDisable(true);});
+        ((ImageView) devslots.getChildren().get(2)).setVisible(true);
+        ((ImageView) devslots.getChildren().get(2)).setDisable(false);
         ((ImageView) devslots.getChildren().get(2)).setOnMouseClicked(e -> {positionInput=3;
             done=true;
             devslots.setDisable(true);});
     }
 
+    /**
+     * Allows the player to select the operations to perform while waiting for the own turn.
+     */
     public void watch()
     {
         Platform.runLater(()->{
@@ -283,7 +317,7 @@ public class MainController {
 
         resetAction();
         done=false;
-        System.out.println("\nWatch: Development grid (1), Market (2)\n");
+        //System.out.println("\nWatch: Development grid (1), Market (2)\n");
         ((Button) actions.getChildren().get(0)).setText("grid");
         ((Button) actions.getChildren().get(1)).setText("market");
         ((Button) actions.getChildren().get(0)).setVisible(true);
@@ -294,15 +328,29 @@ public class MainController {
         ((Button) actions.getChildren().get(1)).setOnAction(e->{actionInput=2;done=true;actions.setDisable(true);actions.setVisible(false);});
         });
     }
+
+    /**
+     * Resets the player action.
+     */
     private void resetAction(){
         for(Node x : actions.getChildren()){
             x.setVisible(false);
             x.setDisable(true);
         }
+        actions.getChildren().get(5).setDisable(false);
     }
 
+    /**
+     * Allows the player to select the operations to perform when it is the current player of the turn.
+     * @param pi Player information register.
+     * @param popeSpace Pope space information register: active / not active.
+     * @param cn Client nickname.
+     * @param m Informations about all the players.
+     */
     public void action(PlayerInformation pi, boolean[] popeSpace, String cn, HashMap<String, PlayerInformation> m)
     {
+        System.out.println("action");
+        //System.out.println(view.getPlayersInfo().get(view.getNickClient()).getDepot());
         done=false;
         resetAction();
         printPlayerBoard(pi,popeSpace, cn);
@@ -329,13 +377,17 @@ public class MainController {
         ((Button) actions.getChildren().get(4)).setDisable(false);
         actions.setVisible(true);
         actions.setDisable(false);
-        ((Button) actions.getChildren().get(0)).setOnAction(e->{actionInput=1;actions.setVisible(false);done=true;});
-        ((Button) actions.getChildren().get(1)).setOnAction(e->{actionInput=2;actions.setVisible(false);done=true;});
-        ((Button) actions.getChildren().get(2)).setOnAction(e->{actionInput=3;actions.setVisible(false);done=true;});
-        ((Button) actions.getChildren().get(3)).setOnAction(e->{actionInput=4;actions.setVisible(false);done=true;});
-        ((Button) actions.getChildren().get(4)).setOnAction(e->{actionInput=6;actions.setVisible(false);done=true;}); });
+        ((Button) actions.getChildren().get(0)).setOnAction(e->{actionInput=1;resetAction();done=true;});
+        ((Button) actions.getChildren().get(1)).setOnAction(e->{actionInput=2;resetAction();done=true;});
+        ((Button) actions.getChildren().get(2)).setOnAction(e->{actionInput=3;resetAction();done=true;});
+        ((Button) actions.getChildren().get(3)).setOnAction(e->{actionInput=4;resetAction();done=true;});
+        ((Button) actions.getChildren().get(4)).setOnAction(e->{actionInput=6;resetAction();done=true;}); });
     }
 
+    /**
+     * Submits actions regarding the depot.
+     * @param pi Player information register.
+     */
     public void depotAction(PlayerInformation pi)
     {
         done=false;
@@ -344,39 +396,77 @@ public class MainController {
         actions.getChildren().get(5).setVisible(true);
         Platform.runLater(()->{
             ((Label)actions.getChildren().get(5)).setText("Action: Insert (1), Swap (2), Confirm (3)");
-
-
-        ((Button) actions.getChildren().get(0)).setText("Insert");
-        ((Button) actions.getChildren().get(1)).setText("Swap");
-        ((Button) actions.getChildren().get(2)).setText("Confirm");
-        actions.setVisible(true);
-        actions.setDisable(false);
-        ((Button) actions.getChildren().get(0)).setOnAction(e->{actionInput=1;actions.setVisible(false);done=true;});
-        ((Button) actions.getChildren().get(1)).setOnAction(e->{actionInput=2;actions.setVisible(false);done=true;});
-        ((Button) actions.getChildren().get(2)).setOnAction(e->{actionInput=3;actions.setVisible(false);done=true;});});
+            ((Button) actions.getChildren().get(0)).setDisable(false);
+            ((Button) actions.getChildren().get(0)).setVisible(true);
+            ((Button) actions.getChildren().get(1)).setDisable(false);
+            ((Button) actions.getChildren().get(1)).setVisible(true);
+            ((Button) actions.getChildren().get(2)).setDisable(false);
+            ((Button) actions.getChildren().get(2)).setVisible(true);
+            ((Button) actions.getChildren().get(0)).setText("Insert");
+            ((Button) actions.getChildren().get(1)).setText("Swap");
+            ((Button) actions.getChildren().get(2)).setText("Confirm");
+            actions.setVisible(true);
+            actions.setDisable(false);
+            ((Button) actions.getChildren().get(0)).setOnAction(e->{actionInput=1;actions.setVisible(false);done=true;});
+            ((Button) actions.getChildren().get(1)).setOnAction(e->{actionInput=2;actions.setVisible(false);done=true;});
+            ((Button) actions.getChildren().get(2)).setOnAction(e->{actionInput=3;actions.setVisible(false);done=true;});});
     }
 
+    /**
+     * Selects in the market a row or a column where the player would like to put an resource in.
+     * @param m Resource market
+     * @param fm Resource that the player puts in
+     */
     public void chooseMarket(Resource[][] m, Resource fm){
         done=false;
         printMarket(m, fm);
-        market.setDisable(false);
-        market.setVisible(true);
+        resetAction();
+        actions.setDisable(false);
+        actions.setVisible(true);
+        Platform.runLater(()->{
+            ((Button)actions.getChildren().get(0)).setVisible(true);
+            ((Button)actions.getChildren().get(0)).setDisable(false);
+            ((Button)actions.getChildren().get(0)).setText("return");
+            ((Button)actions.getChildren().get(0)).setOnAction(e->{
+                chooseInput = 0;
+                done=true;
+                market.setVisible(false);
+                market.setDisable(true);
+                resetAction();
+            });
+        });
+        ((GridPane) market.getChildren().get(2)).setDisable(false);
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(12)).setOnMouseClicked(e->{
-            System.out.println(1);
             chooseInput=1;
-            market.setVisible(false);done=true;});
-        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(13)).setOnMouseClicked(e->{chooseInput=2;System.out.println(2);
-            market.setVisible(false);done=true;});
-        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(14)).setOnMouseClicked(e->{chooseInput=3;System.out.println(3);
-            market.setVisible(false);done=true;});
-        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(15)).setOnMouseClicked(e->{chooseInput=4;System.out.println(4);
-            market.setVisible(false);done=true;});
-        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(16)).setOnMouseClicked(e->{chooseInput=5;System.out.println(5);
-            market.setVisible(false);done=true;});
-        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(17)).setOnMouseClicked(e->{chooseInput=6;System.out.println(6);
-            market.setVisible(false);done=true;});
-        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(18)).setOnMouseClicked(e->{chooseInput=7;System.out.println(7);
-            market.setVisible(false);done=true;});
+            market.setVisible(false);
+            market.setDisable(true);
+            done=true;});
+        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(13)).setOnMouseClicked(e->{
+            chooseInput=2;
+            market.setVisible(false);market.setDisable(true);
+            done=true;});
+        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(14)).setOnMouseClicked(e->{
+            chooseInput=3;
+            market.setVisible(false);market.setDisable(true);
+            done=true;});
+        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(15)).setOnMouseClicked(e->{
+            chooseInput=4;
+            market.setVisible(false);market.setDisable(true);
+            done=true;});
+        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(16)).setOnMouseClicked(e->{
+            chooseInput=5;
+            market.setVisible(false);market.setDisable(true);
+            done=true;});
+        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(17)).setOnMouseClicked(e->{
+            chooseInput=6;
+            market.setVisible(false);
+            market.setDisable(true);
+            done=true;});
+        ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(18)).setOnMouseClicked(e->{
+            chooseInput=7;
+            market.setVisible(false);
+            market.setDisable(true);
+            done=true;});
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(12)).setDisable(false);
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(13)).setDisable(false);
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(14)).setDisable(false);
@@ -384,9 +474,14 @@ public class MainController {
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(16)).setDisable(false);
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(17)).setDisable(false);
         ((Button)((GridPane) market.getChildren().get(2)).getChildren().get(18)).setDisable(false);
-        ((GridPane) market.getChildren().get(2)).setDisable(false);
+
     }
 
+    /**
+     * Inserts a resource taken from the market in a chosen row or column if available
+     * @param pi Player information register.
+     * @param gain Resource that the player takes from the market.
+     */
     public  void chooseInsert(PlayerInformation pi, ArrayList<Resource> gain){
         done=false;
         resetAction();
@@ -414,8 +509,14 @@ public class MainController {
             cg(i,pi,false);
         }
     }
+
+
+    /**
+     * Shows the resources in <code>gain</code>.
+     * @param gain Resource that the player takes from the market.
+     */
     public String printGain(ArrayList<Resource> gain) {
-        int i = 1;
+        int i = 0;
         String a="";
         for(Resource r: gain)
         {
@@ -424,7 +525,13 @@ public class MainController {
         }
         return a;
     }
-    private void cc(PlayerInformation pi){
+
+    /**
+     * Handles the row selection.
+     * @param pi Player information register.
+     */
+    private void cr(PlayerInformation pi){
+
         resetAction();
         actions.getChildren().get(5).setVisible(true);
         Platform.runLater(()->{
@@ -436,424 +543,434 @@ public class MainController {
         }
     }
 
+
     private void cg(int i,PlayerInformation pi,boolean t){
-        ((Button) actions.getChildren().get(i)).setVisible(true);
-        ((Button) actions.getChildren().get(i)).setDisable(false);
-        ((Button) actions.getChildren().get(i)).setOnAction(e->{
-            chooseInput=i+1;
-            if(!t){
-                cc(pi);
-            }else {
-                done=true;
-            }
+        Platform.runLater(()->{
+            ((Button) actions.getChildren().get(i)).setVisible(true);
+            ((Button) actions.getChildren().get(i)).setDisable(false);
+            ((Button) actions.getChildren().get(i)).setText(""+i);
+            ((Button) actions.getChildren().get(i)).setOnAction(e->{
+
+                if(!t){
+                    chooseInput=i+1;
+                    cr(pi);
+                }else {
+                    depotInput=i+1;
+                    done=true;
+                }
+            });
         });
+
     }
 
 
-
+    /**
+     * Selects two cells in the depot and swaps their content.
+     * @param pi Player information register.
+     */
     public void chooseSwap(PlayerInformation pi){
         done=false;
         depot.setVisible(true);
         depot.setDisable(false);
 
 
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e-> {
             chooseInput = 0;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;
                 depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e-> {
             chooseInput = 1;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e-> {
             chooseInput = 2;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e-> {
             chooseInput = 3;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e-> {
             chooseInput = 4;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e-> {
             chooseInput = 5;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e-> {
             chooseInput = 6;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e-> {
             chooseInput = 7;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e-> {
             chooseInput = 8;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;depot.setDisable(true);
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e1-> {
                 depotInput = 9;
                 done=true;depot.setDisable(true);
             });
 
 
         });
-        ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e-> {
+        ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(3)).setOnMouseClicked(e-> {
             chooseInput = 9;
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 1;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(1)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 2;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 3;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 4;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(2)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 5;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 6;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(1)).setOnMouseClicked(e1-> {
                 depotInput = 7;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(3)).getChildren().get(2)).setOnMouseClicked(e1-> {
                 depotInput = 8;
                 done=true;
             });
-            ((ImageView) ((HBox) ((VBox) depot.getChildren()).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
+            ((ImageView) ((HBox) ((VBox) depot.getChildren().get(0)).getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e1-> {
                 depotInput = 0;
                 done=true;
             });
@@ -863,79 +980,116 @@ public class MainController {
 
     }
 
+    /**
+     * Chooses the development card to use.
+     * @param deck Development cards' deck.
+     */
     public void chooseDev(ArrayList<DevCard> deck){
         done=false;
         printDevGrid(deck);
-        System.out.println("\nChoose a card or come back (0)\n");
-
+        //System.out.println("\nChoose a card or come back (0)\n");
+        resetAction();
+        actions.setDisable(false);
+        actions.setVisible(true);
+        Platform.runLater(()->{
+            ((Button)actions.getChildren().get(0)).setVisible(true);
+            ((Button)actions.getChildren().get(0)).setDisable(false);
+            ((Button)actions.getChildren().get(0)).setText("return");
+            ((Button)actions.getChildren().get(0)).setOnAction(e->{
+                chooseInput = 0;
+                done=true;
+                devcards.setVisible(false);
+                devcards.setDisable(true);
+                resetAction();
+            });
+        });
         devcards.setDisable(false);
         devcards.setVisible(true);
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(0)).setOnMouseClicked(e-> {
             chooseInput = 9;
             done=true;
             devcards.setVisible(false);
+            devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(1)).setOnMouseClicked(e-> {
             chooseInput = 10;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(2)).setOnMouseClicked(e-> {
             chooseInput = 11;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(3)).setOnMouseClicked(e-> {
             chooseInput = 12;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(4)).setOnMouseClicked(e-> {
             chooseInput = 5;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(5)).setOnMouseClicked(e-> {
             chooseInput = 6;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(6)).setOnMouseClicked(e-> {
             chooseInput = 7;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(7)).setOnMouseClicked(e-> {
             chooseInput = 8;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(8)).setOnMouseClicked(e-> {
             chooseInput = 1;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(9)).setOnMouseClicked(e-> {
             chooseInput = 2;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(10)).setOnMouseClicked(e-> {
             chooseInput = 3;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
         ((ImageView) ((GridPane)devcards.getChildren().get(0)).getChildren().get(11)).setOnMouseClicked(e-> {
             chooseInput = 4;
             done=true;
-            devcards.setVisible(false);
+            devcards.setVisible(false);devcards.setDisable(true);resetAction();
         });
     }
 
+    /**
+     * Chooses the leader card to use.
+     * @param pi Player information register.
+     * @param cn Client nickname.
+     */
     public void chooseLeader(PlayerInformation pi, String cn) { //usato per scegliere il leader da attivare o scartare
         done=false;
+        actions.setDisable(false);
+        actions.setVisible(true);
+        Platform.runLater(()->{
+            ((Button)actions.getChildren().get(0)).setVisible(true);
+            ((Button)actions.getChildren().get(0)).setDisable(false);
+            ((Button)actions.getChildren().get(0)).setText("return");
+            ((Button)actions.getChildren().get(0)).setOnAction(e->{
+                chooseInput = 0;
+                done=true;
+                leader.setDisable(true);
+                resetAction();
+            });
+        });
         printPlayerLeader(pi,cn);
-        System.out.print("\nChoose a leader or come back (0)");
+        //System.out.print("\nChoose a leader or come back (0)");
         leader.setVisible(true);
         leader.setDisable(false);
         for(int i=0;i<pi.getLeaderCards().size();i++){
@@ -947,8 +1101,13 @@ public class MainController {
             leaderInput = i + 1;
             done=true;
             leader.setDisable(true);
+            resetAction();
         });
     }
+
+    /**
+     * Choose the operation to perform on the leader card: discard or activate
+     */
     public void interactLeader()
     {
         done=false;
@@ -971,6 +1130,12 @@ public class MainController {
         });
     }
 
+
+    /**
+     * Used when there are two market leaders, the player should indicate what to do for every white resource.
+     * @param w Number of white resources.
+     * @param pi Player information register.
+     */
     public void marketLeader(int w,PlayerInformation pi){ //usato se si hanno 2 leader mercato, il giocatore deve specificare per ogni bianco
         done=false;
         resetAction();
@@ -980,7 +1145,7 @@ public class MainController {
             ((Label)actions.getChildren().get(5)).setText("\nFor each white resource, choose a leader card: (0) or (1)\n");
         });
 
-        System.out.println("\nFor each white resource, choose a leader card: (0) or (1)\n");
+        //System.out.println("\nFor each white resource, choose a leader card: (0) or (1)\n");
         ml(w);
     }
 
@@ -1016,7 +1181,10 @@ public class MainController {
         });});
     }
 
-
+    /**
+     * Allows the player to choose the discounts to use.
+     * @param pi Player information register.
+     */
     public void discountLeader(PlayerInformation pi){ //q è passata dal controller e indica quante carte discount ha attivato il giocatore
         Platform.runLater(()->{
         int q = pi.getLeaderDiscount().size();
@@ -1024,7 +1192,7 @@ public class MainController {
         resetAction();
         switch(q)
         {
-            case 1: System.out.println("\nDo you want to use the discount? No (0) Yes (1)\n");
+            case 1: //System.out.println("\nDo you want to use the discount? No (0) Yes (1)\n");
                 ((Label) actions.getChildren().get(5)).setVisible(true);
 
                     ((Label)actions.getChildren().get(5)).setText("Do you want to use the discount? No (1) Yes (2)");
@@ -1050,7 +1218,7 @@ public class MainController {
                 });
 
                 break;
-            case 2: System.out.println("\nWhich discount do you want to use? None (1) First (2) Second (3) Both (4)\n");
+            case 2: //System.out.println("\nWhich discount do you want to use? None (1) First (2) Second (3) Both (4)\n");
                 ((Label) actions.getChildren().get(5)).setVisible(true);
                 Platform.runLater(()->{
                     ((Label)actions.getChildren().get(5)).setText("Which discount do you want to use? None (0) First (1) Second (2) Both (3)");
@@ -1096,6 +1264,11 @@ public class MainController {
         }});
     }
 
+    /**
+     * Allows the player to select any kind of resource for each <code>AnyResource</code>.
+     * @param n Number of resources to take / pay.
+     * @param b Indicates if it's input resource or output resource: true for input and false for output.
+     */
     public void chooseAny(int n,  boolean b) //s è "pay" o "take"
     {
         done=false;
@@ -1105,21 +1278,21 @@ public class MainController {
                 ((Label)actions.getChildren().get(5)).setText("Choose "+n+" resource to take: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)");
                 ((Label)actions.getChildren().get(5)).setVisible(true);
             });
-
-            System.out.println("\nChoose " + n + " resource to take: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)\n");
+            ca(n,n,false);
+            //System.out.println("\nChoose " + n + " resource to take: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)\n");
         } else {
             Platform.runLater(()->{
-                ((Label)actions.getChildren().get(5)).setText("Choose "+n+" resource to Pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4), FAITH (5)");
+                ((Label)actions.getChildren().get(5)).setText("Choose "+n+" resource to Pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4)");
                 ((Label)actions.getChildren().get(5)).setVisible(true);
             });
-
-            System.out.println("\nChoose " + n + " resource to pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4)\n");
+            ca(n,n,true);
+            //System.out.println("\nChoose " + n + " resource to pay: COIN (1), SERVANT (2), SHIELD (3), STONE (4)\n");
         }
 
-        ca(n,n);
+
     }
 
-    private void ca(int w,int n){
+    private void ca(int w,int n,boolean pay){
         Platform.runLater(()->{
 
 
@@ -1127,12 +1300,16 @@ public class MainController {
         ((Button) actions.getChildren().get(1)).setVisible(true);
         ((Button) actions.getChildren().get(2)).setVisible(true);
         ((Button) actions.getChildren().get(3)).setVisible(true);
-        ((Button) actions.getChildren().get(4)).setVisible(true);
+
         ((Button) actions.getChildren().get(0)).setDisable(false);
         ((Button) actions.getChildren().get(1)).setDisable(false);
         ((Button) actions.getChildren().get(2)).setDisable(false);
         ((Button) actions.getChildren().get(3)).setDisable(false);
-        ((Button) actions.getChildren().get(4)).setDisable(false);
+        if(!pay){
+            ((Button) actions.getChildren().get(4)).setVisible(true);
+            ((Button) actions.getChildren().get(4)).setDisable(false);
+        }
+
         ((Button) actions.getChildren().get(0)).setText("1");
         ((Button) actions.getChildren().get(1)).setText("2");
         ((Button) actions.getChildren().get(2)).setText("3");
@@ -1143,7 +1320,7 @@ public class MainController {
         ((Button) actions.getChildren().get(0)).setOnAction(e-> {
             anyInput[n-w] = 0;
             if(w>1){
-                ca(w-1,n);
+                ca(w-1,n,pay);
             }
             else {
                 done=true;
@@ -1153,7 +1330,7 @@ public class MainController {
         ((Button) actions.getChildren().get(1)).setOnAction(e-> {
             anyInput[n-w] = 1;
             if(w>1){
-                ca(w-1,n);
+                ca(w-1,n,pay);
             }else {
                 done=true;
                 resetAction();
@@ -1162,7 +1339,7 @@ public class MainController {
         ((Button) actions.getChildren().get(2)).setOnAction(e-> {
             anyInput[n-w] = 2;
             if(w>1){
-                ca(w-1,n);
+                ca(w-1,n,pay);
             }else {
                 done=true;
                 resetAction();
@@ -1171,7 +1348,7 @@ public class MainController {
         ((Button) actions.getChildren().get(3)).setOnAction(e-> {
             anyInput[n-w] = 3;
             if(w>1){
-                ca(w-1,n);
+                ca(w-1,n,pay);
             }else {
                 done=true;
                 resetAction();
@@ -1180,17 +1357,22 @@ public class MainController {
         ((Button) actions.getChildren().get(4)).setOnAction(e-> {
             anyInput[n-w] = 4;
             if(w>1){
-                ca(w-1,n);
+                ca(w-1,n,pay);
             }else {
                 done=true;
                 resetAction();
             }
         });  });
     }
+
+    /**
+     * Chooses the slots to activate.
+     * @param pi Player information register.
+     */
     public void chooseSlot(PlayerInformation pi) {
         done=false;
         printSlot(pi); // printa solo gli slot attivi
-        System.out.println("\nChoose slots, 6 to confirm\n");// 0 base 1-3 normale 4-5 speciale 6 ok
+        //System.out.println("\nChoose slots, 6 to confirm\n");// 0 base 1-3 normale 4-5 speciale 6 ok
         devSlotInput = new int[6];
         for (int j = 0;j<6; j++) {
             devSlotInput[j] = -1;
@@ -1256,17 +1438,22 @@ public class MainController {
         }); });
     }
 
-
+    /**
+     * Takes the resources from the depot.
+     * @param r Type of resource to take.
+     * @param s Type of depot.
+     */
     public void depotTaking(Resource r, String s){
-        Platform.runLater(()->{
         done=false;
+        System.out.println("depotTaking");
+        Platform.runLater(()->{
         resetAction();
-        System.out.println("\nIndicate how many "+r+" you want to withdraw from depot\n");
+        //System.out.println("\nIndicate how many "+r+" you want to withdraw from depot\n");
         actions.setVisible(true);
         actions.setDisable(false);
         ((Label) actions.getChildren().get(5)).setVisible(true);
 
-            ((Label)actions.getChildren().get(5)).setText("Indicate how many "+r+" you want to withdraw from"+s+" depot");
+        ((Label)actions.getChildren().get(5)).setText("Indicate how many "+r+" you want to withdraw from"+s+" depot");
 
 
         ((TextField) actions.getChildren().get(6)).setVisible(true);
@@ -1277,8 +1464,10 @@ public class MainController {
         ((Button) actions.getChildren().get(7)).setText("confirm");
         ((Button) actions.getChildren().get(7)).setOnAction(e->{
             resourcesInput= Integer.parseInt(((TextField) actions.getChildren().get(6)).getText());
+            System.out.println(resourcesInput);
             done=true;
             resetAction();
+
         });
         });
     }
@@ -1287,7 +1476,7 @@ public class MainController {
         Platform.runLater(()->{
         resetAction();
         done=false;
-        System.out.println("\nIndicate how many "+r+" you want to withdraw from depot\n");
+        //System.out.println("\nIndicate how many "+r+" you want to withdraw from depot\n");
         ((Label) actions.getChildren().get(5)).setVisible(true);
 
             ((Label)actions.getChildren().get(5)).setText("Indicate how many "+r+" you want to withdraw from special depot");
@@ -1306,36 +1495,36 @@ public class MainController {
         });});
     }
 
-    //metodi che stampano informazioni all'utente. Andranno inserite le informazioni specifiche del giocatore in alcuni metodi
+    /**
+     * Prints the faith track information.
+     * @param hm All players' informations.
+     * @param popeSpace Pope space status.
+     */
+
+    //methods for the user information display. Some of them require specific informations of the player.
     public void printFaithTrack(HashMap<String, PlayerInformation> hm, boolean[] popeSpace) {
-        System.out.println("Faith Track\n");
-        for (String nick : hm.keySet())
-        {
-            System.out.println(nick+": "+hm.get(nick).getPosition()+"/24\n"); //da inserire variabili
-        }
-        System.out.println("Victory points: 1 (3/24), 2 (6/24), 4 (9/24), 6 (12/24), 9 (15/24), 12 (18/24), 16 (21/24), 20 (24/24)");
-        if (popeSpace[0])
-            System.out.println("Next : 8/24\n");
-        else if(popeSpace[1])
-            System.out.println("Next : 16/24\n");
-        else if(popeSpace[2])
-            System.out.println("Next : 24/24\n");
-        else {
-            System.out.println("all Pope Space have been activated\n");
-        }
+
 
         path.setVisible(true);
         path.setDisable(true);
         int pos=hm.get(view.getNickClient()).getPosition();
-        ((ImageView)path.getChildren().get(pos)).setImage(new Image(ImageEnum.getUrl("MARKER")));
+
         for(int i=0;i<24;i++){
 
-            ((ImageView)path.getChildren().get(pos)).setVisible(false);
+            ((ImageView)path.getChildren().get(i)).setVisible(false);
+            ((ImageView)path.getChildren().get(i)).setImage(new Image(ImageEnum.getUrl("EMPTY")));
 
         }
+        ((ImageView)path.getChildren().get(pos)).setImage(new Image(ImageEnum.getUrl("MARKER")));
         ((ImageView)path.getChildren().get(pos)).setVisible(true);
     }
 
+    /**
+     * Prints the player board.
+     * @param pi Player information register.
+     * @param popeSpace Pope space status.
+     * @param cn Client nickname.
+     */
     private void printPlayerBoard(PlayerInformation pi, boolean[] popeSpace, String cn) {
         printDepot(pi);
         printStrongBox(pi);
@@ -1349,6 +1538,11 @@ public class MainController {
 
     }
 
+    /**
+     * Prints the pope favor information.
+     * @param pi Player information register.
+     * @param popeSpace Pope space status.
+     */
     private void printPopeFavor(PlayerInformation pi, boolean[] popeSpace) {
         String[] s = new String[3];
         for (int i = 0; i < 3; i++) {
@@ -1363,9 +1557,14 @@ public class MainController {
         text.appendText("Pope Favor \n 2 PV (5-8):" + s[0] + ", 3 PV (12-16): " + s[1] + ", 4 PV (19-24): " + s[2] + "\n"); //inserire variabili
     }
 
+
+    /**
+     * Prints the strongbox.
+     * @param pi Player information register.
+     */
     public void printStrongBox(PlayerInformation pi) {
         Platform.runLater((()->{
-            System.out.println("\nStrongBox\n Coin: " + pi.getStrongBox().get(Resource.COIN) + "\n Servant:" + pi.getStrongBox().get(Resource.SERVANT) + " \n Shield: " + pi.getStrongBox().get(Resource.SHIELD) + "\n Stone: " + pi.getStrongBox().get(Resource.STONE) + "\n"); //inserire variabili
+            //System.out.println("\nStrongBox\n Coin: " + pi.getStrongBox().get(Resource.COIN) + "\n Servant:" + pi.getStrongBox().get(Resource.SERVANT) + " \n Shield: " + pi.getStrongBox().get(Resource.SHIELD) + "\n Stone: " + pi.getStrongBox().get(Resource.STONE) + "\n"); //inserire variabili
             String p=view.getNickClient();
             int coin=view.getPlayersInfo().get(p).getStrongBox().get(Resource.COIN);
             ((Label)((GridPane)strongbox.getChildren().get(0)).getChildren().get(4)).setText(String.valueOf(coin));
@@ -1381,19 +1580,26 @@ public class MainController {
 
     }
 
+
+    /**
+     * Prints the normal depot.
+     * @param pi Player information register.
+     */
     public void printDepot (PlayerInformation pi) { //Stampa del deposito normale
 
         for(int i=0;i<4;i++){
             for(int j=0;j<=i;j++){
-                System.out.println(i+" "+j);
-                ((ImageView)((HBox)((VBox)depot.getChildren().get(0)).getChildren().get(i)).getChildren().get(j)).setVisible(false);
+                //System.out.println(i+" "+j);
+                ((ImageView)((HBox)((VBox)depot.getChildren().get(0)).getChildren().get(i)).getChildren().get(j)).setVisible(true);
+                ((ImageView)((HBox)((VBox)depot.getChildren().get(0)).getChildren().get(i)).getChildren().get(j)).setImage(new Image(ImageEnum.getUrl("EMPTY")));
+
             }
         }
         ArrayList<ArrayList<Resource>> d= view.getPlayersInfo().get(view.getNickClient()).getDepot();
-        System.out.println(d.size());
+        //System.out.println(d.size());
         for(int i=0;i<d.size();i++){
             for(int j=0;j<d.get(i).size();j++){
-                System.out.println("a"+i+" "+j);
+                //System.out.println("a"+i+" "+j);
                 ((ImageView)((HBox)((VBox)depot.getChildren().get(0)).getChildren().get(i)).getChildren().get(j)).setVisible(true);
                 ((ImageView)((HBox)((VBox)depot.getChildren().get(0)).getChildren().get(i)).getChildren().get(j)).setImage(new Image(ImageEnum.getUrl(d.get(i).get(j).name().toUpperCase(Locale.ROOT))));
             }
@@ -1413,13 +1619,12 @@ public class MainController {
         depot.setVisible(true);
     }
 
-    //貌似不需要
     public void printDepotSwap (PlayerInformation pi) //Tutte le celle del deposito sono numerate, anche quelle nulle
     {
         int j = 0;
         for (int i = 0; i<3; i++) {
             for (Resource r : pi.getDepot().get(i)) {
-                System.out.println(r + " " + "(" + j + ") ");
+                //System.out.println(r + " " + "(" + j + ") ");
                 j++;
             }
         } //sono numerati anche i null, che sono considerati oggetti di scambio
@@ -1427,35 +1632,52 @@ public class MainController {
         for (int i =0; i<pi.getLeaderDepots().size(); i++) //ogni row ha 2 elementi (considerati anche quelli null)
         {
             for (Resource r : pi.getLeaderDepots().get(i).getRow()) { //j arriva fino a 7 o a 9
-                System.out.println(r + " " + "(" + j + ") ");
+                //System.out.println(r + " " + "(" + j + ") ");
                 j++;
             }
         }
     }
 
 
+    /**
+     * Prints the market.
+     * @param market Market of resources.
+     * @param freeMarble The free resource to put in the market.
+     */
     public void printMarket (Resource[][]market, Resource freeMarble){
 
         ((ImageView)this.market.getChildren().get(1)).setImage(new Image(ImageEnum.getUrl(freeMarble.name().toUpperCase())));
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                System.out.println(market[i][j].name());
+                //System.out.println(market[i][j].name());
                 ((ImageView)((GridPane)this.market.getChildren().get(2)).getChildren().get(4*i+j)).setImage(new Image(ImageEnum.getUrl(market[i][j].name().toUpperCase())));
             }
         }
-        this.market.setVisible(true);
         this.market.setDisable(false);
+        this.market.setVisible(true);
     }
 
-    //貌似不需要
+    /**
+     * Prints the development cards.
+     * @param dc Development card.
+     */
     public void printDevCard (DevCard dc){
         text.appendText(dc.getLevel() + " | " + dc.getColor() + " | " + dc.getVictoryPoint() + " | " + dc.getCostList() + " | " + dc.getProductInputList() + " --> " + dc.getProductOutputList());
     }
-    //貌似不需要
+
+    /**
+     * Prints the development cards for other players in watching.
+     * @param dc Development card.
+     */
     public void printPartlyDevCard (DevCard dc){
         text.appendText(dc.getLevel() + " | " + dc.getColor() + " | " + dc.getVictoryPoint());
     }
 
+
+    /**
+     * Prints the development grid.
+     * @param deck Deck of development cards.
+     */
     public void printDevGrid (ArrayList<DevCard> deck)
     {
         for(int i=0;i<3;i++){
@@ -1471,7 +1693,11 @@ public class MainController {
         }
         devcards.setDisable(false);
     }
-    //不需要！
+
+    /**
+     * Prints the leader cards for other players in watching.
+     * @param lc Leader card.
+     */
     public void printPartlyLeader(LeaderCard lc) //usato per stampare carte leader altri giocatori
     {
         if (lc.isActive())
@@ -1484,12 +1710,15 @@ public class MainController {
         }
     }
 
+    /**
+     * Prints the leader cards.
+     */
     public void printLeader () {
         for(int i=0;i<2;i++){
             ((ImageView)((HBox)leader.getChildren().get(0)).getChildren().get(i)).setVisible(false);
         }
         ArrayList<LeaderCard> l=view.getPlayersInfo().get(view.getNickClient()).getLeaderCards();
-        System.out.println("leadersize"+l.size());
+        //System.out.println("leadersize"+l.size());
         for(int i=0;i<l.size();i++){
             ((ImageView)((HBox)leader.getChildren().get(0)).getChildren().get(i)).setImage(new Image(ImageEnum.getUrl("LEADER"+l.get(i).getID())));
             ((ImageView)((HBox)leader.getChildren().get(0)).getChildren().get(i)).setVisible(true);
@@ -1497,6 +1726,11 @@ public class MainController {
         leader.setVisible(true);
     }
 
+
+    /**
+     * Prints the leader markets.
+     * @param pi Player information register.
+     */
     public void printMarketLeader(PlayerInformation pi){
         for(Resource r : pi.getLeaderMarket())
         {
@@ -1504,7 +1738,11 @@ public class MainController {
         }
     }
 
-    /**metodo che ordina i giocatori in base al punteggio, stampando la classifica. valutare se spostare sul server**/
+    /**
+     * Prints the players ranking.
+     * @param rank Points list of the players.
+     * @param nicks Nickname list.
+     */
     public void printRanking (ArrayList<Integer> rank, ArrayList<String> nicks) //nicks: lista ordinata dei giocatori rank: lista dei punteggi associata a lista nicks
     {
         ArrayList<Integer> a = new ArrayList<Integer>(rank); //a: copia di rank che verrà ordinata in base al punteggio
@@ -1517,6 +1755,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Prints the number of development cards, base slots, active normal slots and leader slots.
+     * @param pi Player information register.
+     */
     private void printSlot (PlayerInformation pi)
     { //stampa il numero di carte sviluppo, slot base, slot normali attivi e slot leader
         ArrayList<DevSlot> s=view.getPlayersInfo().get(view.getNickClient()).getDevSlots();
@@ -1538,6 +1780,11 @@ public class MainController {
 
     }
 
+
+    /**
+     * Prints the expense.
+     * @param hm HashMap of resources and their corresponding prices.
+     */
     public void printExpense(HashMap<Resource, Integer> hm) {
         String s="Price: ";
 
@@ -1556,7 +1803,7 @@ public class MainController {
         initialInput = new int[2];
 
         this.view=view;
-        System.out.println("here");
+        //System.out.println("here");
         view.setMc(this);
         init();
     }
@@ -1569,10 +1816,15 @@ public class MainController {
             ((Label)player.getChildren().get(i)).setVisible(false);
         }
         Platform.runLater(()->{
+            System.out.println("print player");
         view.getPlayersInfo().keySet().forEach(e->{
+            System.out.println(e);
             for(int i=0;i<4;i++){
+                System.out.println(i);
                 if(((Label)player.getChildren().get(i)).getId().equals("null")){
-                    ((Label)player.getChildren().get(i)).setText(e);
+                    System.out.println("here"+i);
+                    ((Label)player.getChildren().get(i)).setId(e);
+                    ((Label)player.getChildren().get(i)).setText("Player: "+e);
                     ((Label)player.getChildren().get(i)).setVisible(true);
                     break;
                 }
@@ -1582,6 +1834,8 @@ public class MainController {
         depot.setVisible(false);
         leader.setVisible(false);
         market.setVisible(false);
+        resetAction();
+        actions.setVisible(false);
     }
     public void printText(String text)
     {

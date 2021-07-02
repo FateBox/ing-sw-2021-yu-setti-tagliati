@@ -1,39 +1,37 @@
 package it.polimi.ingsw.connection;
 
-import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.model.Game;
-
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
-
+/**
+ * It initializes the server application.
+ */
 public class Server {
 
     private int port;
-    private Scanner scanner;
     private LobbyHandler lobbyHandler;
     private ServerSocket serverSocket;
+    private Scanner scanner = new Scanner(System.in);
 
     public Server(){
         lobbyHandler = new LobbyHandler();
-        scanner = new Scanner(System.in);
     }
 
 
+    /**
+     * Initializes the server socket on a selected port.
+     * @throws IOException when the connection fails.
+     */
     public void start() throws IOException {
 
         port = 8000;
 
         try{
-            /*
+
             System.out.println("Choose the connection port");
             port = scanner.nextInt();
-             */
 
             serverSocket = new ServerSocket(port);
 
@@ -50,6 +48,9 @@ public class Server {
     }
 
 
+    /**
+     * Launches the server, it should be always ready to accept new client connections.
+     */
     public void run() {
 
         while (true) {
@@ -60,15 +61,17 @@ public class Server {
                 new Thread(newConnection).start();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Server stop");
                 //In case the serverSocket gets closed
 
             }
         }
     }
 
-
-
+    public void deactiveMatch(int lobbyID) {
+        Lobby lobby = lobbyHandler.findLobby(lobbyID);
+        lobby.stopConnection();
+    }
 
     public LobbyHandler getLobbyHandler() {
         return lobbyHandler;

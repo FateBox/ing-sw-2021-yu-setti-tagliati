@@ -6,13 +6,15 @@ import it.polimi.ingsw.model.Game;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class represents each created lobby and launches the game when the player list is complete.
+ */
 public class Lobby {
 
     private final int lobbyID;
     private HashMap<String,Connection> playerList;
     private final int maxPlayerNumber;
     private boolean full;
-    GameController gameController;
 
     public Lobby(int lobbyID, int maxPlayerNumber)
     {
@@ -22,6 +24,11 @@ public class Lobby {
         playerList=new HashMap<>();
     }
 
+    /**
+     * Adds a new player to the lobby.
+     * @param playerNick Nickname of the new player.
+     * @param connection Connection of the new player.
+     */
     public void addPlayer(String playerNick, Connection connection)
     {
         playerList.put(playerNick,connection);
@@ -31,6 +38,10 @@ public class Lobby {
         }
     }
 
+    /**
+     * Remove a player from the lobby.
+     * @param playerNick Nickname of the player to remove.
+     */
     public void removePlayer(String playerNick)
     {
         playerList.remove(playerNick);
@@ -55,9 +66,12 @@ public class Lobby {
     }
 
 
-    public void startGame(Lobby lobby) {
+    /**
+     * Launches the match by instantiating the gameController and the game.
+     */
+    public void startGame() {
 
-        GameController gameController = new GameController(lobby.getPlayerNickList());
+        GameController gameController = new GameController(getPlayerNickList());
         Game game = gameController.getGame();
 
         for(Connection c : playerList.values()) {
@@ -68,6 +82,14 @@ public class Lobby {
 
         gameController.start();
 
+    }
+
+    public void stopConnection() {
+        for(Connection c : playerList.values()) {
+            if(c.isActive()) {
+                c.close();
+            }
+        }
     }
 
 }

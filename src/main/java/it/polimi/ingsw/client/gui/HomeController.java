@@ -13,6 +13,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
+/**
+ * Handles the user interface for the game's initial phases:
+ * login with server IP and port, nickname selection, game mode selection
+ */
 
 public class HomeController {
 
@@ -44,7 +48,9 @@ public class HomeController {
     private View view;
 
 
-
+    /**
+     * Starts the client connection by submitting ip address and port wrote by the user.
+     */
     public void submit() {
 
         String ipAnswer = ip.getCharacters().toString();
@@ -54,6 +60,9 @@ public class HomeController {
     }
 
 
+    /**
+     * Submits the nickname or the game mode chosen by the user, according to the value of <code>nickSet</code>.
+     */
     public void confirm() {
 
         if(!nickSet) {
@@ -78,6 +87,10 @@ public class HomeController {
 
     }
 
+    /**
+     * Displays text messages received from the server.
+     * @param str Text message.
+     */
     public void showText(String str) {
         Platform.runLater(() -> text.setText(str));
 
@@ -94,6 +107,9 @@ public class HomeController {
         this.view = view;
     }
 
+    /**
+     * Sets up the login page.
+     */
     public void showServer() {
         serverVBox.setDisable(false);
         serverVBox.setVisible(true);
@@ -103,6 +119,9 @@ public class HomeController {
         port.setText("8000");
     }
 
+    /**
+     * Sets up the nickname selection page.
+     */
     public void showNick() {
         serverVBox.setDisable(true);
         serverVBox.setVisible(false);
@@ -115,7 +134,9 @@ public class HomeController {
         playButton.setText("Ok");
     }
 
-
+    /**
+     * Sets up the game mode selection page.
+     */
     public void showMode() {
         nickSet=true;
         nickname.setDisable(true);

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.enumeration;
 
+/**
+ * Enum of all player action type
+ */
 public enum PlayerAction {
     INIT,
     LEADER_READY,

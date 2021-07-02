@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Player information register, it contains player informations client-side.
+ */
 public class PlayerInformation {
 
     private String nick;

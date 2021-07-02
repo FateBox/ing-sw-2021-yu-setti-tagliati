@@ -8,10 +8,11 @@ import it.polimi.ingsw.enumeration.MessageType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.UTFDataFormatException;
 import java.net.Socket;
-import java.util.Scanner;
 
+/**
+ * This class handles the updates from the game and the connection socket server-side, one for each connected client.
+ */
 public class Connection extends Observable<Message> implements Observer<Message>, Runnable {
 
     private Socket socket;
@@ -29,17 +30,25 @@ public class Connection extends Observable<Message> implements Observer<Message>
         this.active=true;
     }
 
+    /**
+     * Sends Message object to the client.
+     * @param m Message object to send.
+     */
     public void sendMessage(Message m)  {
         try {
             objOut.writeObject(m);
             objOut.flush();
             objOut.reset();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection of " + nickname + " reset");
         }
     }
 
 
+    /**
+     * Sends text strings to the client after enveloping them into Messages.
+     * @param text Text string to send.
+     */
     //* synchronized method (?)
     public void sendText(String text){
 
@@ -49,6 +58,11 @@ public class Connection extends Observable<Message> implements Observer<Message>
         message.setNeedReply(false);
         sendMessage(message);
     }
+
+    /**
+     * Sends to the client text strings which needs an reply.
+     * @param text Text string to send.
+     */
     public void askReply(String text){
 
         Message message=new Message();
@@ -59,6 +73,9 @@ public class Connection extends Observable<Message> implements Observer<Message>
     }
 
 
+    /**
+     * Closes the socket connection.
+     */
     public synchronized void closeConnection() {
         try{
             String text="connection closed";
@@ -74,11 +91,11 @@ public class Connection extends Observable<Message> implements Observer<Message>
         active = false;
     }
 
-    private synchronized boolean isActive(){
+    public synchronized boolean isActive(){
         return active;
     }
 
-    private void close() {
+    protected void close() {
         closeConnection();
         System.out.println("De-registering client...");
         server.getLobbyHandler().removePlayer(nickname);
@@ -86,6 +103,9 @@ public class Connection extends Observable<Message> implements Observer<Message>
     }
 
 
+    /**
+     * Handles the client-server communication by sending and receiving objects from the socket.
+     */
     @Override
     public void run() {
 
@@ -100,7 +120,7 @@ public class Connection extends Observable<Message> implements Observer<Message>
 
             Lobby l = server.getLobbyHandler().findLobby(lobbyId);
             if(l.isFull()) {
-                l.startGame(server.getLobbyHandler().findLobby(lobbyId));
+                l.startGame();
             }
 
             while(isActive()){
@@ -116,9 +136,9 @@ public class Connection extends Observable<Message> implements Observer<Message>
 
         } catch(Exception e){
             System.out.println(nickname + ": connection stop");
-            e.printStackTrace();
         } finally {
             close();
+            server.deactiveMatch(lobbyId);
         }
     }
 
@@ -131,7 +151,7 @@ public class Connection extends Observable<Message> implements Observer<Message>
             try {
                 playerNickname= ((Message)objIn.readObject()).getText();
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                System.out.println("Not found");
             }
             System.out.println(playerNickname);
 
@@ -148,7 +168,7 @@ public class Connection extends Observable<Message> implements Observer<Message>
         }
     }
 
-    public void spOrMp()//send player to the lobby handler and take the player to a lobby;
+    private void spOrMp()//send player to the lobby handler and take the player to a lobby;
     {
         int maxPlayer;
         boolean done = false;
@@ -168,13 +188,17 @@ public class Connection extends Observable<Message> implements Observer<Message>
             } catch (IOException e) {
                 sendText("Input error");
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                System.out.println("Not found");
             }
         }
 
     }
 
 
+    /**
+     * Receives messages from the game and sends them to the client.
+     * @param message Message to send.
+     */
     @Override
     public void update(Message message) {
         if(message.isBroadCast() || message.getPlayerNick().equals(nickname))

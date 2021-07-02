@@ -25,218 +25,13 @@
             <Image url="@../pics/board/Board1.png" />
          </image>
       </ImageView>
-      <Pane fx:id="market" layoutX="400.0" layoutY="150.0" prefHeight="336.0" prefWidth="259.0">
+      <TextArea fx:id="text" layoutX="930.0" layoutY="305.0" prefHeight="160.0" prefWidth="230.0" wrapText="true" />
+      <Pane fx:id="player" layoutX="927.0" layoutY="-1.0" prefHeight="163.0" prefWidth="235.0">
          <children>
-            <ImageView fitHeight="364.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../pics/punchboard/plancia.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="29.0" fitWidth="33.0" layoutX="186.0" layoutY="44.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../pics/marble/WhiteMarble.png" />
-               </image>
-            </ImageView>
-            <GridPane layoutX="74.0" layoutY="73.0" prefHeight="116.0" prefWidth="146.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../pics/marble/BlueMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                     <image>
-                        <Image url="@../pics/marble/YellowMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
-                     <image>
-                        <Image url="@../pics/marble/WhiteMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
-                     <image>
-                        <Image url="@../pics/marble/YellowMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/marble/YellowMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/marble/WhiteMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/marble/WhiteMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/marble/GreyMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/marble/GreyMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/marble/RedMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/marble/PurpleMarble.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/marble/BlueMarble.png" />
-                     </image>
-                  </ImageView>
-                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="4" />
-                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-                  <Button mnemonicParsing="false" text="Button" GridPane.rowIndex="3" />
-                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-               </children>
-            </GridPane>
-         </children>
-      </Pane>
-      <Pane fx:id="devcards" disable="true" layoutX="322.0" layoutY="103.0" prefHeight="430.0" prefWidth="385.0" visible="false">
-         <children>
-            <GridPane gridLinesVisible="true" prefHeight="420.0" prefWidth="395.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <ImageView fitHeight="183.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="171.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="185.0" fitWidth="91.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="181.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-4-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="185.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="173.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="177.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="187.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-12-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="196.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-9-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="192.0" fitWidth="91.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="190.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="190.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-12-1.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </GridPane>
-         </children>
-      </Pane>
-      <Pane fx:id="leadercards" disable="true" layoutX="199.0" layoutY="214.0" prefHeight="272.0" prefWidth="632.0" visible="false">
-         <children>
-            <GridPane prefHeight="218.0" prefWidth="569.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <ImageView fitHeight="220.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-49-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="248.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-49-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="256.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-58-1.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="256.0" fitWidth="136.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
-                     <image>
-                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-61-1.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </GridPane>
+            <Label layoutX="14.0" layoutY="14.0" text="Label" />
+            <Label layoutX="14.0" layoutY="51.0" text="Label" />
+            <Label layoutX="14.0" layoutY="86.0" text="Label" />
+            <Label layoutX="14.0" layoutY="116.0" text="Label" />
          </children>
       </Pane>
       <Pane fx:id="strongbox" layoutX="24.0" layoutY="492.0" prefHeight="125.0" prefWidth="166.0">
@@ -409,25 +204,6 @@
             </VBox>
          </children>
       </Pane>
-      <Pane fx:id="devslots" disable="true" layoutX="351.0" layoutY="229.0" prefHeight="259.0" prefWidth="542.0" visible="false">
-         <children>
-            <ImageView fitHeight="189.0" fitWidth="126.0" layoutX="29.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="178.0" fitWidth="163.0" layoutX="212.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="189.0" fitWidth="118.0" layoutX="393.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
       <Pane fx:id="actions" layoutX="936.0" layoutY="420.0" prefHeight="226.0" prefWidth="200.0">
          <children>
             <Button layoutX="15.0" layoutY="110.0" mnemonicParsing="false" text="grid" />
@@ -435,17 +211,9 @@
             <Button layoutX="15.0" layoutY="145.0" mnemonicParsing="false" text="opponetboard" />
             <Button layoutX="120.0" layoutY="145.0" mnemonicParsing="false" text="Button" />
             <Button layoutX="15.0" layoutY="175.0" mnemonicParsing="false" text="Button" />
-            <Label layoutX="15.0" layoutY="80.0" text="Label" />
+            <Label layoutX="15.0" layoutY="50.0" prefWidth="180.0" text="Label" wrapText="true" />
             <TextField layoutX="15.0" layoutY="203.0" prefHeight="23.0" prefWidth="118.0" />
             <Button layoutX="145.0" layoutY="203.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="55.0" text="Button" />
-         </children>
-      </Pane>
-      <Pane fx:id="player" layoutX="927.0" layoutY="-1.0" prefHeight="163.0" prefWidth="235.0">
-         <children>
-            <Label layoutX="14.0" layoutY="14.0" text="Label" />
-            <Label layoutX="14.0" layoutY="51.0" text="Label" />
-            <Label layoutX="14.0" layoutY="86.0" text="Label" />
-            <Label layoutX="14.0" layoutY="116.0" text="Label" />
          </children>
       </Pane>
       <Pane fx:id="leader" layoutX="930.0" layoutY="104.0" prefHeight="201.0" prefWidth="219.0">
@@ -499,6 +267,238 @@
             <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="853.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
-      <TextArea fx:id="text" layoutX="930.0" layoutY="305.0" prefHeight="178.0" prefWidth="228.0" />
+      <Pane fx:id="devslots" disable="true" layoutX="351.0" layoutY="229.0" prefHeight="259.0" prefWidth="542.0">
+         <children>
+            <ImageView fitHeight="188.0" fitWidth="125.0" layoutX="29.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../pics/back/BackBlue1.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="188.0" fitWidth="125.0" layoutX="212.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../pics/back/BackGreen1.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="188.0" fitWidth="125.0" layoutX="393.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../pics/back/BackPurple1.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Pane fx:id="devcards" disable="true" layoutX="322.0" layoutY="103.0" prefHeight="430.0" prefWidth="385.0" visible="false">
+         <children>
+            <GridPane gridLinesVisible="true" prefHeight="420.0" prefWidth="395.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <ImageView fitHeight="183.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="171.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="185.0" fitWidth="91.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="181.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-4-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="185.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="173.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="177.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="187.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-12-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="196.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-9-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="192.0" fitWidth="91.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-3-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="190.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="190.0" fitWidth="93.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-12-1.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
+      <Pane fx:id="market" layoutX="400.0" layoutY="150.0" prefHeight="336.0" prefWidth="259.0" visible="false">
+         <children>
+            <ImageView fitHeight="364.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../pics/punchboard/plancia.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="29.0" fitWidth="33.0" layoutX="186.0" layoutY="44.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../pics/marble/WhiteMarble.png" />
+               </image>
+            </ImageView>
+            <GridPane layoutX="74.0" layoutY="73.0" prefHeight="116.0" prefWidth="146.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../pics/marble/BlueMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="29.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                     <image>
+                        <Image url="@../pics/marble/YellowMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                     <image>
+                        <Image url="@../pics/marble/WhiteMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
+                     <image>
+                        <Image url="@../pics/marble/YellowMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/marble/YellowMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/marble/WhiteMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/marble/WhiteMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@../pics/marble/GreyMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/marble/GreyMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/marble/RedMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/marble/PurpleMarble.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="150.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@../pics/marble/BlueMarble.png" />
+                     </image>
+                  </ImageView>
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="4" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.rowIndex="3" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
+      <Pane fx:id="leadercards" disable="true" layoutX="199.0" layoutY="214.0" prefHeight="272.0" prefWidth="632.0" visible="false">
+         <children>
+            <GridPane prefHeight="218.0" prefWidth="569.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <ImageView fitHeight="220.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-49-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="248.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-49-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="256.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-58-1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="256.0" fitWidth="136.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3">
+                     <image>
+                        <Image url="@../pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-61-1.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </GridPane>
+         </children>
+      </Pane>
    </children>
 </Pane>

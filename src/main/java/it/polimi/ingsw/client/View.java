@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.Message;
-import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Observer;
 import it.polimi.ingsw.client.gui.Gui;
 import it.polimi.ingsw.client.gui.MainController;
@@ -14,24 +13,28 @@ import it.polimi.ingsw.model.*;
 import java.io.IOException;
 import java.util.*;
 
-//NON STAMPA NIENTE, CHIAMA CLI/GUI PER STAMPA
-//VIEW CONTROLLA INPUT, PREPARA MESSAGGIO (UTILIZZANDO STRUTTURE DATI) E NOTIFICA A CONNECTION DEL MESSAGGIO PREPARATO
+/**
+ * Checks inputs and prepares messages to send to the server connection.
+ * It doesn't print anything, it invokes Cli / Gui for information display.
+ */
+
 public class View implements Observer<Message> {
-    //attributi visualizzazione
+    // visualization attributes
     private boolean cli;
     private Cli c;
     private Gui g;
 
 
     private MainController mc;
-    //informazioni comuni e variabili per operazioni
+    // common informations and operation variables
     private String nickClient;//nick of player of this client
-    private ArrayList<String> nickList;//nick ordinati dei giocatori di playerlist
+    private ArrayList<String> nickList;//ordered list of players nicknames in playerlist
     private String currentPlayer; //nick of player in turn
     private HashMap<String, PlayerInformation> playersInfo;
     private PlayerInformation p; //client player pointer
     private Client clientConnection;
-    private ArrayList<DevCard> visibleDevGrid; //le carte di questa lista non vanno mai rimosse, solo aggiornate, quando un mazzo finisce nel server, si aggiorna qui con null
+    private ArrayList<DevCard> visibleDevGrid; //the cards in this list are never removed, just updated
+    //when a deck goes to the server, it will be updated here with null
     private Resource[][] market;
     private Resource freeMarble;
     private boolean[] popeSpace;
@@ -40,9 +43,9 @@ public class View implements Observer<Message> {
     private HashMap<Resource,Integer> taking;
     private HashMap<Resource,Integer> specialTaking;
     private ArrayList<Resource> discountRes;
-    private ArrayList<Resource> gain; //mandato dal server dopo market
+    private ArrayList<Resource> gain; // sent by the server after market
 
-    //Backup //questi dati vengono aggiornati nello stesso modo insieme al deposito, deposito speciale e guadagno normali
+    //Backup // they are updated in the same way as the depot, special depot and normal gain
     ArrayList<ArrayList<Resource>> depotBackUp;
     ArrayList<Resource> gainBackUp;
     ArrayList<SpecialDepot> spDepotBackUp;
@@ -67,7 +70,7 @@ public class View implements Observer<Message> {
         this.mc = mc;
     }
 
-    public void initialization() {
+    private void initialization() {
         market = new Resource[3][4];
         popeSpace = new boolean[3];
         playersInfo = new HashMap<>();
@@ -128,27 +131,31 @@ public class View implements Observer<Message> {
         this.cli = b;
     }
 
+    /**
+     * Sets the client-side view.
+     * @param nc Client nickname.
+     * @param nl Nicknames list.
+     */
     public void setPlayerView(String nc, ArrayList<String> nl)
     {
-        System.out.println(nc);
         setNickClient(nc);
         setNickList(nl);
         setCurrentPlayer(nickList.get(0));
         setPlayer();
         p = playersInfo.get(nickClient);
-        System.out.println(nickClient);
-        System.out.println(p.getNick());
     }
 
     public void setNickList(ArrayList<String> nl) {
         nickList = new ArrayList<>(nl);
     }
 
+    /**
+     * Sets the player information registerfor each player.
+     */
     public void setPlayer() {
         for (String s : nickList) {
             playersInfo.put(s, new PlayerInformation(s));
         }
-        System.out.println(playersInfo.keySet());
     }
 
     public void setCurrentPlayer(String s) {
@@ -163,13 +170,14 @@ public class View implements Observer<Message> {
         this.freeMarble = freeMarble;
     }
 
+    /*
     public void setGameView(Resource[][] m, Resource fm, boolean[] ps, ArrayList<DevCard> deck)
     {
         setMarket(m);
         setFreeMarble(fm);
         setPopeSpace(ps);
         setVisibleDevGrid(deck);
-    }
+    }*/
 
     public void setVisibleDevGrid(ArrayList<DevCard> deck) {
         visibleDevGrid = new ArrayList<DevCard>(deck);
@@ -179,6 +187,10 @@ public class View implements Observer<Message> {
         System.arraycopy(ps, 0, popeSpace, 0, 3);
     }
 
+    /**
+     * Initializes the market of this match.
+     * @param market Market of resources.
+     */
     public void setMarket(Resource[][] market) {
         for (int i = 0; i<3; i++) //per ognuna delle 3 righe
         {
@@ -190,7 +202,9 @@ public class View implements Observer<Message> {
         this.gain = new ArrayList<>(gain);
     }
 
-    //metodi gestione input
+    /**
+     * Handles the inputs in the initialization phase.
+     */
     public void askInitially()
     {
         int n = nickList.indexOf(nickClient);
@@ -232,9 +246,9 @@ public class View implements Observer<Message> {
         }
         else
         {
-
             message.setIdLeader1(p.getLeaderCards().get(mc.getInitialInput()[0]-1).getID());
             message.setIdLeader2(p.getLeaderCards().get(mc.getInitialInput()[1]-1).getID());
+            mc.initialResource(n);
         }
         int[] k;
         if(cli){
@@ -273,7 +287,10 @@ public class View implements Observer<Message> {
 
     }
 
-    //fa visualizzare al giocatore la sua palncia e le possibili azioni se è il suo turno o cosa vuole visualizzare se non lo è
+    /**
+     * Handles the operations of the players. It shows the board for the players, the possible operation if it is
+     * their turn, or the possible actions if it isn't.
+     */
     public void askAction () {
 
         int action;
@@ -353,6 +370,7 @@ public class View implements Observer<Message> {
             }
 
             switch (action) {
+
                 case 1:
                     c.printDevGrid(visibleDevGrid);
                     askAction();
@@ -379,9 +397,15 @@ public class View implements Observer<Message> {
     //invia al server il deposito, il deposito speciale e le risorse non inserite
     //Corrisponde a MARKET2
 
+    /**
+     * It is called instead of askAction to handle the management of depot after the market operation.
+     * It sends to the server the depot, the special depot and the resources not yet inserted.
+     * It corresponds to MARKET2.
+     */
     public void askDepot() {
-        //Quando viene chiamato askDepot i depositi e gain vengono ripristinati alle informazioni dell'ultimo update
-        //in questo modo, in caso di un messaggio d'errore con deposito sbagliato, questo viene ripristinato
+
+        //When askDepot is called, the depots and gain are reset to the last update's informations.
+        //In this way, when it's an error message with wrong depot, it would be renewed.
         //p.setDepot(depotBackUp);
         //gain = new ArrayList<Resource>(gainBackUp);
         //p.setLeaderDepots(spDepotBackUp);
@@ -434,7 +458,9 @@ public class View implements Observer<Message> {
         clientConnection.write(message);
     }
 
-    //metodo ausiliare di askDepot, permette di inserire un elemento all'interno del deposito
+    /**
+     * Auxiliary method of askDepot, it allows to insert an element in the depot.
+     */
     public void askInsert(){
 
         int chooseInput;
@@ -517,7 +543,9 @@ public class View implements Observer<Message> {
 
     }
 
-    //metodo ausiliare di askDepot, permette di scambaire 2 celle del deposito, andandolo prima a convertire in una matrice
+    /**
+     * Auxiliary method of askDepot, it allows to swap two cells of the depot by converting it in a matrix firstly.
+     */
     public void askSwap() {
 
         Resource[][] arrayDepot = new Resource[5][3];
@@ -587,7 +615,11 @@ public class View implements Observer<Message> {
         }
     }
 
-    //metodo ausiliario di askSwap, trasforma l'input del giocatore negli indici della cella
+    /**
+     * Auxiliary method of askSwap, it converts the player's input into cell indexes.
+     * @param c Number that the player inputs.
+     * @return Cell indexes.
+     */
     private int[] cellConvert(int c)
     {
         int [] r;
@@ -631,7 +663,10 @@ public class View implements Observer<Message> {
         return r;
     }
 
-    //Corrisponde a UseLeader e DiscardLeader: Chiede quale carta si voglia attivare o scartare
+    /**
+     * Corresponds to useLeader and discardLeader.
+     * It asks which cards the player wants to activate or discard.
+     */
     private void askLeader() {
 
         int chooseInput;
@@ -643,7 +678,7 @@ public class View implements Observer<Message> {
             if (c.getLeaderInput() == 0 || c.getLeaderInput()-1 > p.getLeaderCards().size())
             {   askAction();
                 return;
-            }//se size è 2, leaderinput può essere MAX 3
+            }//if size is 2, leaderinput can be MAX 3
             c.interactLeader();
             chooseInput = c.getChooseInput();
             leaderInput = c.getLeaderInput();
@@ -683,7 +718,7 @@ public class View implements Observer<Message> {
                 message.setPlayerNick(p.getNick());
                 message.setType(MessageType.ACTION);
                 message.setPlayerAction(PlayerAction.DISCARD_LEADER);
-                //informazioni mandate
+                // information sent
                 message.setIdLeader1(p.getLeaderCards().get(leaderInput - 1).getID());
                 break;
             case 2:
@@ -700,7 +735,10 @@ public class View implements Observer<Message> {
         clientConnection.write(message);
     }
 
-    //Corrisponde a Market1, chiede al giocatore le risorse del mercato
+    /**
+     * Asks the player to choose the market resources.
+     * It corresponds to Market1.
+     */
     public void askMarket() {
         int w=0;
         int i;
@@ -713,6 +751,13 @@ public class View implements Observer<Message> {
             chooseInput = c.getChooseInput();
         } else {
             mc.chooseMarket(market, freeMarble);
+            while (!mc.isDone()){
+                try {
+                    wait(100);
+                }catch (Exception e){
+
+                }
+            }
             chooseInput = mc.getChooseInput();
         }
 
@@ -781,14 +826,17 @@ public class View implements Observer<Message> {
         message.setPlayerNick(p.getNick());
         message.setType(MessageType.ACTION);
         message.setPlayerAction(PlayerAction.MARKET1);
-        //informazioni mandate:
-        System.out.println(message.getRowCol());
+        // information sent:
         message.setRowCol(chooseInput-1);
         message.setResources(marketChange);
         clientConnection.write(message);
     }
 
-    //Corrisponde a PRODUCTION
+
+
+    /**
+     * Corresponds to PRODUCTION.
+     */
     public void askSlot(){
 
         int i =0, o=0;
@@ -909,7 +957,7 @@ public class View implements Observer<Message> {
         message.setPlayerNick(p.getNick());
         message.setType(MessageType.ACTION);
         message.setPlayerAction(PlayerAction.PRODUCTION);
-        //informazioni mandate
+        // information sent
         message.setProductionSlots(slot);
         message.setPaymentDepot(taking);
         message.setPaymentLeader(specialTaking);
@@ -919,22 +967,25 @@ public class View implements Observer<Message> {
     }
 
 
-    //metodo ausiliare di askSlot
+    /**
+     * Auxiliary method of askSlot.
+     * @param anyInput Array of AnyResource.
+     */
     public void productionExpense(ArrayList<Resource> anyInput) {
-        price.put(Resource.COIN, 0); //reset del prezzo a zero per ogni risorsa
+        price.put(Resource.COIN, 0); // resets the price of each resource to 0
         price.put(Resource.SERVANT, 0);
         price.put(Resource.SHIELD, 0);
         price.put(Resource.STONE, 0);
-        for (Resource r : anyInput) //aggiunta delle risorse di anyInput al prezzo
+        for (Resource r : anyInput) // add the anyInput resources to the price
         {
             price.put(r, price.get(r)+1);
         }
 
         if(cli) {
-            for (int i : c.getDevSlotInput()) //per ogni devSlot vengono aggiunte le risorse delle inputResource
+            for (int i : c.getDevSlotInput()) // for each devSlot, the resources of inputResources are added
             {
                 if(i!=6 && i!=-1) {
-                    ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copia delle inputResource
+                    ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copy of inputResource
                     for (Resource r : ar) {
                         price.put(r, price.get(r) + 1);
                     }
@@ -942,10 +993,10 @@ public class View implements Observer<Message> {
             }
             c.printExpense(price);
         } else {
-            for (int i : mc.getDevSlotInput()) //per ogni devSlot vengono aggiunte le risorse delle inputResource
+            for (int i : mc.getDevSlotInput()) // for each devSlot, the resources of inputResources are added
             {
                 if(i!=6 && i!=-1) {
-                    ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copia delle inputResource
+                    ArrayList<Resource> ar = new ArrayList<>(p.getDevSlots().get(i).getInputResource()); //copy of inputResource
                     for (Resource r : ar) {
                         price.put(r, price.get(r) + 1);
                     }
@@ -956,7 +1007,9 @@ public class View implements Observer<Message> {
 
     }
 
-    //Corrisponde a PURCHASE
+    /**
+     * Corresponds to PURCHASE.
+     */
     public void askDev()
     {
         discountRes = new ArrayList<>();
@@ -1005,7 +1058,7 @@ public class View implements Observer<Message> {
                 }
             }
 
-            //uso carta leader
+            //use carta leader
             if (p.getLeaderDiscount().size() > 0) {
 
                 if(cli) {
@@ -1063,9 +1116,9 @@ public class View implements Observer<Message> {
         message.setPlayerNick(p.getNick());
         message.setType(MessageType.ACTION);
         message.setPlayerAction(PlayerAction.PURCHASE);
-        //informazioni mandate
+        //information sent
         message.setDevCardId(visibleDevGrid.get(chooseInput - 1).getId());
-        message.setSlotToInsert(positionInput); //da 1 a 3
+        message.setSlotToInsert(positionInput); //from 1 to 3
         message.setPaymentDepot(taking);
         message.setPaymentLeader(specialTaking);
         message.setResources(discountRes);
@@ -1073,7 +1126,10 @@ public class View implements Observer<Message> {
 
     }
 
-    //metodo ausiliario per ottenere price
+
+    /**
+     * Auxiliary method to obtain prices.
+     */
     private void purchaseExpense() {
 
         int chooseInput;
@@ -1084,8 +1140,8 @@ public class View implements Observer<Message> {
             chooseInput = mc.getChooseInput();
         }
 
-        ArrayList<Resource> ar = visibleDevGrid.get(chooseInput-1).getCostList();//prende il costo della carta
-        price.put(Resource.COIN, 0); //reset del prezzo a zero per ogni risorsa
+        ArrayList<Resource> ar = visibleDevGrid.get(chooseInput-1).getCostList(); // takes the card price
+        price.put(Resource.COIN, 0); //resets the price to 0 for each resource
         price.put(Resource.SERVANT, 0);
         price.put(Resource.SHIELD, 0);
         price.put(Resource.STONE, 0);
@@ -1108,7 +1164,9 @@ public class View implements Observer<Message> {
 
     }
 
-    //metodo ausiliario per prelevare risorse dai depositi
+    /**
+     * Auxiliary method to take resources from depots.
+     */
     public void askPayment()
     {
         taking=createEmptyPaymentHash();
@@ -1116,7 +1174,7 @@ public class View implements Observer<Message> {
 
         if (cli) {
             c.printDepot(p);
-            c.printStrongBox(p); //testato
+            c.printStrongBox(p); //tested
             for (Resource r : price.keySet()) {
                 if(price.get(r)>0) {
                     c.depotTaking(r, "");
@@ -1159,6 +1217,13 @@ public class View implements Observer<Message> {
                 }
             }
         }
+        CardSlot a=(CardSlot)getPlayersInfo().get(getNickClient()).getDevSlots().get(1);
+        if(!a.getDevCards().empty()){
+            System.out.println(a.getDevCards().peek().getId());
+        }
+        else {
+            System.out.println("empty");
+        }
 
     }
 
@@ -1196,6 +1261,10 @@ public class View implements Observer<Message> {
         return p;
     }
 
+    /**
+     * Prints errors through Cli or Gui.
+     * @param text Error message to print.
+     */
     public void showError(String text)
     {
         //fai stampare errore da cli o gui.
@@ -1203,6 +1272,11 @@ public class View implements Observer<Message> {
         printText("Error: " + text);
 
     }
+
+    /**
+     * Prints Lorenzo messages through Cli or Gui.
+     * @param text Lorenzo message to print.
+     */
     public void showLorenzoMessage(String text)
     {
 
@@ -1210,16 +1284,19 @@ public class View implements Observer<Message> {
 
     }
 
+    /*
     public void showServerText()//prints server text and ask for a input.
     {
 
-    }
+    }*/
 
+    /**
+     * Handles the messages received from the server in different situations.
+     * {@inheritDoc}
+     * @param message Message received from the server.
+     */
     @Override
     public void update(Message message) {
-        printText(message.getType().toString());
-        if(message.getText()!=null)
-            printText(message.getText());
         switch (message.getType()) {
             case SERVER:
             {
@@ -1235,7 +1312,6 @@ public class View implements Observer<Message> {
                 break;
             }
             case UPDATE: {
-                System.out.println(message.getPlayerAction());
                 switch (message.getPlayerAction()) {
                     case LEADER_READY: {
                         p.setLeaderCards(message.getLeaderDeck());
@@ -1266,7 +1342,6 @@ public class View implements Observer<Message> {
                         setPopeFavor(message.getPopeFavor());
                         setPopeSpace(message.getPopeSpace());
                         setFaith(message.getFaithTrack());
-                        System.out.println("ASKING DEPOT");
                         askDepot();
 
                         break;
@@ -1324,11 +1399,10 @@ public class View implements Observer<Message> {
                         break;
                     }
                     case END_ACTION: {
-                        System.out.println("ENDACTION UPDATE RECEIVED");
+                        //System.out.println("ENDACTION UPDATE RECEIVED");
                         askAction();
                         break;
                     }
-
                 }
                 break;
             }
@@ -1355,6 +1429,12 @@ public class View implements Observer<Message> {
                 break;
             }
             case ERROR: {
+                setMarket(message.getMarket());
+                setFreeMarble(freeMarble);
+                playersInfo.get(message.getPlayerNick()).setDepot(message.getDepot());
+                setFaith(message.getFaithTrack());
+                setPopeSpace(popeSpace);
+                setPopeFavor(message.getPopeFavor());
                 if (this.nickClient.equals(message.getPlayerNick())) {
                     showError(message.getText());
                     askAction();
@@ -1372,6 +1452,12 @@ public class View implements Observer<Message> {
         }
     }
 
+
+    /**
+     * Initializes the client-side connection.
+     * @param ip Server IP address.
+     * @param port Server port.
+     */
     public void start(String ip, String port)
     {
 
@@ -1380,13 +1466,9 @@ public class View implements Observer<Message> {
         if(cli) {
             while(!ok) {
 
-                /*
+
                 ip= c.askIp();
                 port=c.askPort();
-                */
-
-                ip = "127.0.0.1";
-                port = "8000";
 
                 try {
 
@@ -1442,6 +1524,11 @@ public class View implements Observer<Message> {
 
     }
 
+    /**
+     * Creates a Message object with type=SERVER.
+     * @param text string to convert into a Message.
+     * @return the Message created.
+     */
     public Message createServerTextMessage(String text)
     {
         Message message=new Message();

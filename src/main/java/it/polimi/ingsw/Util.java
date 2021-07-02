@@ -5,13 +5,25 @@ import it.polimi.ingsw.enumeration.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+/**
+ * It contains some generic methods which can be useful in multiple instances.
+ */
 public class Util {
 
+    /*
     public static void method()
     {
         System.out.println("funziona");
     }
+     */
 
+
+    /**
+     * Checks if the elements in the depot are placed in a correct way.
+     * @param depot Resources depot
+     * @return true if it's correct, false otherwise.
+     */
     public static boolean isDepotCorrect(ArrayList<ArrayList<Resource>> depot)
     {
         for (ArrayList<Resource> row: depot)
@@ -51,6 +63,10 @@ public class Util {
         return true;
     }
 
+    /**
+     * Initializes the payment operation.
+     * @return HashMap of resources and their corresponding prices.
+     */
     public static HashMap<Resource,Integer> createEmptyPaymentHash()
     {
         HashMap<Resource,Integer> temp=new HashMap<>();

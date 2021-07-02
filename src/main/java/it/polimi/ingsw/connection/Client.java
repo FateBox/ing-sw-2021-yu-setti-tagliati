@@ -2,19 +2,23 @@ package it.polimi.ingsw.connection;
 
 import it.polimi.ingsw.Message;
 import it.polimi.ingsw.Observable;
-import it.polimi.ingsw.Observer;
-import it.polimi.ingsw.enumeration.MessageType;
+
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.NoSuchElementException;
+
 import java.util.Scanner;
 
+/**
+ * This class handles the client-side socket connection and notifies to View the information received from server.
+ * Its observer is View.
+ */
 public class Client extends Observable<Message>{
-    private String ip;
-    private int port;
+
+    private final String ip;
+    private final int port;
     private String nickname;
     private Scanner stdin;
 
@@ -29,6 +33,10 @@ public class Client extends Observable<Message>{
         this.stdin = new Scanner(System.in);
     }
 
+    /**
+     * Starts the client socket connection.
+     * @throws IOException when the connection fails.
+     */
     public void start() throws IOException {
 
         Socket socket = new Socket(ip, port);
@@ -61,6 +69,10 @@ public class Client extends Observable<Message>{
     }
 
 
+    /**
+     * Handles the input objects from the socket.
+     * @param objIn ObjectInputStream of the socket.
+     */
     public void read(ObjectInputStream objIn) {
 
         System.out.println("Reading thread start");
@@ -71,22 +83,25 @@ public class Client extends Observable<Message>{
                 notify(message);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Reading thread exception");
+            System.out.println("Reading thread stopped");
         }
 
     }
 
+    /**
+     * Sends Message objects to the socket.
+     * @param m Message object to send.
+     */
     public void write(Message m) {
 
-        System.out.println("Start writing");
+        //System.out.println("Start writing");
 
         try{
             objOut.writeObject(m);
             objOut.flush();
             objOut.reset();
         } catch (Exception e) {
-            System.out.println("Writing exception");
+            System.out.println("Stop writing");
         }
 
     }

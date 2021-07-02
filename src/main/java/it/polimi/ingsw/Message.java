@@ -12,6 +12,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * It represents the Message object used in the client-server communication.
+ * It can be set in multiple ways in different situations.
+ */
 public class Message implements Serializable {
     private boolean broadCast;
     private String playerNick;

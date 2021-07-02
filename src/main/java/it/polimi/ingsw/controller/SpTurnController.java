@@ -2,21 +2,26 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.model.LorenzoCard;
-
-import java.util.Collections;
 import java.util.Stack;
 
+/**
+ * Turn Controller for single player game
+ */
 public class SpTurnController implements TurnController{
     Game game;
     int lorenzoCounter;
-
+    /**
+     * Constructor
+     */
     public SpTurnController(Game game)
     {
         this.game=game;
         this.lorenzoCounter=0;
     }
 
-
+    /**
+     * Handles all Lorenzo's action, before the action, verify whether player or Lorenzo have won.
+     */
     public void nextTurn()
     {
         if (isPlayerWin())
@@ -53,7 +58,7 @@ public class SpTurnController implements TurnController{
                     lorenzoCounter++;
                 }
             }
-            //game.sendUpdateNextTurn();
+            game.sendUpdateNextTurn();
         }
     }
 

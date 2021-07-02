@@ -8,25 +8,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * It handles the operations regarding the production.
+ * Required information:
+ * - Choose in which slots the array of integers should be activated
+ * - Choose how to pay the required resources
+ * { if base slot is selected, it should choose the resources to pay from the depot}
+ *
+ * Operations to do:
+ * - Checks the selections
+ * - Perform the actions
+ * { removes the paid resources, adds the acquired ones and moves forward the faith track}
+ */
 public class ProductionExecutor implements ActionExecutor {
 
-    /**
-     * informazioni richieste
-     * scelta di quali slot attivare array di Integer
-     * scelta di come pagare le risorse richieste
-     * {
-     *     per lo base slot, se scelto deve sceglire quali risorse pagare dal deposito
-     * }
-     *
-     * operazioni da eseguire
-     * validare le scelte
-     * eseguire le operazioni
-     * {
-     *     rimuovere le risorse pagate
-     *     aggiungere le risorse acquistate e muovere il percorso fede
-     * }
-     *
-     */
 
     private Game game;
     private ArrayList<DevSlot> devSlots;
@@ -40,9 +35,17 @@ public class ProductionExecutor implements ActionExecutor {
         payment=new HashMap<>();
     }
 
+    /**
+     * Verify if the payment could be correct.
+     * @param slotsId ID of the slots.
+     * @param paymentDepot Payment depot.
+     * @param paymentLeader Payment leader depot.
+     * @param extraInput Extra inputs.
+     * @return
+     */
     public boolean verifyData(ArrayList<Integer> slotsId, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader, ArrayList<Resource> extraInput)
     {
-        System.out.println("veryfiing data");
+        System.out.println("veryfing data");
         devSlots=game.getCurrentP().getDevSlots();
         payment=createPayment(slotsId,extraInput);
         //does player has enough resource from his depot and spDepot?
@@ -53,6 +56,13 @@ public class ProductionExecutor implements ActionExecutor {
         return true;
     }
 
+    /**
+     * Executes the operation.
+     * @param slotsId ID of the slots.
+     * @param paymentDepot Payment depot.
+     * @param paymentLeader Payment leader depot.
+     * @param extraOutput Extra outputs.
+     */
     public void execute(ArrayList<Integer> slotsId, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader,ArrayList<Resource> extraOutput)
     {
         //draw resource from player storage

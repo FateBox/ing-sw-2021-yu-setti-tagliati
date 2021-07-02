@@ -3,12 +3,11 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.client.View;
 import it.polimi.ingsw.client.Cli;
 import it.polimi.ingsw.client.gui.Gui;
-import it.polimi.ingsw.connection.Client;
 import javafx.application.Application;
 
-import java.io.IOException;
-import java.util.Scanner;
-
+/**
+ * It is the main class of the Client application.
+ */
 public class ClientMain {
 
     public static void main( String[] args )
@@ -20,16 +19,14 @@ public class ClientMain {
 
 
         if(args.length==0) {
+            gui = new Gui();
+            Application.launch(Gui.class);
+
+        } else {
             cli = new Cli();
             view = new View(cli);
             view.start("","");
-
-        } else {
-
-            gui = new Gui();
-            Application.launch(Gui.class);
         }
-
 
     }
 }

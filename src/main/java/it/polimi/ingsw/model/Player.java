@@ -6,6 +6,9 @@ import java.util.*;
 
 import static it.polimi.ingsw.enumeration.Resource.*;
 
+/**
+ * Contains all information of a player.
+ */
 public class Player {
     private String nickname;
     private int faithLocation;
@@ -30,6 +33,11 @@ public class Player {
     private ArrayList<Resource> gain;
 
     //constructor
+
+    /**
+     * constructor
+     * @param nickname nickname of this player
+     */
     public Player(String nickname) {
         this.leaderPicked=false;
         this.didAction=false;
@@ -136,19 +144,6 @@ public class Player {
     {
         return leaderCards;
     }
-    public LeaderCard getLeaderById(int id)
-    {
-        for(LeaderCard l: leaderCards)
-        {
-            if(l.getID()==id)
-                return l;
-        }
-        return null;
-    }
-
-    public boolean isLeaderPicked() {
-        return leaderPicked;
-    }
 
     public void setLeaderPicked(boolean leaderPicked) {
         this.leaderPicked = leaderPicked;
@@ -163,7 +158,10 @@ public class Player {
     }
 
 
-
+    /**
+     * Returns total victory point gained of this player
+     * @return total victory point (int)
+     */
     public int vp()
     {
         int i;
@@ -260,12 +258,23 @@ public class Player {
     // strongbox
     // Requires a storable resource
     // Remove and return resource removed, throw Exception if there's no resource of that type in strongbox
+
+    /**
+     * Draws specified amount of resource from strongbox
+     * @param r resource
+     * @param num number of resource to be drawn
+     */
     public void drawStrongBox(Resource r,int num)
     {
         strongBox.put(r,strongBox.get(r)-num);
     }
     // Requires a storable resource
     // Insert selected resource in strongbox
+
+    /**
+     * Inserts 1 of specified resource into strongbox
+     * @param r
+     */
     public void insertStrongBox(Resource r)
     {
             strongBox.put(r,strongBox.get(r)+1);
@@ -286,23 +295,14 @@ public class Player {
     }
 
     /** depots **/
-    //given row, return type of resource inside of this row. Input should be a number between 0 and 2, if no resource is present, returns null
-    public Resource getDepotsRowType(int row)
-    {
-        if(depots.get(row).size()>0)
-        {
-            return depots.get(row).get(0);
-        }
-        return null;
-    }
-
-
-    public ArrayList<Resource> getDepotRow(int row)
-    {
-        return new ArrayList<>(depots.get(row));
-    }
 
     //For given parameter, check if player has all the required conditions
+
+    /**
+     * Verify if player has all the resource inside the Arraylist
+     * @param resList list of resource
+     * @return a boolean
+     */
     public boolean ownsResources(ArrayList<Resource> resList)
     {
         ArrayList<Resource> InputResource=new ArrayList<>();
@@ -329,11 +329,20 @@ public class Player {
         return true;
     }
 
+    /**
+     * Returns amount of specified resource that player has.
+     * @param r resource
+     * @return number of resource that player has
+     */
     public int getNumResource(Resource r)//return amount of specified resource that player has.
     {
         return getNumResourceSp(r)+getNumResourceStrongbox(r)+getNumResourceDepot(r);
     }
-
+    /**
+     * Returns amount of specified resource that player has inside depot.
+     * @param r resource
+     * @return number of resource that player has
+     */
     public int getNumResourceDepot(Resource r)
     {
         int num=0;
@@ -347,6 +356,11 @@ public class Player {
         }
         return num;
     }
+    /**
+     * Returns amount of specified resource that player has inside Special Depot.
+     * @param r resource
+     * @return number of resource that player has
+     */
     public int getNumResourceSp(Resource r)
     {
         int playerResource=0;
@@ -359,6 +373,11 @@ public class Player {
         }
         return playerResource;
     }
+    /**
+     * Returns amount of specified resource that player has inside Strongbox.
+     * @param r resource
+     * @return number of resource that player has
+     */
     public int getNumResourceStrongbox(Resource r)
     {
         if(r == FAITH || r == WHITE)
@@ -366,7 +385,12 @@ public class Player {
         return strongBox.get(r);
     }
 
-
+    /**
+     * Verify if player has specified number of Development card with specified color
+     * @param color
+     * @param quantity
+     * @return a boolean
+     */
     public boolean hasDevCard(Color color, int quantity)
     {
         int result=0;
@@ -381,6 +405,13 @@ public class Player {
         return result>=quantity;
     }
 
+    /**
+     * Verify if player has specified number of Development card with specified color and level
+     * @param level level of card
+     * @param color color of card
+     * @param quantity number of card
+     * @return a boolean
+     */
     public boolean hasDevCard(Level level, Color color, int quantity)
     {
         int result=0;
@@ -395,6 +426,12 @@ public class Player {
     }
 
     //given id of leaderCard, return true if such leader is present
+
+    /**
+     * given id of leaderCard, return true if such leader is present
+     * @param id id of the card
+     * @return a boolean
+     */
     public boolean hasLeader(int id)
     {
         for (LeaderCard c:leaderCards) {
@@ -406,6 +443,11 @@ public class Player {
         return false;
     }
 
+    /**
+     * Return true if leader is active
+     * @param id id of leader
+     * @return a boolean
+     */
     public boolean isLeaderActive(int id)
     {
         for (LeaderCard c:leaderCards) {
@@ -427,7 +469,12 @@ public class Player {
     }
 
 
-
+    /**
+     * Draw resource from player's storage, amount are specified in parameters, if there's remaining resource not drawn, draws al the rest form strongbox
+     * @param toBePaid Hashmap that indicates how many should draw from storage.
+     * @param paymentDepot Hashmap that indicates how many should draw from depot.
+     * @param paymentLeader Hashmap that indicates how many should draw from special depot.
+     */
     public void drawResourceHash(HashMap<Resource,Integer> toBePaid, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader)
     {
         //draw resource from Depot

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.enumeration;
 
+/**
+ * Used to simplify implementation of gui
+ */
 public enum ImageEnum {
     DEV0("/pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-1-1.png","DEV0"),
     DEV1("/pics/front/Masters of Renaissance_Cards_FRONT_3mmBleed_1-2-1.png","DEV1"),
@@ -96,7 +99,8 @@ public enum ImageEnum {
     PPF3F("/pics/punchboard/pope_favor3_front.png","PPF3F"),
     PPF3B("/pics/punchboard/pope_favor3_back.png","PPF3B"),
     MARKER("/pics/punchboard/marker.png","MARKER"),
-    FAITH("/pics/punchboard/marker.png","FAITH");
+    FAITH("/pics/punchboard/marker.png","FAITH"),
+    EMPTY("/pics/punchboard/empty.png","EMPTY");
 
 
 

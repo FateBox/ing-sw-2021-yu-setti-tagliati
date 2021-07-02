@@ -4,6 +4,10 @@ import it.polimi.ingsw.connection.Server;
 
 import java.io.IOException;
 
+
+/**
+ * It is the main class of the Server application.
+ */
 public class ServerMain {
     public static void main( String[] args )
     {

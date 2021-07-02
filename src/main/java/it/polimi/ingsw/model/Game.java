@@ -137,6 +137,14 @@ public class Game extends Observable<Message> {
     public Resource[][] getMarket() {
         return market;
     }
+    public void setMarket(Resource[][] market)
+    {
+        this.market=market;
+    }
+    public void setFreeMarble(Resource freemarble)
+    {
+        this.freeMarble=freemarble;
+    }
     private ArrayList<String> getPlayerNickList()
     {
         ArrayList<String> temp=new ArrayList<>();
@@ -644,6 +652,10 @@ public class Game extends Observable<Message> {
                 setPope(i);
             }
         }
+        if(playerList.size()==1)
+        {
+            forwardLorenzo(box);
+        }
     }
 
     /**
@@ -876,7 +888,13 @@ public class Game extends Observable<Message> {
         m.setText(text);
         m.setBroadCast(false);
         m.setPlayerNick(getCurrentP().getNickname());
-        sendUnicast(currentPlayer.getNickname(),m);
+        m.setMarket(market);
+        m.setFreeMarble(freeMarble);
+        m.setDepot(currentPlayer.getDepots());
+        m.setPopeSpace(popeSpace);
+        m.setPopeFavor(createPopeFavor());
+        m.setFaithTrack(createFaithTrack());
+        sendBroadcast(m);
     }
 
     /**
@@ -1032,7 +1050,6 @@ public class Game extends Observable<Message> {
         m.setFaithTrack(createFaithTrack());
         m.setPopeSpace(popeSpace);
         m.setPopeFavor(createPopeFavor());
-
         sendBroadcast(m);
     }
     /**
@@ -1102,4 +1119,5 @@ public class Game extends Observable<Message> {
     public void sendUnicast(String nickname, Message m) {
         notify(m);
     }
+
 }

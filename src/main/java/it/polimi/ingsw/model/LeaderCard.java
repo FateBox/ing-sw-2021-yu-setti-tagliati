@@ -25,7 +25,7 @@ public class LeaderCard implements Serializable {
      * @param value Ability type
      * @param abilityResource corresponding resource
      */
-    LeaderCard(int id,int victoryPoint, AbilityType value, Resource abilityResource)
+    public LeaderCard(int id,int victoryPoint, AbilityType value, Resource abilityResource)
     {
         res = abilityResource;
         active=false;
@@ -125,14 +125,26 @@ public class LeaderCard implements Serializable {
      */
     public int getVictoryPoint() { return this.victoryPoint; }
 
+    /**
+     * Return resource of reference for this card
+     * @return resource
+     */
     public Resource getRes()
     {
         return this.res;
     }
 
+    /**
+     * Return Resource requirement for this card
+     * @return Arraylist of resource
+     */
     public ArrayList<Resource> getResourcesRequirements() {
         return resourcesRequirements;
     }
+    /**
+     * Return color requirement for this card
+     * @return Arraylist of resource
+     */
     public ArrayList<Color> getDevColorRequirements() {
         return devColorRequirements;
     }

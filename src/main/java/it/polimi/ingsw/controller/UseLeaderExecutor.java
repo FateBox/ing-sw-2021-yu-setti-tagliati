@@ -4,25 +4,41 @@ import it.polimi.ingsw.model.LeaderCard;
 import it.polimi.ingsw.model.LeaderSlot;
 import it.polimi.ingsw.model.Player;
 
+/**
+ * Executor for USE LEADER action
+ */
 public class UseLeaderExecutor {
 
 
 
     /**
-     * informazioni
-     * quale leader utilizzare
+     * Information
+     * Which leader is being used
      *
-     * operazioni da eseguire
-     * verificare che il leader sia presente e non stato già giocato
-     * verificare i requisiti (leader.isPlayable)
-     * usa il leader (leader.use())
+     * Operation to be executed
+     * Verify whether this leader is present or not
+     * Verify whether this leader is played or not
+     * Verify all requirement (leader.isPlayable)
+     * Use leader (leader.use())
      */
 
+
     private Game game;
+
+    /**
+     * Constructor
+     * @param game game
+     */
     public UseLeaderExecutor(Game game)
     {
         this.game=game;
     }
+
+    /**
+     * Given leader id, verify whether player has this leader and whether player activated this leader or not
+     * @param leaderID id of leader
+     * @return a boolean
+     */
     public boolean verifyData(int leaderID)
     {
         if (!game.getCurrentP().hasLeader(leaderID))
@@ -32,6 +48,10 @@ public class UseLeaderExecutor {
         return true;
     }
 
+    /**
+     * Given leader id, use it and changes players model based on leader type
+     * @param leaderID leader to be discarded
+     */
     public void execute(int leaderID)
     {
         LeaderCard leaderCard=getLeaderCard(leaderID);

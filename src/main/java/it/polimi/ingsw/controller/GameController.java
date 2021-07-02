@@ -1,23 +1,22 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Message;
-import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Observer;
-import it.polimi.ingsw.Util;
-import it.polimi.ingsw.connection.Connection;
 import it.polimi.ingsw.enumeration.MessageType;
 import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
+/**
+ * It represents the main controller of the game and it handles the minor controllers.
+ * It invokes specific methods of different executors in performing operations.
+ */
 public class GameController implements Observer<Message> {
 
     private final Game game;
     final ArrayList<Player> players;
-
 
 
     //TurnController turnController;
@@ -28,6 +27,10 @@ public class GameController implements Observer<Message> {
     private final UseLeaderExecutor useLeaderExecutor;
     private final TurnController turnController;
 
+    /**
+     * It initializes the gameController with the players' nicknames list.
+     * @param nicknames List containing all the players' nicknames in this match.
+     */
     public GameController(ArrayList<String> nicknames) {
         players = new ArrayList<>();
         Collections.shuffle(nicknames);
@@ -50,8 +53,12 @@ public class GameController implements Observer<Message> {
         discardLeaderExecutor = new DiscardLeaderExecutor(game);
     }
 
+    /**
+     * It receives messages from connection and handles the operations the player wants to do.
+     * @param message Message sent by the player.
+     */
     @Override
-    public void update(Message message) {
+    public synchronized void update(Message message) {
 
         System.out.println("In GC: from " + message.getPlayerNick() + ": " + message.getType());
 
@@ -60,7 +67,7 @@ public class GameController implements Observer<Message> {
             if(game.getCurrentP().getNickname().equals(message.getPlayerNick()))//message is taken into consideration only if the sender is the player on turn.
             {
                 switch (message.getPlayerAction()) {
-//with chosen row/col, modify market and gained resource (forward in case of red marble)
+                //with chosen row/col, modify market and gained resource (forward in case of red marble)
                     case MARKET1 -> {
                         System.out.println("received market1 message");
                         if (game.getCurrentP().isDidAction()) {
@@ -82,7 +89,7 @@ public class GameController implements Observer<Message> {
                         game.sendUpdateMarket1();
                         break;
                     }
-//insert into depot and forward in case of remaining
+                    //insert into depot and forward in case of remaining
                     case MARKET2 -> {
                         System.out.println("received market2 message");
                         if (game.getCurrentP().isDidAction()) {
@@ -169,7 +176,6 @@ public class GameController implements Observer<Message> {
                         }
                         game.getCurrentP().setDidAction(false);
                         turnController.nextTurn();
-                        game.sendUpdateNextTurn();
                         break;
                     }
                     default -> {
@@ -212,33 +218,6 @@ public class GameController implements Observer<Message> {
             }
         }
     }
-
-
-
-    //Creates a hash table with Resource as key and quantity as value.
-    /*private HashMap<Resource,Integer> createClientCount(ArrayList<ArrayList<Resource>> depot, ArrayList<SpecialDepot> specialDepots)
-    {
-        HashMap<Resource,Integer> clientCount= Util.createEmptyPaymentHash();
-        System.out.println("this is depot");
-        System.out.println(depot);
-        System.out.println(depot.size());
-        System.out.println("this is depot");
-        for (ArrayList<Resource> row: depot)
-        {
-            System.out.println(row);
-            for(Resource r:row)
-            {
-                clientCount.put(r,clientCount.get(r)+1);
-            }
-        }
-        for(SpecialDepot s:specialDepots)
-        {
-            clientCount.put(s.getRes(),s.getQuantity()+clientCount.get(s.getRes()));
-        }
-
-        return clientCount;
-    }*/
-
     //insert 4 leaders to choose and call turnController setupFirstRound
     private void prepare4Leader()
     {
@@ -269,12 +248,10 @@ public class GameController implements Observer<Message> {
         player.getLeader().removeIf(lc -> (lc.getID()!=id1 && lc.getID()!=id2));
     }
 
-    private boolean checkChosenLeader(String nickname, int id1,int id2)
-    {
-        Player player = game.getPlayerByNick(nickname);
-        return player.getLeader().contains(player.getLeaderById(id1)) && player.getLeader().contains(player.getLeaderById(id2));
-    }
 
+    /**
+     * Initializes the match once the lobby is complete.
+     */
     public void start()
     {
         System.out.println("Game started");

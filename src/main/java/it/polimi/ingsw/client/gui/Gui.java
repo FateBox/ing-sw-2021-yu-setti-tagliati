@@ -9,13 +9,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Launches the GUI for the client application.
+ */
+
 public class Gui extends Application {
 
     private Stage stage;
     private Scene scene;
     private HomeController homeController;
-
-
 
     private MainController mainController;
 
@@ -29,6 +31,11 @@ public class Gui extends Application {
     private int current;
 
 
+    /**
+     * Sets the initial scene for the GUI by loading the first scene.
+     * @param st Default window
+     * @throws Exception
+     */
     @Override
     public void start(Stage st) throws Exception {
         this.stage = st;
@@ -50,6 +57,12 @@ public class Gui extends Application {
         stage.setScene(scene);
 
         homeController.showServer();
+
+        stage.setOnCloseRequest(e-> {
+            Platform.exit();
+            System.exit(0);
+        });
+
         stage.show();
 
     }
@@ -59,6 +72,11 @@ public class Gui extends Application {
         this.view = view;
     }
 
+
+    /**
+     * Displays messages received from server, which should be handled in different scenes.
+     * @param text The text message to display.
+     */
     public void printText(String text) {
         if(current<2) {
 
@@ -97,13 +115,13 @@ public class Gui extends Application {
     }
 
 
+    /**
+     * Initializes the scene for asking nickname to the user.
+     */
     public void askNickname() {
         Platform.runLater(() -> homeController.showNick());
     }
 
-    public void askMode() {
-        homeController.showMode();
-    }
 
     public int getCurrent() {
         return this.current;

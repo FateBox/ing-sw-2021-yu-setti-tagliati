@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.Player;
 
 import java.util.ArrayList;
 
+/**
+ * It represents the turn controller for the multiplayer game.
+ */
 public class MpTurnController implements TurnController{
     Game game;
 
@@ -13,7 +16,13 @@ public class MpTurnController implements TurnController{
         this.game=game;
     }
 
-    public void nextTurn()//calls nextPlayer in game, if current player is last player and it's lastRound, end game.
+
+    /**
+     * Handles the turns and updates them in the game.
+     * It calls the next player if available.
+     * If the current player is the last one and it's the last round, the game ends.
+     */
+    public void nextTurn()
     {
         if(game.isGameOverMP())
         {
