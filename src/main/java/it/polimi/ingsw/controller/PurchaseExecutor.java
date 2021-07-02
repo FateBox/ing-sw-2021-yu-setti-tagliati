@@ -54,9 +54,10 @@ public class PurchaseExecutor implements ActionExecutor{
     public boolean verifyData(int devCardId, int slotId, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader, ArrayList<Resource> discount)
     {
         deckId=findDeck(devCardId);
-        toBePaid=createPayment(findDeck(devCardId),discount);
         if (deckId==-1)
             return false;
+        toBePaid=createPayment(findDeck(devCardId),discount);
+
         if (slotId<1||slotId>3)
             return false;
         CardSlot temp = null;
@@ -64,18 +65,21 @@ public class PurchaseExecutor implements ActionExecutor{
             return false;
 
         //does player has all required resources?
-        if(!(game.getCurrentP().ownsResources(getDiscountedCost(game.getDevCard(deckId).getCostList(),discount))))
-            return false;
-        //is insertable?
-        temp=(CardSlot)game.getCurrentP().getDevSlots().get(slotId);
-        if(!(temp.getDevCards().peek().getNextLevel().equals(game.getDevCard(deckId).getLevel())))
-        {
-            return false;
-        }
         if(!verifyPayment(toBePaid,paymentDepot,paymentLeader))
         {
             return false;
         }
+
+        //is insertable?
+        temp=(CardSlot)game.getCurrentP().getDevSlots().get(slotId);
+        if(!(temp.getDevCards().isEmpty()))
+        {
+            if(!(temp.getDevCards().peek().getNextLevel().equals(game.getDevCard(deckId).getLevel())))
+            {
+                return false;
+            }
+        }
+
 
         return true;
     }
@@ -86,13 +90,8 @@ public class PurchaseExecutor implements ActionExecutor{
         CardSlot temp=(CardSlot) game.getCurrentP().getDevSlots().get(slotId);
         temp.addDevCard(game.drawDevCard(deckId));
         game.getCurrentP().addDevCard();
-        //draw resource from depot and leader depot
-        game.getCurrentP().drawResourceHash(paymentDepot,paymentLeader);
-        //draw resource from Strongbox
-        for(Resource r: toBePaid.keySet())
-        {
-            game.getCurrentP().drawStrongBox(r,toBePaid.get(r));
-        }
+        //draw resource from player's storage
+        game.getCurrentP().drawResourceHash(toBePaid,paymentDepot,paymentLeader);
 
         game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" obtained a new Development Card.");
         if(discount.size()!=0)
@@ -120,6 +119,7 @@ public class PurchaseExecutor implements ActionExecutor{
         price="";
         HashMap<Resource,Integer> toBePaid = Util.createEmptyPaymentHash();
         DevCard card= game.getDevCard(deckId);
+        //create announcement string
         for(Resource r:toBePaid.keySet())
         {
             if(discount.contains(r))
@@ -140,8 +140,12 @@ public class PurchaseExecutor implements ActionExecutor{
     {
         for (Resource r: toBePaid.keySet())
         {
-            toBePaid.put(r,toBePaid.get(r)-paymentDepot.get(r)-paymentLeader.get(r));
-            if (toBePaid.get(r)<0 || toBePaid.get(r)>game.getCurrentP().getQuantityDepot(r))
+            if(game.getCurrentP().getNumResource(r)<toBePaid.get(r))//player must have required resources in his storages
+                return false;
+
+            if(game.getCurrentP().getNumResourceDepot(r)<paymentDepot.get(r))// player must have what he is trying to pay from depot
+                return false;
+            if(game.getCurrentP().getNumResourceSp(r)<paymentLeader.get(r))// player must have what he is trying to pay from SpDepot
                 return false;
         }
         return true;

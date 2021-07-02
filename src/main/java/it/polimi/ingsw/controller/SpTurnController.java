@@ -34,16 +34,16 @@ public class SpTurnController implements TurnController{
                 case SHUFFLE:
                 {
                     game.forwardLorenzo(1);
-                    game.sendLorenzoAnnouncement("I'm forwarding by 1");
                     game.shuffleLorenzo();
                     game.sendLorenzoAnnouncement("My action deck is shuffled");
+                    game.sendLorenzoAnnouncement("I'm forwarding by 1, now I'm at "+ game.getLorenzoLocation()+"/24.");
                     lorenzoCounter=0;
                     break;
                 }
                 case MOVE:
                 {
                     game.forwardLorenzo(2);
-                    game.sendLorenzoAnnouncement("I'm forwarding by 2");
+                    game.sendLorenzoAnnouncement("I'm forwarding by 2, now I'm at "+ game.getLorenzoLocation()+"/24.");
                     lorenzoCounter++;
                     break;
                 }
@@ -53,7 +53,7 @@ public class SpTurnController implements TurnController{
                     lorenzoCounter++;
                 }
             }
-            game.sendEndTurn();
+            //game.sendUpdateNextTurn();
         }
     }
 

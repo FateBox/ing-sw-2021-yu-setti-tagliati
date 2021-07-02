@@ -1,6 +1,7 @@
 package it.polimi.ingsw.connection;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.model.Game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,10 +58,12 @@ public class Lobby {
     public void startGame(Lobby lobby) {
 
         GameController gameController = new GameController(lobby.getPlayerNickList());
+        Game game = gameController.getGame();
 
         for(Connection c : playerList.values()) {
             c.addObserver(gameController);
-            gameController.addObs(c);
+            c.sendText("Start!");
+            game.addObserver(c);
         }
 
         gameController.start();

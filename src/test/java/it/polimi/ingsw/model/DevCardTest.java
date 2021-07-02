@@ -14,6 +14,15 @@ class DevCardTest {
     Resource[] res= new Resource[1];
 
     @Test
+    void getCostList()
+    {
+        ArrayList<Resource> temp=new ArrayList<>();
+        temp.add(Resource.STONE);
+        temp.add(Resource.SHIELD);
+        temp.add(Resource.SERVANT);
+        assertEquals(devCard.getCostList(),temp);
+    }
+    @Test
     void getId() {
         assertEquals(devCard.getId(),0);
     }
@@ -25,8 +34,11 @@ class DevCardTest {
 
     @Test
     void getNextLevel() {
-
         assertEquals(devCard.getNextLevel(),Level.LV2);
+        DevCard devCard2=new DevCard(0, Level.LV2, Color.GREEN, 2, Resource.STONE, Resource.SHIELD, Resource.SERVANT);
+        assertEquals(devCard2.getNextLevel(),Level.LV3);
+        DevCard devCard3=new DevCard(0, Level.LV3, Color.GREEN, 2, Resource.STONE, Resource.SHIELD, Resource.SERVANT);
+        assertNull(devCard3.getNextLevel());
     }
 
     @Test
@@ -38,25 +50,6 @@ class DevCardTest {
     void getVictoryPoint() {
         assertEquals(devCard.getVictoryPoint(),2);
     }
-
-    @Test
-    void getCostList() {
-
-    }
-
-    @Test
-    void getReducedCost() {
-
-    }
-
-    @Test
-    void getProductInputList() {
-    }
-
-    @Test
-    void getProductOutputList() {
-    }
-
 
     @Test
     void setProductInputList() {
@@ -75,4 +68,5 @@ class DevCardTest {
         temp.add(Resource.COIN);
         assertEquals(devCard.getProductOutputList(),temp);
     }
+
 }

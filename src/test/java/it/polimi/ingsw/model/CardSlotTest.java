@@ -15,12 +15,16 @@ class CardSlotTest {
 
     CardSlot cs=new CardSlot();
     DevCard devCard=new DevCard(0, Level.LV1, Color.GREEN, 2,Resource.STONE, Resource.SHIELD, Resource.SERVANT);
+    DevCard devCard1=new DevCard(0, Level.LV2, Color.GREEN, 6,Resource.STONE, Resource.SHIELD, Resource.SERVANT);
     //devCard.setProductInputList(Resource.STONE);
     //devCard.setProductOutputList(Resource.SERVANT);
     @Test
     void getAllVictoryPoint() {
         cs.addDevCard(devCard);
+
         assertEquals(devCard.getVictoryPoint(),2);
+        cs.addDevCard(devCard1);
+        assertEquals(cs.getAllVictoryPoint(),devCard.getVictoryPoint()+devCard1.getVictoryPoint());
     }
 
     @Test
@@ -44,9 +48,6 @@ class CardSlotTest {
 
     }
 
-    @Test
-    void getInputResource() {
-    }
 
     @Test
     void setInputResource() {

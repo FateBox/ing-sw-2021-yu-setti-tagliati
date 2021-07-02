@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.enumeration.Resource;
-import it.polimi.ingsw.model.BasicSlot;
-import it.polimi.ingsw.model.DevSlot;
-import it.polimi.ingsw.model.LeaderCard;
-import it.polimi.ingsw.model.SpecialDepot;
+import it.polimi.ingsw.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +32,15 @@ public class PlayerInformation {
         strongBox.put(Resource.SERVANT,0);
         strongBox.put(Resource.SHIELD,0);
         strongBox.put(Resource.STONE,0);
-        leaderCards = new ArrayList<>(4);
-        leaderDiscount = new ArrayList<>(4);
-        leaderDepots = new ArrayList<>(4);
-        leaderMarket = new ArrayList<>(4);
-        devSlots = new ArrayList<>(5);
+        leaderCards = new ArrayList<>();
+        leaderDiscount = new ArrayList<>();
+        leaderDepots = new ArrayList<>();
+        leaderMarket = new ArrayList<>();
+        devSlots = new ArrayList<>();
+        devSlots.add(new BasicSlot());
+        devSlots.add(new CardSlot());
+        devSlots.add(new CardSlot());
+        devSlots.add(new CardSlot());
         popeFavor = new boolean[3];
         inkWell = false;
         position = 0;

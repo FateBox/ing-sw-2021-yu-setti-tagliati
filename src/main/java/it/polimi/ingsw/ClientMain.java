@@ -1,6 +1,10 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.client.View;
+import it.polimi.ingsw.client.Cli;
+import it.polimi.ingsw.client.gui.Gui;
 import it.polimi.ingsw.connection.Client;
+import javafx.application.Application;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -10,26 +14,21 @@ public class ClientMain {
     public static void main( String[] args )
     {
 
-        Scanner scanner = new Scanner(System.in);
-        boolean ok = false;
-
-        while(!ok) {
-            System.out.println("Server IP address:");
-            String ip = scanner.nextLine();
-            System.out.println("Server port:");
-            int port = Integer.parseInt(scanner.nextLine());
-            // La parte per ip e porta finirà in launcher separati per cli e gui!
+        View view;
+        Cli cli;
+        Gui gui;
 
 
-            Client client = new Client(ip, port);
-            try {
-                client.start();
-                ok = true;
-            } catch (IOException e) {
-                System.out.println("Invalid input");;
-            }
+        if(args.length==0) {
+            cli = new Cli();
+            view = new View(cli);
+            view.start("","");
+
+        } else {
+
+            gui = new Gui();
+            Application.launch(Gui.class);
         }
-
 
 
     }

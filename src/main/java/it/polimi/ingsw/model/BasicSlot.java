@@ -3,9 +3,13 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.enumeration.SlotType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BasicSlot implements DevSlot {
+/**
+ * Basic slot is first slot of player, where player can choose 2 any resource as input and obtain 1 any resource as output
+ */
+public class BasicSlot implements DevSlot, Serializable {
     private ArrayList<Resource> inputResource;
     private ArrayList<Resource> outputResource;
     private SlotType type;
@@ -15,14 +19,6 @@ public class BasicSlot implements DevSlot {
         type=SlotType.BASIC;
         inputResource=new ArrayList<>(2);
         outputResource=new ArrayList<>(1);
-    }
-
-    public void addInputResource(int i, Resource r) {
-        this.inputResource.add(i, r);
-    }
-
-    public void addOutputResource(Resource r) {
-        this.outputResource.add(0,r);
     }
 
     @Override

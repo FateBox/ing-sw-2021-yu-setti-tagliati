@@ -2,9 +2,10 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.Resource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SpecialDepot {
+public class SpecialDepot implements Serializable {
 
 
     Resource res;

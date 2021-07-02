@@ -5,6 +5,9 @@ import it.polimi.ingsw.enumeration.SlotType;
 
 import java.util.ArrayList;
 
+/**
+ * Interface of all development power slot
+ */
 public interface DevSlot {
     //interface of all development slot (1 base slot, 3 card slot and max 2 leader slot)
 

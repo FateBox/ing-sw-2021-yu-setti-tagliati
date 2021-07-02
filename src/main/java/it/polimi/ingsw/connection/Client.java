@@ -1,6 +1,8 @@
 package it.polimi.ingsw.connection;
 
 import it.polimi.ingsw.Message;
+import it.polimi.ingsw.Observable;
+import it.polimi.ingsw.Observer;
 import it.polimi.ingsw.enumeration.MessageType;
 
 import java.io.IOException;
@@ -10,14 +12,16 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class Client {
+public class Client extends Observable<Message>{
     private String ip;
     private int port;
     private String nickname;
     private Scanner stdin;
 
+    ObjectOutputStream objOut;
+    ObjectInputStream objIn;
+
     private Thread fromSocket;
-    private Thread toSocket;
 
     public Client(String ip, int port){
         this.ip = ip;
@@ -30,17 +34,13 @@ public class Client {
         Socket socket = new Socket(ip, port);
         System.out.println("Connection established");
 
-        ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
+        objOut = new ObjectOutputStream(socket.getOutputStream());
+        objIn = new ObjectInputStream(socket.getInputStream());
 
         try{
 
             fromSocket = new Thread(() -> read(objIn));
             fromSocket.start();
-
-            toSocket = new Thread(() -> write(objOut));
-            toSocket.start();
-
 
             fromSocket.join();
 
@@ -51,9 +51,6 @@ public class Client {
 
             if(!fromSocket.isInterrupted()) {
                 fromSocket.stop();
-            }
-            if(!toSocket.isInterrupted()) {
-                toSocket.stop();
             }
 
             stdin.close();
@@ -70,33 +67,36 @@ public class Client {
 
         try {
             while(true) {
-                String input = ((Message)objIn.readObject()).getText();
-                System.out.println(input);
+                Message message = (Message)objIn.readObject();
+                notify(message);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Reading thread exception");
         }
 
     }
 
-    public void write(ObjectOutputStream objOut) {
+    public void write(Message m) {
 
-        System.out.println("Writing thread start");
+        System.out.println("Start writing");
 
         try{
-            while (true) {
-                String inputLine = stdin.nextLine();
-                Message message=new Message();
-                message.setText(inputLine);
-                message.setType(MessageType.SERVER);
-                objOut.writeObject(message);
-                objOut.flush();
-                objOut.reset();
-            }
+            objOut.writeObject(m);
+            objOut.flush();
+            objOut.reset();
         } catch (Exception e) {
-            System.out.println("Writing thread exception");
+            System.out.println("Writing exception");
         }
 
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
 

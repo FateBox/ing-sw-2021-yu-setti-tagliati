@@ -5,10 +5,14 @@ import it.polimi.ingsw.enumeration.Level;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.enumeration.SlotType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class CardSlot implements DevSlot {
+/**
+ * Card slots are slots 1,2 and 3, which player uses it as purchased Development card's storage,
+ */
+public class CardSlot implements DevSlot, Serializable {
 
 
     private Stack<DevCard> devCards;
@@ -24,6 +28,10 @@ public class CardSlot implements DevSlot {
         type=SlotType.CARD;
     }
 
+    /**
+     * Returns sum of victory points of all present Cards
+     * @return a integer
+     */
     public int getAllVictoryPoint()//return sum of VP of all cards in this slot
     {
         int sum=0;
@@ -33,6 +41,10 @@ public class CardSlot implements DevSlot {
         return sum;
     }
 
+    /**
+     * Adds a cart to this slot then change its input and output resource to card's input and output
+     * @param d Devcard
+     */
     public void addDevCard(DevCard d)
     {
         devCards.push(d);
@@ -40,6 +52,11 @@ public class CardSlot implements DevSlot {
         this.setOutputResource(d.getProductOutputList());
     }
 
+    /**
+     * Return number of card with specific color
+     * @param color required color
+     * @return number of cards
+     */
     public int getQuantityDevCard(Color color)
     {
         int sum=0;
@@ -50,7 +67,12 @@ public class CardSlot implements DevSlot {
         }
         return sum;
     }
-
+    /**
+     * Return number of card with specific color and level
+     * @param color required color
+     * @param level required level
+     * @return number of cards
+     */
     public int getQuantityDevCard(Color color, Level level)//return number of card with specified requirement
     {
         int sum=0;

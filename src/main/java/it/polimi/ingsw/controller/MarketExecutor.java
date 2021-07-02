@@ -41,14 +41,14 @@ public class MarketExecutor implements ActionExecutor {
 
     public void choiceResource(int input) //l'input va da 0 a 6. Prende le risorse dal mercato e fa avanzare se è presente un segnalino fede
     {
-
+        boolean faith=false;
         if (input < 3) { //da 0 a 2
             gain = new ArrayList<Resource>(game.getRow(input)); //input va da 0 a 2 per la riga
             game.insertRow(input);
         }
         else { //da 3 a 6
             gain = new ArrayList<Resource>(game.getCol(input-3)); //input va da 0 a 3 per la colonna
-            game.insertRow(input-3); //da 0 a 3
+            game.insertCol(input-3); //da 0 a 3
         }
 
         for (Resource r : gain)
@@ -56,17 +56,18 @@ public class MarketExecutor implements ActionExecutor {
             if (r == Resource.FAITH)
             {
                 game.forwardPlayer(game.getIndexPlayer(game.getCurrentP()), 1);
-                gain.remove(r);
+                faith=true;
             }
         }
+        gain.removeIf(resource -> resource.equals(Resource.FAITH) );
         if(input<3)
         {
             game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " chose row "+ input);
         }else {
             game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " chose column "+ (input-3));
         }
-        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " chose ");
-        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" forward by 1 box :" + game.getCurrentP().getFaithLocation()+"/24");
+        if (faith)
+        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" forward by 1 box, current position " + game.getCurrentP().getFaithLocation()+"/24");
     }
 
     public void manualChange (ArrayList<Resource> list)
@@ -83,40 +84,14 @@ public class MarketExecutor implements ActionExecutor {
             }
             game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " used leader ability.");
         }
+        else
+        {
+            gain.removeIf(r -> r.equals(Resource.WHITE));
+        }
+        game.getCurrentP().setGain(gain);
+        System.out.println(gain);
     }
 
-
-    //conclusa prima fase. Unica modifica al model: Market
-
-    //seconda fase. Inserimento risorse deposito. //questa parte avviene prevalentemente nel client. Il server si limita a verificare che sia corretta la versione finale
-
-    /*public void checkDepot (ArrayList<ArrayList<Resource>> depots, ArrayList<Resource> removed) throws Exception
-    {
-
-        //controllo correttezza
-        for(int i = 0; i< depots.size(); i++){ //considera tutti i piani
-            if (depots.get(i).size()>0 && i<3) // se il piano è normale e non è vuoto allora
-            {
-                if( depots.get(0).size() > i+1 || depots.get(i).size() != Collections.frequency(depots.get(i), depots.get(i).get(0)))// controlla che il numero di elementi del primo tipo della riga sia pari al numero di elementi totali della riga
-                {
-                    throw new Exception ("The resources in the depot are wrong");
-                }
-            }
-            if (depots.get(i).size()>0 && i>2) //considera i piani speciali
-            {
-                if(depots.get(i).size() > 2 || depots.get(i).size() != Collections.frequency(depots.get(i),game.getCurrentP().getSpecialDepot(i-2)))// controlla che il numero di elementi del primo tipo della riga sia pari al numero di elementi totali della riga
-                {
-                    throw new Exception ("The resources in the leader depot are wrong");
-                }
-            }
-        }
-        //se si arriva qui senza errori, il model viene modificato
-        game.forwardOtherPlayers(game.getIndexPlayer(game.getCurrentP()), removed.size()); //i giocatori vengono fatti avanzare
-        for(int i = 0; i<depots.size(); i++)
-        {
-            game.getCurrentP().setDepots(depots); //il deposito inviato al server viene copiato nel deposito del model
-        }
-    }*/
     //market 2
     public boolean checkDepot (ArrayList<ArrayList<Resource>> depots, ArrayList<SpecialDepot> specialDepots)
     {
@@ -135,9 +110,10 @@ public class MarketExecutor implements ActionExecutor {
 
     public boolean checkNumResource(HashMap<Resource,Integer> clientCount)//make sure player didn't send a depot that is not his.
     {
+        System.out.println(clientCount);
         //count each resource from player's gain and depot+leaderDepot server side then compare them to client side
         for (Resource r: clientCount.keySet()) {
-            if((game.getCurrentP().getNumResourceDepot(r)+Collections.frequency(game.getCurrentP().getGain(),r))!=clientCount.get(r))
+            if((game.getCurrentP().getNumResourceDepot(r)+game.getCurrentP().getNumResourceSp(r)+Collections.frequency(game.getCurrentP().getGain(),r))!=clientCount.get(r))
             {
                 return false;
             }

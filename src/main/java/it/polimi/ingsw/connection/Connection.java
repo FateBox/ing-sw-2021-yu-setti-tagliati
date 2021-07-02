@@ -12,7 +12,7 @@ import java.io.UTFDataFormatException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Connection extends Observable<Message> implements Runnable, Observer<Message> {
+public class Connection extends Observable<Message> implements Observer<Message>, Runnable {
 
     private Socket socket;
     private ObjectOutputStream objOut;
@@ -46,6 +46,15 @@ public class Connection extends Observable<Message> implements Runnable, Observe
         Message message=new Message();
         message.setText(text);
         message.setType(MessageType.SERVER);
+        message.setNeedReply(false);
+        sendMessage(message);
+    }
+    public void askReply(String text){
+
+        Message message=new Message();
+        message.setText(text);
+        message.setType(MessageType.SERVER);
+        message.setNeedReply(true);
         sendMessage(message);
     }
 
@@ -69,7 +78,7 @@ public class Connection extends Observable<Message> implements Runnable, Observe
         return active;
     }
 
-    private void close(){
+    private void close() {
         closeConnection();
         System.out.println("De-registering client...");
         server.getLobbyHandler().removePlayer(nickname);
@@ -97,7 +106,9 @@ public class Connection extends Observable<Message> implements Runnable, Observe
             while(isActive()){
 
                 Message newMessage=(Message) objIn.readObject();
-                System.out.println("Message from " + nickname);
+                System.out.println("received a new message");
+                //System.out.println("Message from " + nickname + ": " + newMessage.getText());
+                //newMessage.setPlayerNick(nickname);
 
                 notify(newMessage);
 
@@ -105,6 +116,7 @@ public class Connection extends Observable<Message> implements Runnable, Observe
 
         } catch(Exception e){
             System.out.println(nickname + ": connection stop");
+            e.printStackTrace();
         } finally {
             close();
         }
@@ -112,7 +124,7 @@ public class Connection extends Observable<Message> implements Runnable, Observe
 
     private void askNickname() throws IOException {
         boolean repeatNick=true;
-        sendText("Welcome! What's your name?");
+        askReply("Welcome! What's your name?");
         String playerNickname = "ok";
         while(repeatNick)
         {
@@ -125,29 +137,29 @@ public class Connection extends Observable<Message> implements Runnable, Observe
 
             if(server.getLobbyHandler().isNickRepeated(playerNickname))
             {
-                sendText("Someone else is already using this Nickname, please insert another.");
+                askReply("Someone else is already using this Nickname, please insert another.");
             }
             else{
-                sendText("Got it! Welcome to the lobby "+ playerNickname);
+                sendText("Got it!");
+                sendText("Welcome to the lobby, "+ playerNickname);
                 this.nickname = playerNickname;
                 repeatNick = false;
             }
         }
-
     }
 
     public void spOrMp()//send player to the lobby handler and take the player to a lobby;
     {
         int maxPlayer;
         boolean done = false;
-
         while(!done) {
             try {
-                sendText("Choose mode: 1/2/3/4 player(s)");
+                askReply("Choose mode: 1/2/3/4 player(s)");
                 maxPlayer=Integer.parseInt(((Message)objIn.readObject()).getText());
                 if(maxPlayer>0 && maxPlayer<5) {
                     lobbyId=server.getLobbyHandler().joinLobby(nickname,this, maxPlayer);
                     sendText("You join the lobby " + lobbyId);
+                    sendText("Please wait until game starts...");
                     System.out.println("Player " + nickname + " join the lobby " + lobbyId);
                     done = true;
                 } else {

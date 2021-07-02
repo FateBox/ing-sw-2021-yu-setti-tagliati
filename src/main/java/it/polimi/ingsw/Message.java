@@ -15,9 +15,11 @@ import java.util.HashMap;
 public class Message implements Serializable {
     private boolean broadCast;
     private String playerNick;
+    private boolean needReply;
     private MessageType type;
     private PlayerAction playerAction;
     private String text;
+    private HashMap<Resource,Integer> strongBox;
     private HashMap<Resource,Integer> paymentDepot;
     private HashMap<Resource,Integer> paymentLeader;
     private int idLeader1;
@@ -27,19 +29,22 @@ public class Message implements Serializable {
     private ArrayList<Resource> resources;
 
     //update section
-
-
     //init
     private ArrayList<String> playerNickList;
     private ArrayList<DevCard> devDeck;
     private ArrayList<LeaderCard> leaderDeck;
     //faith track;
     private ArrayList<Integer> faithTrack;
+    private int lorenzoLocation;
+    private boolean[] popeSpace;
+    private boolean[][] popeFavor;
     //market
     private ArrayList<ArrayList<Resource>> depot;
     private ArrayList<SpecialDepot> specialDepots;
     private Resource[][] market;
     private Resource freeMarble;
+    private ArrayList<Resource> marketDiscount;
+    private ArrayList<Resource> devDiscount;
     //purchase
     private ArrayList<DevSlot> devSlots;
     private int devCardId;
@@ -208,7 +213,6 @@ public class Message implements Serializable {
         this.playerNickList = playerNickList;
     }
 
-
     public int getSlotToInsert() {
         return slotToInsert;
     }
@@ -271,5 +275,61 @@ public class Message implements Serializable {
 
     public void setRanking(ArrayList<Integer> ranking) {
         this.ranking = ranking;
+    }
+
+    public boolean[] getPopeSpace() {
+        return popeSpace;
+    }
+
+    public void setPopeSpace(boolean[] popeSpace) {
+        this.popeSpace = popeSpace;
+    }
+
+    public boolean[][] getPopeFavor() {
+        return popeFavor;
+    }
+
+    public void setPopeFavor(boolean[][] popeFavor) {
+        this.popeFavor = popeFavor;
+    }
+
+    public ArrayList<Resource> getMarketDiscount() {
+        return marketDiscount;
+    }
+
+    public void setMarketDiscount(ArrayList<Resource> marketDiscount) {
+        this.marketDiscount = marketDiscount;
+    }
+
+    public ArrayList<Resource> getDevDiscount() {
+        return devDiscount;
+    }
+
+    public void setDevDiscount(ArrayList<Resource> devDiscount) {
+        this.devDiscount = devDiscount;
+    }
+
+    public HashMap<Resource, Integer> getStrongBox() {
+        return strongBox;
+    }
+
+    public void setStrongBox(HashMap<Resource, Integer> strongBox) {
+        this.strongBox = strongBox;
+    }
+
+    public boolean isNeedReply() {
+        return needReply;
+    }
+
+    public void setNeedReply(boolean needReply) {
+        this.needReply = needReply;
+    }
+
+    public int getLorenzoLocation() {
+        return lorenzoLocation;
+    }
+
+    public void setLorenzoLocation(int lorenzoLocation) {
+        this.lorenzoLocation = lorenzoLocation;
     }
 }

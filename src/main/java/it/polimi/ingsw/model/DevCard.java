@@ -4,10 +4,14 @@ import it.polimi.ingsw.enumeration.Color;
 import it.polimi.ingsw.enumeration.Level;
 import it.polimi.ingsw.enumeration.Resource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DevCard {
+/**
+ * Contains all information of a Development cards
+ */
+public class DevCard implements Serializable {
     //state
     private final int id;
     private final Color color;
@@ -20,6 +24,14 @@ public class DevCard {
 
     //costruttore e metodi set usati per inizializzare le carte
 
+    /**
+     * Constructor of Development card
+     * @param id id
+     * @param l level
+     * @param c color
+     * @param v victory point
+     * @param cost cost of card
+     */
     public DevCard(int id, Level l, Color c, int v,Resource... cost)
     {
         this.id = id;
@@ -46,6 +58,10 @@ public class DevCard {
         return level;
     }
 
+    /**
+     * Return next level of this card
+     * @return next level of this.level
+     */
     public Level getNextLevel() {
         switch (level){
             case LV1:
@@ -67,13 +83,6 @@ public class DevCard {
 
     public ArrayList<Resource> getCostList() {
         return costList;
-    }
-
-    //particolare metodo getters che restituisce il prezzo scontato della carta in base all'effetto della carta leader
-    public ArrayList<Resource> getReducedCost(Resource r) {
-        ArrayList<Resource> reducedCost = new ArrayList<Resource>(this.costList);
-        reducedCost.remove(r);
-        return reducedCost;
     }
 
     public ArrayList<Resource> getProductInputList() {

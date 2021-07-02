@@ -36,8 +36,8 @@ public class DiscardLeaderExecutor implements ActionExecutor {
         game.getCurrentP().getLeader().removeIf(lc -> lc.getID() == leaderID);
         game.forwardPlayer(game.getIndexPlayer(game.getCurrentP()),1 );
         game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" Discarded one of his leader card and moved forward by 1 box. "+ game.getCurrentP().getFaithLocation()+"/24");
-    }
 
+    }
 }
 
 

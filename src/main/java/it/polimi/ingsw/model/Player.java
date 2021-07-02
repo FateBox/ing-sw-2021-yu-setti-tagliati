@@ -2,7 +2,6 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.enumeration.*;
 
-import java.io.IOException;
 import java.util.*;
 
 import static it.polimi.ingsw.enumeration.Resource.*;
@@ -14,16 +13,14 @@ public class Player {
     private ArrayList<LeaderCard> leaderCards;
     private boolean[] popeFavor;
     private int devCardCount;
-    /**Resource space**/
+    //Resource space
     //Array containing number of each resources ordered by: COIN, SERVANT,SHIELD, STONE.
     private HashMap<Resource,Integer> strongBox;
     //A matrix where only lower diagonal half will be used as a triangular matrix.
     private ArrayList<ArrayList<Resource>> depots;
-    //Resource stored in hand by player
-    //private ArrayList <Resource> inHandResources;
-    /**Development space**/
+    //Development space**/
     private ArrayList<DevSlot> devSlots;
-    /** Leader properties **/
+    //Leader properties
     // contains base slot and leader slots
     private ArrayList<Resource> developmentDiscounts;
     private ArrayList<Resource> marketDiscounts;
@@ -32,6 +29,68 @@ public class Player {
     private boolean leaderPicked;
     private ArrayList<Resource> gain;
 
+    //constructor
+    public Player(String nickname) {
+        this.leaderPicked=false;
+        this.didAction=false;
+        this.nickname = nickname;
+        this.devCardCount=0;
+        this.faithLocation = 0;
+        this.victoryPoints = 0;
+        this.leaderCards = new ArrayList<LeaderCard>();
+        popeFavor = new boolean[3];
+        strongBox= new HashMap<>();
+        strongBox.put(COIN,0);
+        strongBox.put(SHIELD,0);
+        strongBox.put(STONE,0);
+        strongBox.put(SERVANT,0);
+        this.depots = new ArrayList<ArrayList<Resource>>();
+        for (int i=1; i<4; i++)
+        {
+            depots.add(new ArrayList<Resource>(i));
+        }
+        this.devSlots = new ArrayList<>();
+        devSlots.add(new BasicSlot());
+        devSlots.add(new CardSlot());
+        devSlots.add(new CardSlot());
+        devSlots.add(new CardSlot());
+        this.developmentDiscounts = new ArrayList<>();
+        this.marketDiscounts = new ArrayList<>();
+        this.specialDepots = new ArrayList<SpecialDepot>();
+    }
+
+
+    /** various getters and setters**/
+    public String getNickname() {
+        return nickname;
+    }
+    public ArrayList<ArrayList<Resource>> getDepots() {
+        return depots;
+    }
+    public ArrayList<Resource> getDevelopmentDiscounts() {
+        return developmentDiscounts;
+    }
+    public ArrayList<Resource> getMarketDiscounts() {
+        return marketDiscounts;
+    }
+    public ArrayList<SpecialDepot> getSpecialDepots()
+    {
+        return this.specialDepots;
+    }
+    public ArrayList<DevSlot> getDevSlots()
+    {
+        return this.devSlots;
+    }
+    public void addDevelopmentDiscounts(Resource developmentDiscounts) {
+        this.developmentDiscounts.add( developmentDiscounts );
+    }
+    public HashMap<Resource,Integer> getStrongbox()
+    {
+        return strongBox;
+    }
+    public void addMarketDiscounts(Resource resource) {
+        this.marketDiscounts.add(resource);
+    }
     public void forwardFaithLocation(int box)
     {
         this.faithLocation += box;
@@ -39,11 +98,14 @@ public class Player {
             faithLocation = 24;
         }
     }
+    public boolean[] getPopeFavor()
+    {
+        return popeFavor;
+    }
     public void addDevCard()
     {
         this.devCardCount++;
     }
-
     public int getDevCardCount()
     {
         return devCardCount;
@@ -52,6 +114,55 @@ public class Player {
     {
         return this.faithLocation;
     }
+    public void addSpecialDepot(Resource r) {
+        this.specialDepots.add(new SpecialDepot(r));
+    }
+    public void setDepots (ArrayList<ArrayList<Resource>> d)
+    {
+        this.depots = new ArrayList<ArrayList<Resource>> (d);
+
+    }
+    public void setSpecialDepots(ArrayList<SpecialDepot> specialDepots)
+    {
+        this.specialDepots=specialDepots;
+    }
+    //given resource, return number of this kind of resource inside depot.
+
+    public void addLeader(LeaderCard l)
+    {
+        leaderCards.add(l);
+    }
+    public ArrayList<LeaderCard> getLeader()
+    {
+        return leaderCards;
+    }
+    public LeaderCard getLeaderById(int id)
+    {
+        for(LeaderCard l: leaderCards)
+        {
+            if(l.getID()==id)
+                return l;
+        }
+        return null;
+    }
+
+    public boolean isLeaderPicked() {
+        return leaderPicked;
+    }
+
+    public void setLeaderPicked(boolean leaderPicked) {
+        this.leaderPicked = leaderPicked;
+    }
+
+    public boolean isDidAction() {
+        return didAction;
+    }
+
+    public void setDidAction(boolean didAction) {
+        this.didAction = didAction;
+    }
+
+
 
     public int vp()
     {
@@ -109,17 +220,6 @@ public class Player {
         {i+=4;}
 
         //Resource
-        /*
-        ArrayList<Integer> listOfResource=new  ArrayList<Integer>(strongBox.values());
-        for (Integer num:listOfResource) {
-            i+=num.intValue();
-        }
-        for (int h = 0; h< depots.size(); h++) {
-            r += depots.get(h).size();
-        }
-
-        i += (r/5);
-        */
         //strongBox
         for(Resource resource: strongBox.keySet())
         {
@@ -157,37 +257,23 @@ public class Player {
         return victoryPoints;
     }
 
-    /** strongbox **/
+    // strongbox
     // Requires a storable resource
     // Remove and return resource removed, throw Exception if there's no resource of that type in strongbox
     public void drawStrongBox(Resource r,int num)
     {
         strongBox.put(r,strongBox.get(r)-num);
     }
-
-    // Requires a storable resource or throw exception
+    // Requires a storable resource
     // Insert selected resource in strongbox
     public void insertStrongBox(Resource r)
     {
             strongBox.put(r,strongBox.get(r)+1);
     }
 
-    public int getQuantityStrongBox(Resource r)
-    {
-        if(r == FAITH || r == WHITE)
-            return 0;
-        return strongBox.get(r);
-    }
-    /** leaders **/
+    //leaders
     //classic getters and setters
-    public void addLeader(LeaderCard l)
-    {
-        leaderCards.add(l);
-    }
-    public ArrayList<LeaderCard> getLeader()
-    {
-        return leaderCards;
-    }
+
     /** pope favor **/
     //
     public void setPopeFavor(int num)
@@ -210,100 +296,10 @@ public class Player {
         return null;
     }
 
-    //given resource, return number of this kind of resource inside depot.
-    public int getQuantityDepot(Resource r)
-    {
-        int num=0;
-        for(ArrayList<Resource> row:depots)
-        {
-            for(Resource res: row)
-            {
-                if (res==r)
-                    num++;
-            }
-        }
-        return num;
-    }
 
     public ArrayList<Resource> getDepotRow(int row)
     {
         return new ArrayList<>(depots.get(row));
-    }
-
-
-
-    /** various getters **/
-    public String getNickname() {
-        return nickname;
-    }
-    public ArrayList<ArrayList<Resource>> getDepots() {
-        return depots;
-    }
-    public ArrayList<Resource> getDevelopmentDiscounts() {
-        return developmentDiscounts;
-    }
-    public ArrayList<Resource> getMarketDiscounts() {
-        return marketDiscounts;
-    }
-    public ArrayList<SpecialDepot> getSpecialDepots()
-    {
-        return this.specialDepots;
-    }
-    public ArrayList<DevSlot> getDevSlots()
-    {
-        return this.devSlots;
-    }
-    /** various setters **/
-    public void addDevelopmentDiscounts(Resource developmentDiscounts) {
-        this.developmentDiscounts.add( developmentDiscounts );
-    }
-    public void addMarketDiscounts(Resource resource) {
-        this.marketDiscounts.add(resource);
-    }
-
-    public void addSpecialDepot(Resource r) {
-        this.specialDepots.add(new SpecialDepot(r));
-    }
-
-    public void setDepots (ArrayList<ArrayList<Resource>> d)
-    {
-        this.depots = new ArrayList<ArrayList<Resource>> (d);
-
-    }
-
-    public void setSpecialDepots(ArrayList<SpecialDepot> specialDepots)
-    {
-        this.specialDepots=specialDepots;
-    }
-
-    /** creator **/
-    public Player(String nickname) {
-        this.leaderPicked=false;
-        this.didAction=false;
-        this.nickname = nickname;
-        this.devCardCount=0;
-        this.faithLocation = 0;
-        this.victoryPoints = 0;
-        this.leaderCards = new ArrayList<LeaderCard>();
-        popeFavor = new boolean[3];
-        strongBox= new HashMap<>();
-        strongBox.put(COIN,0);
-        strongBox.put(SHIELD,0);
-        strongBox.put(STONE,0);
-        strongBox.put(SERVANT,0);
-        this.depots = new ArrayList<ArrayList<Resource>>();
-        for (int i=1; i<4; i++)
-        {
-            depots.add(new ArrayList<Resource>(i));
-        }
-        this.devSlots = new ArrayList<>();
-        devSlots.add(new BasicSlot());
-        devSlots.add(new CardSlot());
-        devSlots.add(new CardSlot());
-        devSlots.add(new CardSlot());
-        this.developmentDiscounts = new ArrayList<>();
-        this.marketDiscounts = new ArrayList<>();
-        this.specialDepots = new ArrayList<SpecialDepot>();
     }
 
     //For given parameter, check if player has all the required conditions
@@ -333,36 +329,43 @@ public class Player {
         return true;
     }
 
-    /*public boolean ownsResources(HashMap<Resource,Integer> payment)
-    {
-        for (Resource resource: payment.keySet())
-        {
-            if(!(payment.get(resource)>=getNumResourceDepot(resource)))
-        }
-    }*/
     public int getNumResource(Resource r)//return amount of specified resource that player has.
     {
-        int playerResource=0;
-        for (SpecialDepot sd:specialDepots) {
-            if(sd.getRes().equals(r))
-            {
-                playerResource= sd.getQuantity();
-            }
-        }
-        return playerResource+getQuantityDepot(r)+getQuantityStrongBox(r);
+        return getNumResourceSp(r)+getNumResourceStrongbox(r)+getNumResourceDepot(r);
     }
 
     public int getNumResourceDepot(Resource r)
     {
+        int num=0;
+        for(ArrayList<Resource> row:depots)
+        {
+            for(Resource res: row)
+            {
+                if (res==r)
+                    num++;
+            }
+        }
+        return num;
+    }
+    public int getNumResourceSp(Resource r)
+    {
         int playerResource=0;
         for (SpecialDepot sd:specialDepots) {
             if(sd.getRes().equals(r))
             {
                 playerResource= sd.getQuantity();
             }
+
         }
-        return playerResource+getQuantityDepot(r);
+        return playerResource;
     }
+    public int getNumResourceStrongbox(Resource r)
+    {
+        if(r == FAITH || r == WHITE)
+            return 0;
+        return strongBox.get(r);
+    }
+
 
     public boolean hasDevCard(Color color, int quantity)
     {
@@ -423,40 +426,16 @@ public class Player {
         this.gain = gain;
     }
 
-    public LeaderCard getLeaderById(int id)
-    {
-        for(LeaderCard l: leaderCards)
-        {
-            if(l.getID()==id)
-                return l;
-        }
-        return null;
-    }
 
-    public boolean isLeaderPicked() {
-        return leaderPicked;
-    }
 
-    public void setLeaderPicked(boolean leaderPicked) {
-        this.leaderPicked = leaderPicked;
-    }
-
-    public boolean isDidAction() {
-        return didAction;
-    }
-
-    public void setDidAction(boolean didAction) {
-        this.didAction = didAction;
-    }
-
-    public void drawResourceHash(HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader)
+    public void drawResourceHash(HashMap<Resource,Integer> toBePaid, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader)
     {
         //draw resource from Depot
         for(Resource r:paymentDepot.keySet())
         {
             for(ArrayList<Resource> row: getDepots())
             {
-                if(row.get(0).equals(r))
+                if(!row.isEmpty()&&row.get(0).equals(r))
                 {
                     for (int i=0;i<paymentDepot.get(r);i++)
                     {
@@ -465,6 +444,7 @@ public class Player {
                 }
 
             }
+            toBePaid.put(r,toBePaid.get(r)-paymentDepot.get(r));
         }
         //draw resource from Leader Depot
         for (Resource r:paymentLeader.keySet())
@@ -479,6 +459,13 @@ public class Player {
                     }
                 }
             }
+            toBePaid.put(r,toBePaid.get(r)-paymentLeader.get(r));
+        }
+
+        //draw resource from strongbox
+        for(Resource r: toBePaid.keySet())
+        {
+            drawStrongBox(r,toBePaid.get(r));
         }
     }
 }

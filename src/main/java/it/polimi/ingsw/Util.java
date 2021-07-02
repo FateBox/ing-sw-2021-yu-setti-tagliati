@@ -26,10 +26,25 @@ public class Util {
                 }
             }
         }
-
-        if(depot.get(0).get(0)==depot.get(1).get(0) || depot.get(0).get(0)==depot.get(2).get(0) || depot.get(1).get(0)==depot.get(2).get(0))
+        ArrayList<Resource> temp=new ArrayList<>();
+        //check first element of each row.
+        for(ArrayList<Resource> row: depot)
         {
-            return false;
+            if(!row.isEmpty())
+            {
+                if (temp.isEmpty())
+                {
+                    temp.add(row.get(0));
+                }else if(temp.contains(row.get(0)))
+                {
+                    return false;
+
+                }
+                else
+                {
+                    temp.add(row.get(0));
+                }
+            }
         }
 
 

@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.connection.Connection;
 import it.polimi.ingsw.enumeration.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +17,7 @@ class GameTest {
     void drawDevCard() {
         pg.add(new Player("nick2"));
         pg.add(new Player("nick1"));
+        HashMap<String, Connection> playerConnection= new HashMap<>();
         Game g = new Game(pg);
 
         for (int j = 0; j<4; j++) {
@@ -167,5 +170,12 @@ class GameTest {
             assertNotNull(g.drawLeaderCard());
         }
         assertNull(g.drawLeaderCard());
+    }
+
+    @Test
+    void singlePlayerGame()//lorenzo
+    {
+        pg.add(new Player("nick1"));
+        Game game=new Game(pg);
     }
 }

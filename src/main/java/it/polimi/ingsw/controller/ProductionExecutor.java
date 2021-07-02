@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 import it.polimi.ingsw.Util;
 import it.polimi.ingsw.enumeration.Resource;
-import it.polimi.ingsw.model.DevCard;
 import it.polimi.ingsw.model.DevSlot;
 import it.polimi.ingsw.model.Game;
 
@@ -32,45 +31,50 @@ public class ProductionExecutor implements ActionExecutor {
     private Game game;
     private ArrayList<DevSlot> devSlots;
     private String price,resourceGain;
+    private HashMap<Resource,Integer> payment;
     public ProductionExecutor(Game game) {
         this.game=game;
         devSlots=new ArrayList<>();
         price="";
         resourceGain="";
+        payment=new HashMap<>();
     }
 
-    public boolean verifyData(/*ArrayList<Integer> slotsId, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader, ArrayList<Resource> extraOutput*/)
+    public boolean verifyData(ArrayList<Integer> slotsId, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader, ArrayList<Resource> extraInput)
     {
+        System.out.println("veryfiing data");
         devSlots=game.getCurrentP().getDevSlots();
-        //is all id present?
-        /*
-        for(Resource r:createPayment().keySet())
+        payment=createPayment(slotsId,extraInput);
+        //does player has enough resource from his depot and spDepot?
+        if(!verifyPayment(paymentDepot,paymentLeader))
         {
-
+            return false;
         }
-        if()*/
         return true;
     }
 
     public void execute(ArrayList<Integer> slotsId, HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader,ArrayList<Resource> extraOutput)
     {
-        //draw resource from depot and leader depot
-        game.getCurrentP().drawResourceHash(paymentDepot,paymentLeader);
+        //draw resource from player storage
+        game.getCurrentP().drawResourceHash(payment,paymentDepot,paymentLeader);
         //add resource into player's strongbox and in case of faith forward the player.
         ArrayList<Resource> output=createOutput(slotsId,extraOutput);
+
         int faith=Collections.frequency(output,Resource.FAITH);
         game.getCurrentP().forwardFaithLocation(faith);
         output.removeIf(r -> r.equals(Resource.FAITH));
+
         for (Resource r: output)
         {
             game.getCurrentP().insertStrongBox(r);
         }
+
         String temp="";
         for(Integer i:slotsId)
         {
             temp= temp+" "+i;
         }
-        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " initiated production on slot:" + temp);
+        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+ " initiated production on slots:" + temp);
         game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+
                 " gained Coin x"+Collections.frequency(output,Resource.COIN)+
                 "; Servant x"+Collections.frequency(output,Resource.SERVANT)+
@@ -111,6 +115,22 @@ public class ProductionExecutor implements ActionExecutor {
         }
         output.addAll(extraOutput);
         return output;
+    }
+
+    private boolean verifyPayment(HashMap<Resource,Integer> paymentDepot, HashMap<Resource,Integer> paymentLeader)
+    {
+        //payment is price generated server side using slot ids
+        //compare it to players payment
+        for (Resource r: payment.keySet())
+        {
+            if(payment.get(r)>game.getCurrentP().getNumResource(r))
+                return false;
+            if (paymentDepot.get(r)>game.getCurrentP().getNumResourceDepot(r))
+                return false;
+            if(paymentLeader.get(r)>game.getCurrentP().getNumResourceSp(r))
+                return false;
+        }
+        return true;
     }
 
 }

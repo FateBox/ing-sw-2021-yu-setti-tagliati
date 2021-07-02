@@ -3,7 +3,9 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.Message;
 import it.polimi.ingsw.Observable;
 import it.polimi.ingsw.Observer;
+import it.polimi.ingsw.Util;
 import it.polimi.ingsw.connection.Connection;
+import it.polimi.ingsw.enumeration.MessageType;
 import it.polimi.ingsw.enumeration.PlayerAction;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.model.*;
@@ -13,19 +15,23 @@ import java.util.HashMap;
 
 public class GameController implements Observer<Message> {
 
-    private Game game;
+    private final Game game;
     final ArrayList<Player> players;
+
+
+
     //TurnController turnController;
-    private MarketExecutor marketExecutor;
-    private DiscardLeaderExecutor discardLeaderExecutor;
-    private ProductionExecutor productionExecutor;
-    private PurchaseExecutor purchaseExecutor;
-    private UseLeaderExecutor useLeaderExecutor;
-    private TurnController turnController;
+    private final MarketExecutor marketExecutor;
+    private final DiscardLeaderExecutor discardLeaderExecutor;
+    private final ProductionExecutor productionExecutor;
+    private final PurchaseExecutor purchaseExecutor;
+    private final UseLeaderExecutor useLeaderExecutor;
+    private final TurnController turnController;
 
     public GameController(ArrayList<String> nicknames) {
         players = new ArrayList<>();
         Collections.shuffle(nicknames);
+
         for (String nick : nicknames)
         {
             players.add(new Player(nick));
@@ -42,127 +48,131 @@ public class GameController implements Observer<Message> {
         productionExecutor = new ProductionExecutor(game);
         useLeaderExecutor= new UseLeaderExecutor(game);
         discardLeaderExecutor = new DiscardLeaderExecutor(game);
-
     }
 
     @Override
     public void update(Message message) {
+
+        System.out.println("In GC: from " + message.getPlayerNick() + ": " + message.getType());
+
         if(game.isReadyLeader())
         {
             if(game.getCurrentP().getNickname().equals(message.getPlayerNick()))//message is taken into consideration only if the sender is the player on turn.
             {
-                switch (message.getPlayerAction())
-                {
-                    case MARKET1://with chosen row/col, modify market and gained resource (forward in case of red marble)
-                    {
-                        if(game.getCurrentP().isDidAction())
-                        {
+                switch (message.getPlayerAction()) {
+//with chosen row/col, modify market and gained resource (forward in case of red marble)
+                    case MARKET1 -> {
+                        System.out.println("received market1 message");
+                        if (game.getCurrentP().isDidAction()) {
                             game.sendErrorToCurrentPlayer("You already played an action!");
                             break;
                         }
-                        if (message.getRowCol()<0 || message.getRowCol()>6)
-                        {
+                        if (message.getRowCol() < 0 || message.getRowCol() > 6) {
                             game.sendErrorToCurrentPlayer("Wrong row or column");
                             break;
                         }
 
-                        if(!marketExecutor.checkResArray(message.getResources()))
-                        {
+                        if (!marketExecutor.checkResArray(message.getResources())) {
+                            System.out.println(message.getResources());
                             game.sendErrorToCurrentPlayer("Wrong Market discount");
                             break;
                         }
                         marketExecutor.choiceResource(message.getRowCol());
                         marketExecutor.manualChange(message.getResources());
+                        game.sendUpdateMarket1();
                         break;
                     }
-                    case MARKET2://insert into depot and forward in case of remaining
-                    {
-                        if(game.getCurrentP().isDidAction())
-                        {
+//insert into depot and forward in case of remaining
+                    case MARKET2 -> {
+                        System.out.println("received market2 message");
+                        if (game.getCurrentP().isDidAction()) {
                             game.sendErrorToCurrentPlayer("You already played an action!");
                             break;
                         }
-                        if(!marketExecutor.checkNumResource(createClientCount(message.getDepot(),message.getSpecialDepots())))
-                        {
-                            game.sendErrorToCurrentPlayer("Resources that you have do not match to what you had before");
-                            break;
-                        }
-                        if(!marketExecutor.checkDepot(message.getDepot(), message.getSpecialDepots()))
-                        {
+                        if (!marketExecutor.checkDepot(message.getDepot(), message.getSpecialDepots())) {
                             game.sendErrorToCurrentPlayer("Depot is not correct");
                             break;
                         }
                         game.getCurrentP().setDepots(message.getDepot());
-                        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname()+" ");
                         game.getCurrentP().setSpecialDepots(message.getSpecialDepots());
+                        game.sendLorenzoAnnouncement(game.getCurrentP().getNickname() + " modified his depots");
                         game.forwardOtherPlayers(game.getIndexPlayer(game.getCurrentP()), message.getResources().size());
                         game.getCurrentP().setDidAction(true);
+                        game.sendUpdateMarket2();
+                        game.sendEndAction();
                         break;
                     }
-                    case PURCHASE:
-                    {
-                        if(game.getCurrentP().isDidAction())
-                        {
+                    case PURCHASE -> {
+                        System.out.println("received purchase message");
+                        if (game.getCurrentP().isDidAction()) {
                             game.sendErrorToCurrentPlayer("You already played an action!");
                             break;
                         }
-                        if(purchaseExecutor.verifyData(message.getDevCardId(), message.getSlotToInsert(), message.getPaymentDepot(), message.getPaymentLeader(), message.getResources()))
-                        {
+                        if (purchaseExecutor.verifyData(message.getDevCardId(), message.getSlotToInsert(), message.getPaymentDepot(), message.getPaymentLeader(), message.getResources())) {
+                            System.out.println("into purchase execute, verify ok");
                             purchaseExecutor.execute(message.getSlotToInsert(), message.getPaymentDepot(), message.getPaymentLeader(), message.getResources());
                             game.getCurrentP().setDidAction(true);
+                            game.sendUpdatePurchase();
+                            game.sendEndAction();
+                        } else {
+                            game.sendErrorToCurrentPlayer("Payment error!");
                         }
                         break;
                     }
-                    case PRODUCTION:
-                    {
-                        if(game.getCurrentP().isDidAction())
-                        {
+                    case PRODUCTION -> {
+                        System.out.println("received production message");
+                        if (game.getCurrentP().isDidAction()) {
+                            System.out.println("turn check passed");
                             game.sendErrorToCurrentPlayer("You already played an action!");
                             break;
                         }
-                        if(productionExecutor.verifyData())
-                        {
+                        if (productionExecutor.verifyData(message.getProductionSlots(), message.getPaymentDepot(), message.getPaymentLeader(), message.getExtraInput())) {
+                            System.out.println("verify passed");
                             productionExecutor.execute(message.getProductionSlots(), message.getPaymentDepot(), message.getPaymentLeader(), message.getExtraOutput());
                             game.getCurrentP().setDidAction(true);
+                            game.sendUpdateProduction();
+                            game.sendEndAction();
+                        } else {
+                            game.sendErrorToCurrentPlayer("Payment error!");
                         }
                         break;
                     }
-                    case USE_LEADER:
-                    {
-                        if(useLeaderExecutor.verifyData(message.getIdLeader1()))
-                        {
+                    case USE_LEADER -> {
+                        System.out.println("received useleader message");
+                        if (useLeaderExecutor.verifyData(message.getIdLeader1())) {
                             useLeaderExecutor.execute(message.getIdLeader1());
-                        }
-                        else
-                        {
+                            game.sendUpdateUseLeader();
+                            game.sendEndAction();
+                        } else {
                             game.sendErrorToCurrentPlayer("Leader Card is not present or it's already played");
                         }
+
                         break;
                     }
-                    case DISCARD_LEADER:
-                    {
-                        if (discardLeaderExecutor.verifyData(message.getIdLeader1()))
-                        {
+                    case DISCARD_LEADER -> {
+                        System.out.println("received discardleader message");
+                        if (discardLeaderExecutor.verifyData(message.getIdLeader1())) {
                             discardLeaderExecutor.execute(message.getIdLeader1());
-                        }
-                        else {
+                            game.sendUpdateDiscardLeader();
+                            game.sendEndAction();
+                        } else {
                             game.sendErrorToCurrentPlayer("This leader cannot be discarded!");
                         }
                         break;
                     }
-                    case END_TURN:
-                    {
-                        if(!(game.getCurrentP().isDidAction()))
-                        {
+                    case END_TURN -> {
+                        System.out.println("received endturn message");
+                        if (!(game.getCurrentP().isDidAction())) {
                             game.sendErrorToCurrentPlayer("You have to play an action before ending this turn!");
+                            System.out.println("sent play action error");
                             break;
                         }
                         game.getCurrentP().setDidAction(false);
                         turnController.nextTurn();
+                        game.sendUpdateNextTurn();
                         break;
                     }
-                    default:
-                    {
+                    default -> {
                         game.sendErrorToCurrentPlayer("wrong action type");
                     }
                 }
@@ -174,13 +184,28 @@ public class GameController implements Observer<Message> {
         {
             if(message.getPlayerAction().equals(PlayerAction.CHOOSE_LEADER))
             {
+                System.out.println("received choose leader message");
+                boolean allReady=true;
                 setupLeader(message.getPlayerNick(), message.getIdLeader1(), message.getIdLeader2());
                 setupResource(message.getPlayerNick(), message.getResources());
+                game.sendUpdateChooseLeader(message.getPlayerNick());
                 game.getPlayerByNick(message.getPlayerNick()).setLeaderPicked(true);
-                if(game.isReadyLeader())
+                for (Player p: game.getPlayerList())
                 {
-                    game.sendEndTurn();
+                    System.out.println(p.getLeader().size());
+                    if(p.getLeader().size()>2)
+                    {
+                        allReady=false;
+                    }
                 }
+                if(allReady)
+                {
+                    System.out.println("all ready");
+                    game.setReadyLeader(true);
+
+                    game.sendUpdateNextTurn();
+                }
+                System.out.println();
             }
             else{
                 game.sendErrorToCurrentPlayer("Error in leader choosing stage");
@@ -188,12 +213,19 @@ public class GameController implements Observer<Message> {
         }
     }
 
+
+
     //Creates a hash table with Resource as key and quantity as value.
-    private HashMap<Resource,Integer> createClientCount(ArrayList<ArrayList<Resource>> depot, ArrayList<SpecialDepot> specialDepots)
+    /*private HashMap<Resource,Integer> createClientCount(ArrayList<ArrayList<Resource>> depot, ArrayList<SpecialDepot> specialDepots)
     {
-        HashMap<Resource,Integer> clientCount=new HashMap<>();
+        HashMap<Resource,Integer> clientCount= Util.createEmptyPaymentHash();
+        System.out.println("this is depot");
+        System.out.println(depot);
+        System.out.println(depot.size());
+        System.out.println("this is depot");
         for (ArrayList<Resource> row: depot)
         {
+            System.out.println(row);
             for(Resource r:row)
             {
                 clientCount.put(r,clientCount.get(r)+1);
@@ -201,11 +233,11 @@ public class GameController implements Observer<Message> {
         }
         for(SpecialDepot s:specialDepots)
         {
-            clientCount.put(s.getRes(),clientCount.get(s.getRes())+s.getQuantity());
+            clientCount.put(s.getRes(),s.getQuantity()+clientCount.get(s.getRes()));
         }
 
         return clientCount;
-    }
+    }*/
 
     //insert 4 leaders to choose and call turnController setupFirstRound
     private void prepare4Leader()
@@ -215,11 +247,22 @@ public class GameController implements Observer<Message> {
             p.addLeader(game.drawLeaderCard());
             p.addLeader(game.drawLeaderCard());
             p.addLeader(game.drawLeaderCard());
-        }
-        //notify
 
+
+            game.sendUnicast(p.getNickname(),sendUpdate4Leader(p));
+        }
     }
 
+    private Message sendUpdate4Leader(Player p)
+    {
+        Message m=new Message();
+        m.setType(MessageType.UPDATE);
+        m.setBroadCast(false);
+        m.setPlayerAction(PlayerAction.LEADER_READY);
+        m.setLeaderDeck(p.getLeader());
+        m.setPlayerNick(p.getNickname());
+        return m;
+    }
     private void setupLeader(String nickname, int id1, int id2)
     {
         Player player= game.getPlayerByNick(nickname);
@@ -229,19 +272,16 @@ public class GameController implements Observer<Message> {
     private boolean checkChosenLeader(String nickname, int id1,int id2)
     {
         Player player = game.getPlayerByNick(nickname);
-        if(!(player.getLeader().contains(player.getLeaderById(id1)) && player.getLeader().contains(player.getLeaderById(id2))))
-            return false;
-        return true;
+        return player.getLeader().contains(player.getLeaderById(id1)) && player.getLeader().contains(player.getLeaderById(id2));
     }
 
-    private boolean checkAllIsLeaderPicked()//condition to start the game.
-    {
-
-        return true;
-    }
     public void start()
     {
+        System.out.println("Game started");
+        game.sendInitGame();
+        System.out.println("Sent init");
         prepare4Leader();
+        System.out.println("Leader prepared");
     }
     private void setupResource(String playerNick,ArrayList<Resource> resources)// given playerNickname, add resource to the depot
     {
@@ -267,8 +307,35 @@ public class GameController implements Observer<Message> {
     }
 
 
-    public void addObs(Connection c) {
-        game.addObserver(c);
+
+    public Game getGame()
+    {
+        return game;
     }
 
+
+    //Executor getters
+    public MarketExecutor getMarketExecutor() {
+        return marketExecutor;
+    }
+
+    public DiscardLeaderExecutor getDiscardLeaderExecutor() {
+        return discardLeaderExecutor;
+    }
+
+    public ProductionExecutor getProductionExecutor() {
+        return productionExecutor;
+    }
+
+    public PurchaseExecutor getPurchaseExecutor() {
+        return purchaseExecutor;
+    }
+
+    public UseLeaderExecutor getUseLeaderExecutor() {
+        return useLeaderExecutor;
+    }
+
+    public TurnController getTurnController() {
+        return turnController;
+    }
 }

@@ -27,11 +27,13 @@ public class Server {
 
     public void start() throws IOException {
 
-        port = 0;
+        port = 8000;
 
         try{
+            /*
             System.out.println("Choose the connection port");
             port = scanner.nextInt();
+             */
 
             serverSocket = new ServerSocket(port);
 
@@ -60,6 +62,7 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
                 //In case the serverSocket gets closed
+
             }
         }
     }

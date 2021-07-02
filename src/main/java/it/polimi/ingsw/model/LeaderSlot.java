@@ -3,12 +3,16 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.enumeration.Resource;
 import it.polimi.ingsw.enumeration.SlotType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class LeaderSlot implements DevSlot{
+/**
+ * Leader slots are slots 4 and 5, their presence vary based on whether player used a leader card with such ability or not.
+ */
+public class LeaderSlot implements DevSlot, Serializable {
     private final SlotType type;
-    private ArrayList<Resource> inputResource;
-    private ArrayList<Resource> outputResource;
+    private final ArrayList<Resource> inputResource;
+    private final ArrayList<Resource> outputResource;
 
     public LeaderSlot(Resource resource)
     {
@@ -32,10 +36,4 @@ public class LeaderSlot implements DevSlot{
     public ArrayList<Resource> getOutputResource()
     {
         return  this.outputResource;
-    }
-
-    public void addOutputResource(Resource r)
-    {
-        this.outputResource.add(1,r);
-    }
-}
+    }}

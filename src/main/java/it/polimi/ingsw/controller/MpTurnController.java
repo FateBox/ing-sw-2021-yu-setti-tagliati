@@ -32,7 +32,7 @@ public class MpTurnController implements TurnController{
         else{
             //next player and send announcement
             game.nextPlayer();
-            game.sendEndTurn();
+            game.sendUpdateNextTurn();
             game.sendLorenzoAnnouncement("Now it's "+ game.getCurrentP().getNickname()+"'s round.");
         }
     }
